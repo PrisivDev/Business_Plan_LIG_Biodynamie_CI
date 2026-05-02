@@ -474,7 +474,7 @@ export default function BusinessPlanApp() {
                 <Leaf size={20} className="text-white" />
               </div>
               <div className="hidden sm:block">
-                <span className="font-bold text-white text-sm">LIG Biodynamie</span>
+                <span className="font-bold text-white text-sm">CAPS - Biodynamie</span>
                 <span className="text-xs block" style={{ color: C.accent }}>Business Plan Juin 2026-2028</span>
               </div>
             </div>
