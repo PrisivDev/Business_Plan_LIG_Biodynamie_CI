@@ -55,17 +55,17 @@ function fmtPct(n: number) { return `${n.toFixed(1)}%` }
 // ═══════════════════════════════════════════════════════════
 
 const budgetData = [
-  { name: 'Identité visuelle', value: 10000000, color: '#2A7A65' },
-  { name: 'Lancement officiel', value: 12000000, color: '#3DDBB5' },
-  { name: 'Campagne digitale', value: 8000000, color: '#F3A847' },
-  { name: 'Formations & tournées', value: 10000000, color: '#D4875A' },
-  { name: 'Production de contenu', value: 6000000, color: '#5B8DB8' },
+  { name: 'Identité visuelle & branding', value: 1000000, color: '#2A7A65' },
+  { name: 'Lancement officiel', value: 1500000, color: '#3DDBB5' },
+  { name: 'Campagne digitale', value: 800000, color: '#F3A847' },
+  { name: 'Formations & tournées', value: 1200000, color: '#D4875A' },
+  { name: 'Production de contenu', value: 500000, color: '#5B8DB8' },
 ]
 
 const financialData = [
-  { year: 'Année 1 (2026)', CA: 17.4, couts: 32, resultat: -14.6 },
-  { year: 'Année 2 (2027)', CA: 64, couts: 52, resultat: 9 },
-  { year: 'Année 3 (2028)', CA: 135, couts: 82, resultat: 39.8 },
+  { year: 'Année 1 (2026)', CA: 17.4, couts: 27.5, resultat: -10.1 },
+  { year: 'Année 2 (2027)', CA: 64, couts: 47.5, resultat: 16.5 },
+  { year: 'Année 3 (2028)', CA: 135, couts: 70, resultat: 65 },
 ]
 
 const revenueMixData = [
@@ -147,12 +147,12 @@ const funnelData = [
 ]
 
 const channelBudgetData = [
-  { canal: 'Digital (Social + SEO)', budget: 8, leads: 12000, conversion: 2.5, roi: 3.2, cac: 6667 },
-  { canal: 'Événements / Salons', budget: 12, leads: 3000, conversion: 8.0, roi: 4.5, cac: 50000 },
-  { canal: 'Formation / Tournées', budget: 10, leads: 5000, conversion: 15.0, roi: 6.8, cac: 13333 },
-  { canal: 'Presse / Médias traditionnels', budget: 6, leads: 8000, conversion: 1.5, roi: 1.8, cac: 50000 },
-  { canal: 'Partenariats (ANADER, FIRCA)', budget: 5, leads: 4000, conversion: 12.0, roi: 8.5, cac: 10417 },
-  { canal: 'E-commerce / Site web', budget: 5, leads: 6000, conversion: 4.0, roi: 5.2, cac: 20833 },
+  { canal: 'Digital (Social + SEO)', budget: 0.8, leads: 12000, conversion: 2.5, roi: 3.2, cac: 667 },
+  { canal: 'Événements / Salons', budget: 1.5, leads: 3000, conversion: 8.0, roi: 4.5, cac: 5000 },
+  { canal: 'Formation / Tournées', budget: 1.2, leads: 5000, conversion: 15.0, roi: 6.8, cac: 2400 },
+  { canal: 'Presse / Médias traditionnels', budget: 0.5, leads: 8000, conversion: 1.5, roi: 1.8, cac: 6250 },
+  { canal: 'Partenariats (ANADER, FIRCA)', budget: 0.5, leads: 4000, conversion: 12.0, roi: 8.5, cac: 1250 },
+  { canal: 'E-commerce / Site web', budget: 0.5, leads: 6000, conversion: 4.0, roi: 5.2, cac: 833 },
 ]
 
 const marketingKPIData = [
@@ -202,11 +202,11 @@ const mix4P = [
 ]
 
 const contentCalendar = [
-  { periode: 'Mai 2026', theme: 'Teasing & Anticipation', actions: 'Compte à rebours, révélations produit, MoU partenaires', canaux: 'Social media, WhatsApp, Presse', budget: '3M Fcfa', kpi: 'Impressions: 500K, Engagements: 25K' },
-  { periode: 'Juin 2026', theme: 'Lancement Officiel', actions: 'Cérémonie, démonstrations live, couverture RTI', canaux: 'Tous canaux, TV, Presse, Événement', budget: '12M Fcfa', kpi: 'Participants: 500, Leads: 2000' },
-  { periode: 'Juil-Sept 2026', theme: 'Tournée & Formations', actions: '5 régions, formations gratuites, "1 tonne test"', canaux: 'Terrain, ANADER, Radio rurale, WhatsApp', budget: '10M Fcfa', kpi: 'Agriculteurs formés: 500, Tests: 1000' },
-  { periode: 'Oct-Déc 2026', theme: 'Témoignages & Preuve Sociale', actions: 'Collecte résultats, vidéos témoignages, études de cas', canaux: 'Social media, Site web, Salons', budget: '6M Fcfa', kpi: 'Témoignages: 50, Taux conversion: 25%' },
-  { periode: 'Jan-Jun 2027', theme: 'Consolidation & Expansion', actions: 'Label "Fermes Biodynamiques", salons, partenariats', canaux: 'B2B, Institutions, Événements', budget: '15M Fcfa', kpi: 'Contrats signés: 15, CA: 17.4M' },
+  { periode: 'Mai 2026', theme: 'Teasing & Anticipation', actions: 'Compte à rebours, révélations produit, MoU partenaires', canaux: 'Social media, WhatsApp, Presse', budget: '500K Fcfa', kpi: 'Impressions: 500K, Engagements: 25K' },
+  { periode: 'Juin 2026', theme: 'Lancement Officiel', actions: 'Cérémonie, démonstrations live, couverture RTI', canaux: 'Tous canaux, TV, Presse, Événement', budget: '1.5M Fcfa', kpi: 'Participants: 500, Leads: 2000' },
+  { periode: 'Juil-Sept 2026', theme: 'Tournée & Formations', actions: '5 régions, formations gratuites, "1 tonne test"', canaux: 'Terrain, ANADER, Radio rurale, WhatsApp', budget: '1.2M Fcfa', kpi: 'Agriculteurs formés: 500, Tests: 1000' },
+  { periode: 'Oct-Déc 2026', theme: 'Témoignages & Preuve Sociale', actions: 'Collecte résultats, vidéos témoignages, études de cas', canaux: 'Social media, Site web, Salons', budget: '800K Fcfa', kpi: 'Témoignages: 50, Taux conversion: 25%' },
+  { periode: 'Jan-Jun 2027', theme: 'Consolidation & Expansion', actions: 'Label "Fermes Biodynamiques", salons, partenariats', canaux: 'B2B, Institutions, Événements', budget: '1M Fcfa', kpi: 'Contrats signés: 15, CA: 17.4M' },
 ]
 
 // ═══════════════════════════════════════════════════════════
@@ -226,17 +226,17 @@ const compteResultatData = [
   { poste: '  Commissions commerciales (8%)', a1: -1.4, a2: -2.5, a3: -4.5, bold: false, color: C.text },
   { poste: '  Tests gratuits (1 tonne)', a1: -0.6, a2: -1.5, a3: -2.5, bold: false, color: C.text },
   { poste: 'Marge brute', a1: 5.4, a2: 36.0, a3: 90.0, bold: true, color: C.accentDark },
-  { poste: 'Charges fixes', a1: -20.0, a2: -24.0, a3: -30.0, bold: true, color: C.danger },
+  { poste: 'Charges fixes', a1: -15.5, a2: -19.5, a3: -25.0, bold: true, color: C.danger },
   { poste: '  Salaires & charges sociales', a1: -8.5, a2: -10.5, a3: -13.0, bold: false, color: C.text },
-  { poste: '  Marketing & communication', a1: -5.5, a2: -7.0, a3: -9.0, bold: false, color: C.text },
+  { poste: '  Marketing & communication', a1: -1.0, a2: -2.5, a3: -4.0, bold: false, color: C.text },
   { poste: '  Loyer & charges bureaux', a1: -2.4, a2: -2.8, a3: -3.2, bold: false, color: C.text },
   { poste: '  Amortissements', a1: -1.8, a2: -1.8, a3: -2.0, bold: false, color: C.text },
   { poste: '  Assurances & divers', a1: -1.8, a2: -1.9, a3: -2.8, bold: false, color: C.text },
-  { poste: 'Résultat opérationnel (EBIT)', a1: -14.6, a2: 12.0, a3: 60.0, bold: true, color: null },
+  { poste: 'Résultat opérationnel (EBIT)', a1: -10.1, a2: 16.5, a3: 65.0, bold: true, color: null },
   { poste: 'Charges financières', a1: 0, a2: -1.0, a3: -1.5, bold: false, color: C.text },
-  { poste: 'Résultat avant impôt', a1: -14.6, a2: 11.0, a3: 58.5, bold: true, color: null },
-  { poste: 'Impôt sur les sociétés (25%)', a1: 0, a2: -2.0, a3: -13.7, bold: false, color: C.text },
-  { poste: 'Résultat net', a1: -14.6, a2: 9.0, a3: 44.8, bold: true, color: null },
+  { poste: 'Résultat avant impôt', a1: -10.1, a2: 15.5, a3: 63.5, bold: true, color: null },
+  { poste: 'Impôt sur les sociétés (25%)', a1: 0, a2: -3.9, a3: -15.9, bold: false, color: C.text },
+  { poste: 'Résultat net', a1: -10.1, a2: 11.6, a3: 47.6, bold: true, color: null },
 ]
 
 const bilanData = [
@@ -244,49 +244,49 @@ const bilanData = [
   { poste: '  Immobilisations nettes', a1: 12.0, a2: 10.2, a3: 8.4, bold: false },
   { poste: '  Stocks', a1: 3.0, a2: 8.0, a3: 15.0, bold: false },
   { poste: '  Créances clients', a1: 2.5, a2: 9.0, a3: 18.0, bold: false },
-  { poste: '  Trésorerie', a1: 2.0, a2: 12.0, a3: 45.0, bold: false },
-  { poste: 'Total Actif', a1: 19.5, a2: 39.2, a3: 86.4, bold: true },
+  { poste: '  Trésorerie', a1: 4.5, a2: 18.0, a3: 55.0, bold: false },
+  { poste: 'Total Actif', a1: 22.0, a2: 45.2, a3: 96.4, bold: true },
   { poste: 'PASSIF', a1: '', a2: '', a3: '', header: true },
   { poste: '  Capital social', a1: 20.0, a2: 20.0, a3: 20.0, bold: false },
-  { poste: '  Réserves & RAN', a1: -14.6, a2: -5.6, a3: 39.2, bold: false },
+  { poste: '  Réserves & RAN', a1: -10.1, a2: 1.5, a3: 49.1, bold: false },
   { poste: '  Dettes financières', a1: 8.0, a2: 15.0, a3: 10.0, bold: false },
-  { poste: '  Dettes fournisseurs', a1: 4.1, a2: 6.8, a3: 12.2, bold: false },
-  { poste: '  Dettes fiscales & sociales', a1: 2.0, a2: 3.0, a3: 5.0, bold: false },
-  { poste: 'Total Passif', a1: 19.5, a2: 39.2, a3: 86.4, bold: true },
+  { poste: '  Dettes fournisseurs', a1: 2.6, a2: 5.7, a3: 12.3, bold: false },
+  { poste: '  Dettes fiscales & sociales', a1: 1.5, a2: 3.0, a3: 5.0, bold: false },
+  { poste: 'Total Passif', a1: 22.0, a2: 45.2, a3: 96.4, bold: true },
 ]
 
 const ratiosData = [
   { category: 'Rentabilité', ratios: [
     { name: 'Marge brute', formula: 'MB/CA', a1: '31.0%', a2: '56.3%', a3: '66.7%', target: '>60%', status: 'warning' },
-    { name: 'Marge opérationnelle (EBIT)', formula: 'EBIT/CA', a1: '-84.1%', a2: '18.8%', a3: '44.4%', target: '>25%', status: 'success' },
-    { name: 'Marge nette', formula: 'RN/CA', a1: '-84.1%', a2: '14.1%', a3: '33.2%', target: '>20%', status: 'success' },
-    { name: 'ROE (Rentabilité des capitaux)', formula: 'RN/Capitaux propres', a1: '-72.9%', a2: '65.2%', a3: '75.7%', target: '>30%', status: 'success' },
-    { name: 'ROA (Rentabilité de l\'actif)', formula: 'RN/Total actif', a1: '-74.9%', a2: '23.0%', a3: '51.9%', target: '>15%', status: 'success' },
-    { name: 'ROCE (Rentabilité capitaux engagés)', formula: 'EBIT/CE', a1: '-72.9%', a2: '40.5%', a3: '63.8%', target: '>25%', status: 'success' },
+    { name: 'Marge opérationnelle (EBIT)', formula: 'EBIT/CA', a1: '-58.0%', a2: '25.8%', a3: '48.1%', target: '>25%', status: 'success' },
+    { name: 'Marge nette', formula: 'RN/CA', a1: '-58.0%', a2: '18.1%', a3: '35.3%', target: '>20%', status: 'success' },
+    { name: 'ROE (Rentabilité des capitaux)', formula: 'RN/Capitaux propres', a1: '-33.4%', a2: '54.0%', a3: '68.8%', target: '>30%', status: 'success' },
+    { name: 'ROA (Rentabilité de l\'actif)', formula: 'RN/Total actif', a1: '-45.9%', a2: '25.7%', a3: '49.4%', target: '>15%', status: 'success' },
+    { name: 'ROCE (Rentabilité capitaux engagés)', formula: 'EBIT/CE', a1: '-33.4%', a2: '44.6%', a3: '72.2%', target: '>25%', status: 'success' },
   ]},
   { category: 'Liquidité', ratios: [
-    { name: 'Ratio de liquidité générale', formula: 'AC/PC', a1: '0.52', a2: '1.38', a3: '2.60', target: '>1.5', status: 'warning' },
-    { name: 'Ratio de liquidité immédiate', formula: '(AC-Stocks)/PC', a1: '0.44', a2: '1.10', a3: '2.15', target: '>1.0', status: 'success' },
-    { name: 'Ratio de solvabilité', formula: 'CP/Total actif', a1: '27.7%', a2: '36.7%', a3: '68.5%', target: '>40%', status: 'warning' },
-    { name: 'Dette/Équité', formula: 'DF/CP', a1: '1.97', a2: '1.41', a3: '0.25', target: '<1.0', status: 'warning' },
+    { name: 'Ratio de liquidité générale', formula: 'AC/PC', a1: '0.55', a2: '1.55', a3: '2.70', target: '>1.5', status: 'warning' },
+    { name: 'Ratio de liquidité immédiate', formula: '(AC-Stocks)/PC', a1: '0.46', a2: '1.20', a3: '2.23', target: '>1.0', status: 'success' },
+    { name: 'Ratio de solvabilité', formula: 'CP/Total actif', a1: '44.9%', a2: '47.6%', a3: '71.7%', target: '>40%', status: 'success' },
+    { name: 'Dette/Équité', formula: 'DF/CP', a1: '0.56', a2: '0.75', a3: '0.18', target: '<1.0', status: 'success' },
   ]},
   { category: 'Activité & Efficacité', ratios: [
     { name: 'Rotation des stocks (jours)', formula: 'Stock/CA×365', a1: '63', a2: '46', a3: '41', target: '<60j', status: 'success' },
     { name: 'Délai paiement clients (jours)', formula: 'Créances/CA×365', a1: '53', a2: '51', a3: '49', target: '<60j', status: 'success' },
-    { name: 'Délai paiement fournisseurs (jours)', formula: 'Dettes/CA×365', a1: '86', a2: '39', a3: '33', target: '>30j', status: 'success' },
+    { name: 'Délai paiement fournisseurs (jours)', formula: 'Dettes/CA×365', a1: '54', a2: '33', a3: '33', target: '>30j', status: 'success' },
     { name: 'CA par employé (M Fcfa)', formula: 'CA/Effectif', a1: '1.2', a2: '3.6', a3: '6.4', target: '>3M', status: 'success' },
   ]},
   { category: 'Croissance', ratios: [
     { name: 'Croissance CA', formula: '(CA n - CA n-1)/CA n-1', a1: 'N/A', a2: '+268%', a3: '+111%', target: '>50%', status: 'success' },
-    { name: 'Croissance résultat net', formula: '(RN n - RN n-1)/RN n-1', a1: 'N/A', a2: 'N/A', a3: '+398%', target: '>30%', status: 'success' },
+    { name: 'Croissance résultat net', formula: '(RN n - RN n-1)/RN n-1', a1: 'N/A', a2: 'N/A', a3: '+310%', target: '>30%', status: 'success' },
     { name: 'Part de marché visée (biofertilisants CI)', formula: 'Estimé', a1: '2%', a2: '8%', a3: '18%', target: '>10%', status: 'warning' },
   ]},
 ]
 
 const vanTriData = [
-  { scenario: 'Pessimiste', taux: '8%', van: 12.5, tri: 22.0, delai: 36, color: C.warning },
-  { scenario: 'Base', taux: '10%', van: 28.4, tri: 34.5, delai: 24, color: C.accent },
-  { scenario: 'Optimiste', taux: '10%', van: 52.8, tri: 48.2, delai: 18, color: C.success },
+  { scenario: 'Pessimiste', taux: '8%', van: 18.2, tri: 28.5, delai: 30, color: C.warning },
+  { scenario: 'Base', taux: '10%', van: 35.8, tri: 41.0, delai: 20, color: C.accent },
+  { scenario: 'Optimiste', taux: '10%', van: 62.4, tri: 55.3, delai: 15, color: C.success },
 ]
 
 const sensitivityData = [
@@ -299,15 +299,15 @@ const sensitivityData = [
 ]
 
 const breakevenData = [
-  { ca: 0, coutsTotal: 20, profit: -20 },
-  { ca: 10, coutsTotal: 25.2, profit: -15.2 },
-  { ca: 20, coutsTotal: 30.4, profit: -10.4 },
-  { ca: 30, coutsTotal: 35.6, profit: -5.6 },
-  { ca: 40, coutsTotal: 40.8, profit: -0.8 },
-  { ca: 47.6, coutsTotal: 47.6, profit: 0 },
-  { ca: 60, coutsTotal: 53.6, profit: 6.4 },
-  { ca: 80, coutsTotal: 62.4, profit: 17.6 },
-  { ca: 100, coutsTotal: 71.2, profit: 28.8 },
+  { ca: 0, coutsTotal: 15.5, profit: -15.5 },
+  { ca: 10, coutsTotal: 20.7, profit: -10.7 },
+  { ca: 20, coutsTotal: 25.9, profit: -5.9 },
+  { ca: 30, coutsTotal: 31.1, profit: -1.1 },
+  { ca: 32.2, coutsTotal: 32.2, profit: 0 },
+  { ca: 40, coutsTotal: 36.3, profit: 3.7 },
+  { ca: 60, coutsTotal: 46.7, profit: 13.3 },
+  { ca: 80, coutsTotal: 57.1, profit: 22.9 },
+  { ca: 100, coutsTotal: 67.5, profit: 32.5 },
   { ca: 135, coutsTotal: 85, profit: 50 },
 ]
 
@@ -598,7 +598,7 @@ export default function BusinessPlanApp() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
               {[
-                { icon: DollarSign, value: '46M', label: 'Fcfa Budget Marketing', color: C.accent },
+                { icon: DollarSign, value: '5M', label: 'Fcfa Budget Marketing', color: C.accent },
                 { icon: Sprout, value: '25%', label: 'PIB Agricole CI', color: C.gold },
                 { icon: Microscope, value: '20+', label: 'Années de R&D', color: C.accentDark },
                 { icon: Droplets, value: '10j', label: 'Résultats visibles', color: C.success },
@@ -944,7 +944,7 @@ export default function BusinessPlanApp() {
                         <div className="p-4 rounded-xl" style={{ backgroundColor: `${C.accentDark}08`, borderLeft: `4px solid ${C.accentDark}` }}>
                           <h4 className="font-semibold text-sm mb-1" style={{ color: C.accentDark }}>CAC (Coût d&apos;Acquisition Client)</h4>
                           <p className="text-3xl font-bold" style={{ color: C.accentDark }}>25 000 <span className="text-base font-normal">Fcfa</span></p>
-                          <p className="text-xs mt-1" style={{ color: C.muted }}>Budget marketing (46M) / 500 nouveaux clients prévus Année 1</p>
+                          <p className="text-xs mt-1" style={{ color: C.muted }}>Budget marketing (5M) / 500 nouveaux clients prévus Année 1</p>
                           <div className="grid grid-cols-3 gap-2 mt-3">
                             <div className="text-center p-2 rounded-lg bg-white/60">
                               <p className="text-xs" style={{ color: C.muted }}>A1</p>
