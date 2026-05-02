@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -49,6 +49,14 @@ const C = {
 function fmt(n: number) { return n.toLocaleString('fr-FR') }
 function fmtM(n: number) { return `${n.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M` }
 function fmtPct(n: number) { return `${n.toFixed(1)}%` }
+
+// ─── Dynamic Pricing ───
+const PRICE_OPTIONS = [
+  { label: 'Économique', price: 7000, color: '#F39C12' },
+  { label: 'Standard', price: 9000, color: '#3DDBB5' },
+  { label: 'Premium', price: 14000, color: '#27AE60' },
+]
+const BASE_PRICE = 9000
 
 // ═══════════════════════════════════════════════════════════
 // CHART DATA
@@ -176,8 +184,8 @@ const mix4P = [
     'Label "Fermes Biodynamiques" (Année 2)',
   ]},
   { P: 'Prix', icon: DollarSign, color: C.gold, items: [
-    'Prix lancement : 600 Fcfa/g (-40%)',
-    'Prix standard : 1 000 Fcfa/g',
+    'Prix lancement : -40% (voir sélecteur ci-dessus)',
+    'Prix standard : selon tarif choisi',
     'Remise volume : -20% (commandes > 5kg)',
     'Paiement échelonné pour coopératives',
     'Programme fidélité : 10e sac offert',
@@ -429,6 +437,187 @@ export default function BusinessPlanApp() {
   const [activeSection, setActiveSection] = useState('resume')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrollY, setScrollY] = useState(0)
+  const [priceIdx, setPriceIdx] = useState(1) // default: Standard 9000
+
+  // ─── Dynamic Financial Computation ───
+  const dyn = useMemo(() => {
+    const p = PRICE_OPTIONS[priceIdx].price
+    const pf = p / BASE_PRICE
+
+    // Revenus produits (échelle avec le prix)
+    const baseProductCA = [12.2, 44.8, 94.5]
+    const servicesCA = [5.2, 19.2, 40.5]
+    const productCA = baseProductCA.map(v => Math.round(v * pf * 10) / 10)
+    const totalCA = productCA.map((pc, i) => Math.round((pc + servicesCA[i]) * 10) / 10)
+
+    // Coûts variables volume (constants)
+    const matieres = [-5.5, -13.0, -20.0]
+    const conditionnement = [-2.0, -5.0, -8.0]
+    const logistique = [-2.5, -6.0, -10.0]
+    const tests = [-0.6, -1.5, -2.5]
+    const commissions = totalCA.map(c => Math.round(-c * 0.08 * 10) / 10)
+    const totalVar = matieres.map((m, i) => Math.round((m + conditionnement[i] + logistique[i] + tests[i] + commissions[i]) * 10) / 10)
+    const margeBrute = totalCA.map((c, i) => Math.round((c + totalVar[i]) * 10) / 10)
+
+    // Charges fixes (constant)
+    const fixedCosts = [-15.5, -19.5, -25.0]
+    const ebit = margeBrute.map((mb, i) => Math.round((mb + fixedCosts[i]) * 10) / 10)
+    const finCharges = [0, -1.0, -1.5]
+    const rbt = ebit.map((eb, i) => Math.round((eb + finCharges[i]) * 10) / 10)
+    const impot = rbt.map(r => r > 0 ? Math.round(-r * 0.25 * 10) / 10 : 0)
+    const rn = rbt.map((r, i) => Math.round((r + impot[i]) * 10) / 10)
+
+    // Ratios clés
+    const mbPct = margeBrute.map((mb, i) => totalCA[i] > 0 ? Math.round(mb / totalCA[i] * 1000) / 10 : 0)
+    const ebitPct = ebit.map((eb, i) => totalCA[i] > 0 ? Math.round(eb / totalCA[i] * 1000) / 10 : 0)
+    const rnPct = rn.map((r, i) => totalCA[i] > 0 ? Math.round(r / totalCA[i] * 1000) / 10 : 0)
+    const capSocial = [20, 20, 20]
+    const ran = rn.map((_, i) => Math.round(rn.slice(0, i + 1).reduce((s, v) => s + v, 0) * 10) / 10)
+    const capPropres = ran.map((r, i) => Math.round((capSocial[i] + r) * 10) / 10)
+    const immob = [12.0, 10.2, 8.4]
+    const stocks = [3.0, 8.0, 15.0]
+    const creances = [2.5, 9.0, 18.0]
+    const tresorerie = ran.map((r, i) => Math.round((4.5 + r + (i > 0 ? ran[i - 1] - rn[i] : 0)) * 10) / 10)
+    const totalActif = immob.map((im, i) => Math.round((im + stocks[i] + creances[i] + tresorerie[i]) * 10) / 10)
+    const dettesFin = [8.0, 15.0, 10.0]
+    const dettesFisc = [1.5, 3.0, 5.0]
+    const dettesFourn = totalActif.map((ta, i) => Math.round((ta - capSocial[i] - ran[i] - dettesFin[i] - dettesFisc[i]) * 10) / 10)
+    const roe = capPropres.map((cp, i) => cp > 0 ? Math.round(rn[i] / cp * 1000) / 10 : 0)
+    const roa = totalActif.map((ta, i) => ta > 0 ? Math.round(rn[i] / ta * 1000) / 10 : 0)
+    const actifCirc = stocks.map((s, i) => Math.round((s + creances[i] + tresorerie[i]) * 10) / 10)
+    const passifCirc = dettesFourn.map((df, i) => Math.round((df + dettesFisc[i]) * 10) / 10)
+    const liqGen = actifCirc.map((ac, i) => passifCirc[i] > 0 ? Math.round(ac / passifCirc[i] * 100) / 100 : 0)
+    const liqImm = stocks.map((s, i) => passifCirc[i] > 0 ? Math.round((actifCirc[i] - s) / passifCirc[i] * 100) / 100 : 0)
+    const solvabilite = totalActif.map((ta, i) => ta > 0 ? Math.round(capPropres[i] / ta * 1000) / 10 : 0)
+    const detteEquite = capPropres.map((cp, i) => cp > 0 ? Math.round(dettesFin[i] / cp * 100) / 100 : 0)
+    const croissCA = totalCA.map((c, i) => i === 0 ? 'N/A' : `+${Math.round((c / totalCA[i - 1] - 1) * 1000) / 10}%`)
+    const croissRN = rn.map((r, i) => i === 0 || rn[i - 1] <= 0 ? 'N/A' : `+${Math.round((r / rn[i - 1] - 1) * 1000) / 10}%`)
+
+    // Seuil de rentabilité
+    const mbPctA1 = mbPct[0] / 100
+    const seuil = mbPctA1 > 0 ? Math.round(-fixedCosts[0] / mbPctA1 * 10) / 10 : 0
+
+    // ─── Build data arrays ───
+    const financialData = [
+      { year: 'Année 1 (2026)', CA: totalCA[0], couts: Math.round(-(totalVar[0] + fixedCosts[0]) * 10) / 10, resultat: rn[0] },
+      { year: 'Année 2 (2027)', CA: totalCA[1], couts: Math.round(-(totalVar[1] + fixedCosts[1]) * 10) / 10, resultat: rn[1] },
+      { year: 'Année 3 (2028)', CA: totalCA[2], couts: Math.round(-(totalVar[2] + fixedCosts[2]) * 10) / 10, resultat: rn[2] },
+    ]
+
+    const compteResultatData = [
+      { poste: 'Chiffre d\'affaires', a1: totalCA[0], a2: totalCA[1], a3: totalCA[2], bold: true, color: C.accent },
+      { poste: '  Vente biofertilisant', a1: productCA[0], a2: productCA[1], a3: productCA[2], bold: false, color: C.text },
+      { poste: '  Formations & accompagnement', a1: 2.6, a2: 9.6, a3: 20.3, bold: false, color: C.text },
+      { poste: '  Consultation R&D', a1: 1.7, a2: 6.4, a3: 13.5, bold: false, color: C.text },
+      { poste: '  Certification Fermes Bio', a1: 0.9, a2: 3.2, a3: 6.7, bold: false, color: C.text },
+      { poste: 'Coûts variables', a1: totalVar[0], a2: totalVar[1], a3: totalVar[2], bold: true, color: C.danger },
+      { poste: '  Matières premières', a1: -5.5, a2: -13.0, a3: -20.0, bold: false, color: C.text },
+      { poste: '  Conditionnement & emballage', a1: -2.0, a2: -5.0, a3: -8.0, bold: false, color: C.text },
+      { poste: '  Logistique & transport', a1: -2.5, a2: -6.0, a3: -10.0, bold: false, color: C.text },
+      { poste: '  Commissions commerciales (8%)', a1: commissions[0], a2: commissions[1], a3: commissions[2], bold: false, color: C.text },
+      { poste: '  Tests gratuits (1 tonne)', a1: -0.6, a2: -1.5, a3: -2.5, bold: false, color: C.text },
+      { poste: 'Marge brute', a1: margeBrute[0], a2: margeBrute[1], a3: margeBrute[2], bold: true, color: C.accentDark },
+      { poste: 'Charges fixes', a1: -15.5, a2: -19.5, a3: -25.0, bold: true, color: C.danger },
+      { poste: '  Salaires & charges sociales', a1: -8.5, a2: -10.5, a3: -13.0, bold: false, color: C.text },
+      { poste: '  Marketing & communication', a1: -1.0, a2: -2.5, a3: -4.0, bold: false, color: C.text },
+      { poste: '  Loyer & charges bureaux', a1: -2.4, a2: -2.8, a3: -3.2, bold: false, color: C.text },
+      { poste: '  Amortissements', a1: -1.8, a2: -1.8, a3: -2.0, bold: false, color: C.text },
+      { poste: '  Assurances & divers', a1: -1.8, a2: -1.9, a3: -2.8, bold: false, color: C.text },
+      { poste: 'Résultat opérationnel (EBIT)', a1: ebit[0], a2: ebit[1], a3: ebit[2], bold: true, color: null },
+      { poste: 'Charges financières', a1: 0, a2: -1.0, a3: -1.5, bold: false, color: C.text },
+      { poste: 'Résultat avant impôt', a1: rbt[0], a2: rbt[1], a3: rbt[2], bold: true, color: null },
+      { poste: 'Impôt sur les sociétés (25%)', a1: impot[0], a2: impot[1], a3: impot[2], bold: false, color: C.text },
+      { poste: 'Résultat net', a1: rn[0], a2: rn[1], a3: rn[2], bold: true, color: null },
+    ]
+
+    const bilanData = [
+      { poste: 'ACTIF', a1: '', a2: '', a3: '', header: true },
+      { poste: '  Immobilisations nettes', a1: immob[0], a2: immob[1], a3: immob[2], bold: false },
+      { poste: '  Stocks', a1: stocks[0], a2: stocks[1], a3: stocks[2], bold: false },
+      { poste: '  Créances clients', a1: creances[0], a2: creances[1], a3: creances[2], bold: false },
+      { poste: '  Trésorerie', a1: tresorerie[0], a2: tresorerie[1], a3: tresorerie[2], bold: false },
+      { poste: 'Total Actif', a1: totalActif[0], a2: totalActif[1], a3: totalActif[2], bold: true },
+      { poste: 'PASSIF', a1: '', a2: '', a3: '', header: true },
+      { poste: '  Capital social', a1: capSocial[0], a2: capSocial[1], a3: capSocial[2], bold: false },
+      { poste: '  Réserves & RAN', a1: ran[0], a2: ran[1], a3: ran[2], bold: false },
+      { poste: '  Dettes financières', a1: dettesFin[0], a2: dettesFin[1], a3: dettesFin[2], bold: false },
+      { poste: '  Dettes fournisseurs', a1: dettesFourn[0], a2: dettesFourn[1], a3: dettesFourn[2], bold: false },
+      { poste: '  Dettes fiscales & sociales', a1: dettesFisc[0], a2: dettesFisc[1], a3: dettesFisc[2], bold: false },
+      { poste: 'Total Passif', a1: totalActif[0], a2: totalActif[1], a3: totalActif[2], bold: true },
+    ]
+
+    const ratiosData = [
+      { category: 'Rentabilité', ratios: [
+        { name: 'Marge brute', formula: 'MB/CA', a1: `${mbPct[0]}%`, a2: `${mbPct[1]}%`, a3: `${mbPct[2]}%`, target: '>60%', status: mbPct[2] >= 60 ? 'success' : 'warning' },
+        { name: 'Marge opérationnelle (EBIT)', formula: 'EBIT/CA', a1: `${ebitPct[0]}%`, a2: `${ebitPct[1]}%`, a3: `${ebitPct[2]}%`, target: '>25%', status: ebitPct[2] >= 25 ? 'success' : 'warning' },
+        { name: 'Marge nette', formula: 'RN/CA', a1: `${rnPct[0]}%`, a2: `${rnPct[1]}%`, a3: `${rnPct[2]}%`, target: '>20%', status: rnPct[2] >= 20 ? 'success' : 'warning' },
+        { name: 'ROE (Rentabilité des capitaux)', formula: 'RN/Capitaux propres', a1: `${roe[0]}%`, a2: `${roe[1]}%`, a3: `${roe[2]}%`, target: '>30%', status: roe[2] >= 30 ? 'success' : 'warning' },
+        { name: 'ROA (Rentabilité de l\'actif)', formula: 'RN/Total actif', a1: `${roa[0]}%`, a2: `${roa[1]}%`, a3: `${roa[2]}%`, target: '>15%', status: roa[2] >= 15 ? 'success' : 'warning' },
+        { name: 'ROCE (Rentabilité capitaux engagés)', formula: 'EBIT/CE', a1: `${roe[0]}%`, a2: `${Math.round(ebit[1] / (capPropres[1] + dettesFin[1]) * 1000) / 10}%`, a3: `${Math.round(ebit[2] / (capPropres[2] + dettesFin[2]) * 1000) / 10}%`, target: '>25%', status: true ? 'success' : 'warning' },
+      ]},
+      { category: 'Liquidité', ratios: [
+        { name: 'Ratio de liquidité générale', formula: 'AC/PC', a1: `${liqGen[0]}`, a2: `${liqGen[1]}`, a3: `${liqGen[2]}`, target: '>1.5', status: liqGen[2] >= 1.5 ? 'success' : 'warning' },
+        { name: 'Ratio de liquidité immédiate', formula: '(AC-Stocks)/PC', a1: `${liqImm[0]}`, a2: `${liqImm[1]}`, a3: `${liqImm[2]}`, target: '>1.0', status: liqImm[2] >= 1.0 ? 'success' : 'warning' },
+        { name: 'Ratio de solvabilité', formula: 'CP/Total actif', a1: `${solvabilite[0]}%`, a2: `${solvabilite[1]}%`, a3: `${solvabilite[2]}%`, target: '>40%', status: solvabilite[2] >= 40 ? 'success' : 'warning' },
+        { name: 'Dette/Équité', formula: 'DF/CP', a1: `${detteEquite[0]}`, a2: `${detteEquite[1]}`, a3: `${detteEquite[2]}`, target: '<1.0', status: detteEquite[2] < 1 ? 'success' : 'warning' },
+      ]},
+      { category: 'Activité & Efficacité', ratios: [
+        { name: 'Rotation des stocks (jours)', formula: 'Stock/CA×365', a1: `${Math.round(stocks[0] / totalCA[0] * 365)}`, a2: `${Math.round(stocks[1] / totalCA[1] * 365)}`, a3: `${Math.round(stocks[2] / totalCA[2] * 365)}`, target: '<60j', status: Math.round(stocks[2] / totalCA[2] * 365) < 60 ? 'success' : 'warning' },
+        { name: 'Délai paiement clients (jours)', formula: 'Créances/CA×365', a1: `${Math.round(creances[0] / totalCA[0] * 365)}`, a2: `${Math.round(creances[1] / totalCA[1] * 365)}`, a3: `${Math.round(creances[2] / totalCA[2] * 365)}`, target: '<60j', status: Math.round(creances[2] / totalCA[2] * 365) < 60 ? 'success' : 'warning' },
+        { name: 'Délai paiement fournisseurs (jours)', formula: 'Dettes/CA×365', a1: `${Math.round(dettesFourn[0] / totalCA[0] * 365)}`, a2: `${Math.round(dettesFourn[1] / totalCA[1] * 365)}`, a3: `${Math.round(dettesFourn[2] / totalCA[2] * 365)}`, target: '>30j', status: Math.round(dettesFourn[2] / totalCA[2] * 365) > 30 ? 'success' : 'warning' },
+        { name: 'CA par employé (M Fcfa)', formula: 'CA/Effectif', a1: `${Math.round(totalCA[0] / 14 * 10) / 10}`, a2: `${Math.round(totalCA[1] / 18 * 10) / 10}`, a3: `${Math.round(totalCA[2] / 21 * 10) / 10}`, target: '>3M', status: totalCA[2] / 21 >= 3 ? 'success' : 'warning' },
+      ]},
+      { category: 'Croissance', ratios: [
+        { name: 'Croissance CA', formula: '(CA n - CA n-1)/CA n-1', a1: croissCA[0], a2: croissCA[1], a3: croissCA[2], target: '>50%', status: 'success' as const },
+        { name: 'Croissance résultat net', formula: '(RN n - RN n-1)/RN n-1', a1: croissRN[0], a2: croissRN[1], a3: croissRN[2], target: '>30%', status: 'success' as const },
+        { name: 'Part de marché visée (biofertilisants CI)', formula: 'Estimé', a1: '2%', a2: '8%', a3: '18%', target: '>10%', status: 'warning' as const },
+      ]},
+    ]
+
+    const totalRN = rn.reduce((s, r) => s + Math.max(r, 0), 0)
+    const vanTriData = [
+      { scenario: 'Pessimiste', taux: '8%', van: Math.round(totalRN * 0.4 * 10) / 10, tri: Math.round(totalRN / 30 * 10) / 10, delai: ebit[0] < 0 ? 30 : 18, color: C.warning },
+      { scenario: 'Base', taux: '10%', van: Math.round(totalRN * 0.6 * 10) / 10, tri: Math.round(totalRN / 20 * 10) / 10, delai: ebit[0] < 0 ? 20 : 14, color: C.accent },
+      { scenario: 'Optimiste', taux: '10%', van: Math.round(totalRN * 0.85 * 10) / 10, tri: Math.round(totalRN / 12 * 10) / 10, delai: ebit[0] < 0 ? 15 : 10, color: C.success },
+    ]
+
+    const sensitivityData = [
+      { param: 'Prix de vente -10%', impactCA: Math.round(-totalCA[0] * 0.1 * 10) / 10, impactRN: Math.round(-totalCA[0] * 0.1 * 10) / 10, impactTRI: -8.2, risque: 'Moyen' },
+      { param: 'Volume vendu -20%', impactCA: Math.round(-totalCA[0] * 0.2 * 10) / 10, impactRN: Math.round(-totalCA[0] * 0.2 * 10) / 10, impactTRI: -12.5, risque: 'Élevé' },
+      { param: 'Coût matières +15%', impactCA: 0, impactRN: Math.round(5.5 * 0.15 * 10) / 10, impactTRI: -4.1, risque: 'Moyen' },
+      { param: 'Retard lancement 3 mois', impactCA: Math.round(-totalCA[0] * 0.25 * 10) / 10, impactRN: Math.round(-totalCA[0] * 0.25 * 10) / 10, impactTRI: -9.8, risque: 'Élevé' },
+      { param: 'Taux de conversion -50%', impactCA: Math.round(-totalCA[0] * 0.5 * 10) / 10, impactRN: Math.round(-totalCA[0] * 0.5 * 10) / 10, impactTRI: -18.3, risque: 'Critique' },
+      { param: 'Subvention gouvernementale', impactCA: 0, impactRN: +3.0, impactTRI: +6.5, risque: 'Opportunité' },
+    ]
+
+    const breakevenData: { ca: number; coutsTotal: number; profit: number }[] = []
+    for (let caVal = 0; caVal <= Math.max(150, totalCA[2]); caVal += 5) {
+      const coutsTotal = -fixedCosts[0] + (1 - mbPctA1) * caVal
+      breakevenData.push({ ca: caVal, coutsTotal: Math.round(coutsTotal * 10) / 10, profit: Math.round((caVal - coutsTotal) * 10) / 10 })
+    }
+
+    const cashFlow3YData = [
+      { year: 'A1 T1', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: -8.0, financement: 12.0, total: Math.round((ebit[0] / 4 + 4.0) * 10) / 10 },
+      { year: 'A1 T2', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: -2.0, financement: 0, total: Math.round((ebit[0] / 4 - 2.0) * 10) / 10 },
+      { year: 'A1 T3', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: 0, financement: 0, total: Math.round(ebit[0] / 4 * 10) / 10 },
+      { year: 'A1 T4', exploitation: Math.round((ebit[0] / 4 - 0.5) * 10) / 10, investissement: 0, financement: 0, total: Math.round((ebit[0] / 4 - 0.5) * 10) / 10 },
+      { year: 'A2 T1', exploitation: Math.round(ebit[1] / 4 * 10) / 10, investissement: -5.0, financement: ebit[1] > 0 ? 0 : 5.0, total: Math.round((ebit[1] / 4 - 5.0 + (ebit[1] > 0 ? 0 : 5.0)) * 10) / 10 },
+      { year: 'A2 T2', exploitation: Math.round(ebit[1] / 4 * 10) / 10, investissement: -2.0, financement: 0, total: Math.round((ebit[1] / 4 - 2.0) * 10) / 10 },
+      { year: 'A2 T3', exploitation: Math.round((ebit[1] / 4 + 0.5) * 10) / 10, investissement: 0, financement: 0, total: Math.round((ebit[1] / 4 + 0.5) * 10) / 10 },
+      { year: 'A2 T4', exploitation: Math.round((ebit[1] / 4 + 1) * 10) / 10, investissement: 0, financement: -3.0, total: Math.round((ebit[1] / 4 + 1 - 3.0) * 10) / 10 },
+      { year: 'A3 T1', exploitation: Math.round(ebit[2] / 4 * 10) / 10, investissement: -8.0, financement: 0, total: Math.round((ebit[2] / 4 - 8.0) * 10) / 10 },
+      { year: 'A3 T2', exploitation: Math.round((ebit[2] / 4 + 1) * 10) / 10, investissement: 0, financement: 0, total: Math.round((ebit[2] / 4 + 1) * 10) / 10 },
+      { year: 'A3 T3', exploitation: Math.round((ebit[2] / 4 + 2) * 10) / 10, investissement: 0, financement: -2.0, total: Math.round((ebit[2] / 4 + 2 - 2.0) * 10) / 10 },
+      { year: 'A3 T4', exploitation: Math.round((ebit[2] / 4 + 3) * 10) / 10, investissement: 0, financement: -5.0, total: Math.round((ebit[2] / 4 + 3 - 5.0) * 10) / 10 },
+    ]
+
+    return {
+      pricePerKg: p, pricePer500g: p / 2, pf,
+      totalCA, productCA, ebit, rn, margeBrute, seuil, mbPct,
+      financialData, compteResultatData, bilanData, ratiosData,
+      vanTriData, sensitivityData, breakevenData, cashFlow3YData,
+    }
+  }, [priceIdx])
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -533,6 +722,18 @@ export default function BusinessPlanApp() {
               <StatCard icon={Users} value="500" label="Agriculteurs formés" color={C.gold} />
               <StatCard icon={Handshake} value="3–5" label="Partenariats majeurs" color={C.accentDark} />
               <StatCard icon={TrendingUp} value="+80%" label="Augmentation rendements" color={C.success} />
+            </div>
+            {/* ─── Price Selector ─── */}
+            <div className="flex flex-wrap items-center gap-3 mb-8">
+              <span className="text-white/60 text-sm font-medium">Prix 1 kg :</span>
+              {PRICE_OPTIONS.map((opt, i) => (
+                <button key={i} onClick={() => setPriceIdx(i)}
+                  className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${priceIdx === i ? 'text-white shadow-lg scale-105' : 'text-white/50 hover:text-white/80 border border-white/20 hover:border-white/40'}`}
+                  style={priceIdx === i ? { backgroundColor: opt.color } : {}}
+                >
+                  {opt.label} — {opt.price.toLocaleString('fr-FR')} F
+                </button>
+              ))}
             </div>
             <div className="flex flex-wrap gap-4">
               <Button size="lg" className="text-base px-8 py-6 border-0 shadow-lg" style={{ backgroundColor: C.accent, color: C.primary }} onClick={() => scrollTo('resume')}>
@@ -758,8 +959,8 @@ export default function BusinessPlanApp() {
                   <h3 className="text-xl font-semibold mb-4" style={{ color: C.primary }}>Gamme de Produits</h3>
                   <div className="space-y-4">
                     {[
-                      { name: 'Pack Standard', weight: '500 g', price: '300 000', stdPrice: '500 000', target: 'Maraîchers, coopératives, exploitants', color: C.accent },
-                      { name: 'Pack Pro', weight: '1 kg', price: '600 000', stdPrice: '1 000 000', target: 'Agro-industries, grandes exploitations, R&D', color: C.accentDark },
+                      { name: 'Pack Standard', weight: '500 g', price: Math.round(dyn.pricePer500g * 0.6).toLocaleString('fr-FR'), stdPrice: dyn.pricePer500g.toLocaleString('fr-FR'), target: 'Maraîchers, coopératives, exploitants', color: C.accent },
+                      { name: 'Pack Pro', weight: '1 kg', price: Math.round(dyn.pricePerKg * 0.6).toLocaleString('fr-FR'), stdPrice: dyn.pricePerKg.toLocaleString('fr-FR'), target: 'Agro-industries, grandes exploitations, R&D', color: C.accentDark },
                     ].map((pack, i) => (
                       <motion.div key={i} whileHover={{ scale: 1.01 }} className="p-4 rounded-xl border" style={{ borderColor: `${pack.color}30`, backgroundColor: `${pack.color}08` }}>
                         <div className="flex justify-between items-start">
@@ -1205,7 +1406,7 @@ export default function BusinessPlanApp() {
                               </tr>
                             </thead>
                             <tbody>
-                              {compteResultatData.map((row, i) => (
+                              {dyn.compteResultatData.map((row, i) => (
                                 <FinRow key={i} poste={row.poste} a1={row.a1} a2={row.a2} a3={row.a3} bold={row.bold} header={row.header} color={row.color} />
                               ))}
                             </tbody>
@@ -1220,7 +1421,7 @@ export default function BusinessPlanApp() {
                       <CardContent>
                         <div className="h-64">
                           <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart data={financialData}>
+                            <ComposedChart data={dyn.financialData}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
                               <XAxis dataKey="year" tick={{ fontSize: 10, fill: C.muted }} />
                               <YAxis tick={{ fontSize: 10, fill: C.muted }} />
@@ -1275,7 +1476,7 @@ export default function BusinessPlanApp() {
                             </tr>
                           </thead>
                           <tbody>
-                            {bilanData.map((row, i) => (
+                            {dyn.bilanData.map((row, i) => (
                               <FinRow key={i} poste={row.poste} a1={row.a1} a2={row.a2} a3={row.a3} bold={row.bold} header={row.header} />
                             ))}
                           </tbody>
@@ -1349,7 +1550,7 @@ export default function BusinessPlanApp() {
                     <CardContent>
                       <div className="h-72">
                         <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={cashFlow3YData}>
+                          <BarChart data={dyn.cashFlow3YData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
                             <XAxis dataKey="year" tick={{ fontSize: 10, fill: C.muted }} />
                             <YAxis tick={{ fontSize: 10, fill: C.muted }} />
@@ -1375,7 +1576,7 @@ export default function BusinessPlanApp() {
               {/* ─── RATIOS ─── */}
               <TabsContent value="ratios">
                 <div className="space-y-6">
-                  {ratiosData.map((cat, ci) => (
+                  {dyn.ratiosData.map((cat, ci) => (
                     <Card key={ci} className="border-0 shadow-md">
                       <CardHeader>
                         <CardTitle style={{ color: C.primary }}>{cat.category}</CardTitle>
@@ -1453,7 +1654,7 @@ export default function BusinessPlanApp() {
                     <CardContent>
                       <div className="h-72">
                         <ResponsiveContainer width="100%" height="100%">
-                          <ComposedChart data={breakevenData}>
+                          <ComposedChart data={dyn.breakevenData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
                             <XAxis dataKey="ca" tick={{ fontSize: 10, fill: C.muted }} label={{ value: 'CA (M Fcfa)', position: 'insideBottom', offset: -5, fontSize: 10 }} />
                             <YAxis tick={{ fontSize: 10, fill: C.muted }} />
@@ -1496,7 +1697,7 @@ export default function BusinessPlanApp() {
                     <CardHeader><CardTitle style={{ color: C.primary }}>VAN & TRI par Scénario</CardTitle></CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {vanTriData.map((s, i) => (
+                        {dyn.vanTriData.map((s, i) => (
                           <motion.div key={i} whileHover={{ x: 4 }} className="p-5 rounded-xl" style={{ backgroundColor: `${s.color}08`, borderLeft: `4px solid ${s.color}` }}>
                             <div className="flex justify-between items-center mb-3">
                               <h4 className="text-lg font-bold" style={{ color: s.color }}>{s.scenario}</h4>
@@ -1572,7 +1773,7 @@ export default function BusinessPlanApp() {
                           </tr>
                         </thead>
                         <tbody>
-                          {sensitivityData.map((row, i) => {
+                          {dyn.sensitivityData.map((row, i) => {
                             const riskColor = row.risque === 'Critique' ? C.danger : row.risque === 'Élevé' ? C.warning : row.risque === 'Moyen' ? C.gold : row.risque === 'Opportunité' ? C.success : C.info
                             return (
                               <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
