@@ -5,15 +5,19 @@ import { motion, AnimatePresence, useInView } from 'framer-motion'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
-  AreaChart, Area
+  AreaChart, Area, LineChart, Line, ComposedChart, ScatterChart, Scatter, ZAxis
 } from 'recharts'
 import {
   Leaf, TrendingUp, Users, Handshake, Target, Calendar, DollarSign,
   Shield, ChevronDown, ChevronRight, Phone, Mail, MapPin, Globe,
   Sprout, Microscope, Award, ArrowUpRight, CheckCircle2, AlertTriangle,
-  Download, Menu, X, ChevronUp, BarChart3, Lightbulb, Droplets
+  Download, Menu, X, ChevronUp, BarChart3, Lightbulb, Droplets,
+  Megaphone, Eye, MousePointerClick, UserPlus, Repeat, Clock,
+  Wallet, PiggyBank, Scale, Activity, Percent, ArrowRight,
+  BarChart2, LineChart as LineChartIcon, PieChart as PieChartIcon, Target as TargetIcon,
+  Zap, Building2, Truck, GraduationCap, Star, Timer
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -35,9 +39,21 @@ const C = {
   warning: '#F39C12',
   success: '#27AE60',
   info: '#3498DB',
+  purple: '#8B5CF6',
+  rose: '#F43F5E',
+  teal: '#14B8A6',
+  orange: '#F97316',
 }
 
-// ─── Chart Data ───
+// ─── Format helpers ───
+function fmt(n: number) { return n.toLocaleString('fr-FR') }
+function fmtM(n: number) { return `${n.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M` }
+function fmtPct(n: number) { return `${n.toFixed(1)}%` }
+
+// ═══════════════════════════════════════════════════════════
+// CHART DATA
+// ═══════════════════════════════════════════════════════════
+
 const budgetData = [
   { name: 'Identité visuelle', value: 10000000, color: '#2A7A65' },
   { name: 'Lancement officiel', value: 12000000, color: '#3DDBB5' },
@@ -61,18 +77,18 @@ const revenueMixData = [
 ]
 
 const cashFlowData = [
-  { month: 'Jan', encaissements: 1.2, decaissements: 3.5 },
-  { month: 'Fév', encaissements: 1.8, decaissements: 3.2 },
-  { month: 'Mar', encaissements: 2.5, decaissements: 2.8 },
-  { month: 'Avr', encaissements: 1.5, decaissements: 2.2 },
-  { month: 'Mai', encaissements: 1.2, decaissements: 2.0 },
-  { month: 'Jun', encaissements: 1.0, decaissements: 1.8 },
-  { month: 'Jul', encaissements: 0.8, decaissements: 1.6 },
-  { month: 'Aoû', encaissements: 0.9, decaissements: 1.5 },
-  { month: 'Sep', encaissements: 1.4, decaissements: 2.0 },
-  { month: 'Oct', encaissements: 1.8, decaissements: 2.2 },
-  { month: 'Nov', encaissements: 2.0, decaissements: 2.5 },
-  { month: 'Déc', encaissements: 1.3, decaissements: 3.0 },
+  { month: 'Jan', encaissements: 1.2, decaissements: 3.5, solde: -2.3 },
+  { month: 'Fév', encaissements: 1.8, decaissements: 3.2, solde: -3.7 },
+  { month: 'Mar', encaissements: 2.5, decaissements: 2.8, solde: -4.0 },
+  { month: 'Avr', encaissements: 1.5, decaissements: 2.2, solde: -4.7 },
+  { month: 'Mai', encaissements: 1.2, decaissements: 2.0, solde: -5.5 },
+  { month: 'Jun', encaissements: 1.0, decaissements: 1.8, solde: -6.3 },
+  { month: 'Jul', encaissements: 0.8, decaissements: 1.6, solde: -7.1 },
+  { month: 'Aoû', encaissements: 0.9, decaissements: 1.5, solde: -7.7 },
+  { month: 'Sep', encaissements: 1.4, decaissements: 2.0, solde: -8.3 },
+  { month: 'Oct', encaissements: 1.8, decaissements: 2.2, solde: -8.7 },
+  { month: 'Nov', encaissements: 2.0, decaissements: 2.5, solde: -9.2 },
+  { month: 'Déc', encaissements: 1.3, decaissements: 3.0, solde: -10.9 },
 ]
 
 const radarData = [
@@ -86,39 +102,12 @@ const radarData = [
 
 // ─── SWOT Data ───
 const swotData = {
-  forces: [
-    'Produit 100% naturel et biodégradable',
-    'R&D de plus de 20 ans validée',
-    'Résultats visibles sous 10 jours',
-    'Compatible avec toutes les cultures tropicales',
-    'Coûts d\'intrants divisés par 3',
-    'Partenaire exclusif ancré localement',
-  ],
-  faiblesses: [
-    'Nouveau sur le marché ivoirien',
-    'Capacité de production initiale limitée',
-    'Notoriété de marque à construire',
-    'Réseau de distribution à établir',
-    'Dépendance au partenaire local',
-  ],
-  opportunites: [
-    'Agriculture = 25% du PIB ivoirien',
-    'Cadre réglementaire favorable (Loi 2015-537)',
-    'Stratégie Bio 2030 du gouvernement',
-    'Forte dépendance aux engrais chimiques importés',
-    'Demande croissante pour le bio en Afrique',
-    'Soutien de bailleurs (BAD, FAO, PNUD)',
-  ],
-  menaces: [
-    'Résistance au changement des agriculteurs',
-    'Concurrence des engrais chimiques établis',
-    'Risques climatiques sur la production',
-    'Instabilité des prix des matières premières',
-    'Complexité des certifications agricoles',
-  ],
+  forces: ['Produit 100% naturel et biodégradable', 'R&D de plus de 20 ans validée', 'Résultats visibles sous 10 jours', 'Compatible avec toutes les cultures tropicales', 'Coûts d\'intrants divisés par 3', 'Partenaire exclusif ancré localement'],
+  faiblesses: ['Nouveau sur le marché ivoirien', 'Capacité de production initiale limitée', 'Notoriété de marque à construire', 'Réseau de distribution à établir', 'Dépendance au partenaire local'],
+  opportunites: ['Agriculture = 25% du PIB ivoirien', 'Cadre réglementaire favorable (Loi 2015-537)', 'Stratégie Bio 2030 du gouvernement', 'Forte dépendance aux engrais chimiques importés', 'Demande croissante pour le bio en Afrique', 'Soutien de bailleurs (BAD, FAO, PNUD)'],
+  menaces: ['Résistance au changement des agriculteurs', 'Concurrence des engrais chimiques établis', 'Risques climatiques sur la production', 'Instabilité des prix des matières premières', 'Complexité des certifications agricoles'],
 }
 
-// ─── Risk Data ───
 const riskData = [
   { name: 'Réticence agriculteurs', likelihood: 4, impact: 3, category: 'commercial' },
   { name: 'Concurrence engrais chimiques', likelihood: 5, impact: 4, category: 'commercial' },
@@ -130,13 +119,211 @@ const riskData = [
   { name: 'Contrefaçon produit', likelihood: 2, impact: 3, category: 'commercial' },
 ]
 
-// ─── Timeline Data ───
 const timelineData = [
   { period: 'Nov 2025', title: 'Pré-lancement', desc: 'Campagne de teasing digitale, signature des MoU avec FIRCA et PALMCI', status: 'upcoming' },
   { period: '10 Déc 2025', title: 'Lancement officiel', desc: 'Cérémonie à Abidjan avec partenaires, démonstration live, couverture médiatique RTI/Business24', status: 'upcoming' },
   { period: 'Jan–Mars 2026', title: 'LIG Biodynamie Tour', desc: 'Tournée dans 5 régions agricoles, formations gratuites, campagne influenceurs verts', status: 'upcoming' },
   { period: 'Avr–Jun 2026', title: 'Évaluation & Consolidation', desc: 'Évaluation des résultats, collecte témoignages, signature nouveaux contrats', status: 'upcoming' },
   { period: 'Jul–Déc 2026', title: 'Extension régionale', desc: 'Extension distribution régionale, lancement label "Fermes Biodynamiques", salons (SARA)', status: 'upcoming' },
+]
+
+// ═══════════════════════════════════════════════════════════
+// EXPANDED MARKETING DATA
+// ═══════════════════════════════════════════════════════════
+
+const personas = [
+  { name: 'Ibrahim D.', role: 'Directeur Agro-industrie', org: 'PALMCI / SIFCA', age: 48, budget: '10-50M Fcfa/an', pain: 'Coût engrais chimiques importés en hausse constante', goal: 'Réduire les coûts d\'intrants de 30% minimum', channel: 'Réseaux professionnels, salons', color: C.accentDark, icon: Building2 },
+  { name: 'Aminata K.', role: 'Présidente Coopérative', org: 'Coopérative de Daloa', age: 42, budget: '1-5M Fcfa/an', pain: 'Baisse de rendement, sols appauvris par les chimiques', goal: 'Régénérer ses sols et augmenter les rendements', channel: 'ANADER, radio rurale, WhatsApp', color: C.gold, icon: Users },
+  { name: 'Kouadio M.', role: 'Maraîcher Urbain', org: 'Marché d\'Abidjan', age: 32, budget: '50-300K Fcfa/cycle', pain: 'Produits chimiques chers et toxiques pour sa santé', goal: 'Produire sainement à moindre coût', channel: 'Réseaux sociaux, marchés, bouche-à-oreille', color: C.accent, icon: Sprout },
+  { name: 'Dr. Yao F.', role: 'Chercheur / R&D', org: 'CNRA / Université', age: 55, budget: 'Budget institutionnel', pain: 'Manque de solutions biologiques validées scientifiquement', goal: 'Valider et diffuser des solutions agro-écologiques', channel: 'Conférences, publications, institutions', color: C.info, icon: Microscope },
+]
+
+const funnelData = [
+  { step: 'Conscience', value: 100000, pct: 100, color: C.accent },
+  { step: 'Intérêt', value: 25000, pct: 25, color: C.accentDark },
+  { step: 'Considération', value: 8000, pct: 8, color: C.gold },
+  { step: 'Essai', value: 2000, pct: 2, color: C.orange },
+  { step: 'Achat', value: 500, pct: 0.5, color: C.success },
+]
+
+const channelBudgetData = [
+  { canal: 'Digital (Social + SEO)', budget: 8, leads: 12000, conversion: 2.5, roi: 3.2, cac: 6667 },
+  { canal: 'Événements / Salons', budget: 12, leads: 3000, conversion: 8.0, roi: 4.5, cac: 50000 },
+  { canal: 'Formation / Tournées', budget: 10, leads: 5000, conversion: 15.0, roi: 6.8, cac: 13333 },
+  { canal: 'Presse / Médias traditionnels', budget: 6, leads: 8000, conversion: 1.5, roi: 1.8, cac: 50000 },
+  { canal: 'Partenariats (ANADER, FIRCA)', budget: 5, leads: 4000, conversion: 12.0, roi: 8.5, cac: 10417 },
+  { canal: 'E-commerce / Site web', budget: 5, leads: 6000, conversion: 4.0, roi: 5.2, cac: 20833 },
+]
+
+const marketingKPIData = [
+  { kpi: 'Notoriété assistée', an1: '15%', an2: '45%', an3: '70%', target: '70%', icon: Eye, color: C.accent },
+  { kpi: 'Taux de conversion essai→achat', an1: '25%', an2: '35%', an3: '45%', target: '45%', icon: MousePointerClick, color: C.gold },
+  { kpi: 'Coût d\'acquisition client (CAC)', an1: '25 000 F', an2: '18 000 F', an3: '12 000 F', target: '<15 000 F', icon: UserPlus, color: C.accentDark },
+  { kpi: 'Vie client moyenne (LTV)', an1: '120 000 F', an2: '350 000 F', an3: '600 000 F', target: '>500 000 F', icon: Repeat, color: C.success },
+  { kpi: 'LTV/CAC Ratio', an1: '4.8x', an2: '19.4x', an3: '50.0x', target: '>20x', icon: Scale, color: C.info },
+  { kpi: 'Taux de réachat', an1: '40%', an2: '60%', an3: '75%', target: '>70%', icon: Repeat, color: C.purple },
+  { kpi: 'NPS (Net Promoter Score)', an1: '30', an2: '55', an3: '70', target: '>60', icon: Star, color: C.orange },
+  { kpi: 'Temps moyen de conversion', an1: '45 jours', an2: '30 jours', an3: '20 jours', target: '<25 jours', icon: Timer, color: C.rose },
+]
+
+const mix4P = [
+  { P: 'Produit', icon: Leaf, color: C.accent, items: [
+    'Biofertilisant 100% naturel, pH 7.5',
+    '3 conditionnements : 100g, 500g, 1kg',
+    'Certification bio en cours (Ecocert)',
+    'Garantie "Résultats visibles sous 10 jours"',
+    'Programme "1 tonne test" gratuit',
+    'Label "Fermes Biodynamiques" (Année 2)',
+  ]},
+  { P: 'Prix', icon: DollarSign, color: C.gold, items: [
+    'Prix lancement : 600 Fcfa/g (-40%)',
+    'Prix standard : 1 000 Fcfa/g',
+    'Remise volume : -20% (commandes > 5kg)',
+    'Paiement échelonné pour coopératives',
+    'Programme fidélité : 10e sac offert',
+    'Comparatif : 3x moins cher que chimiques',
+  ]},
+  { P: 'Place', icon: Truck, color: C.accentDark, items: [
+    'Centre LIG Abidjan (vente directe)',
+    'E-commerce ligbiodynamie.ci',
+    'Réseau ANADER (diffusion nationale)',
+    'Coopératives partenaires (10 régions)',
+    'Magasins bio / intrants verts',
+    '10 technico-commerciaux terrain',
+  ]},
+  { P: 'Promotion', icon: Megaphone, color: C.purple, items: [
+    'Lancement 10 déc. 2025 (événement premium)',
+    'LIG Biodynamie Tour (5 régions)',
+    'Influenceurs verts & ambassadeurs',
+    'Témoignages vidéo agriculteurs',
+    'Campagne digitale Facebook/WhatsApp',
+    'Salons professionnels (SARA, SARA Tech)',
+  ]},
+]
+
+const contentCalendar = [
+  { periode: 'Nov 2025', theme: 'Teasing & Anticipation', actions: 'Compte à rebours, révélations produit, MoU partenaires', canaux: 'Social media, WhatsApp, Presse', budget: '3M Fcfa', kpi: 'Impressions: 500K, Engagements: 25K' },
+  { periode: 'Déc 2025', theme: 'Lancement Officiel', actions: 'Cérémonie, démonstrations live, couverture RTI', canaux: 'Tous canaux, TV, Presse, Événement', budget: '12M Fcfa', kpi: 'Participants: 500, Leads: 2000' },
+  { periode: 'Jan-Mar 2026', theme: 'Tournée & Formations', actions: '5 régions, formations gratuites, "1 tonne test"', canaux: 'Terrain, ANADER, Radio rurale, WhatsApp', budget: '10M Fcfa', kpi: 'Agriculteurs formés: 500, Tests: 1000' },
+  { periode: 'Avr-Jun 2026', theme: 'Témoignages & Preuve Sociale', actions: 'Collecte résultats, vidéos témoignages, études de cas', canaux: 'Social media, Site web, Salons', budget: '6M Fcfa', kpi: 'Témoignages: 50, Taux conversion: 25%' },
+  { periode: 'Jul-Déc 2026', theme: 'Consolidation & Expansion', actions: 'Label "Fermes Biodynamiques", salons, partenariats', canaux: 'B2B, Institutions, Événements', budget: '15M Fcfa', kpi: 'Contrats signés: 15, CA: 17.4M' },
+]
+
+// ═══════════════════════════════════════════════════════════
+// EXPANDED FINANCIAL DATA
+// ═══════════════════════════════════════════════════════════
+
+const compteResultatData = [
+  { poste: 'Chiffre d\'affaires', a1: 17.4, a2: 64.0, a3: 135.0, bold: true, color: C.accent },
+  { poste: '  Vente biofertilisant (70%)', a1: 12.2, a2: 44.8, a3: 94.5, bold: false, color: C.text },
+  { poste: '  Formations & accompagnement (15%)', a1: 2.6, a2: 9.6, a3: 20.3, bold: false, color: C.text },
+  { poste: '  Consultation R&D (10%)', a1: 1.7, a2: 6.4, a3: 13.5, bold: false, color: C.text },
+  { poste: '  Certification Fermes Bio (5%)', a1: 0.9, a2: 3.2, a3: 6.7, bold: false, color: C.text },
+  { poste: 'Coûts variables', a1: -12.0, a2: -28.0, a3: -45.0, bold: true, color: C.danger },
+  { poste: '  Matières premières', a1: -5.5, a2: -13.0, a3: -20.0, bold: false, color: C.text },
+  { poste: '  Conditionnement & emballage', a1: -2.0, a2: -5.0, a3: -8.0, bold: false, color: C.text },
+  { poste: '  Logistique & transport', a1: -2.5, a2: -6.0, a3: -10.0, bold: false, color: C.text },
+  { poste: '  Commissions commerciales (8%)', a1: -1.4, a2: -2.5, a3: -4.5, bold: false, color: C.text },
+  { poste: '  Tests gratuits (1 tonne)', a1: -0.6, a2: -1.5, a3: -2.5, bold: false, color: C.text },
+  { poste: 'Marge brute', a1: 5.4, a2: 36.0, a3: 90.0, bold: true, color: C.accentDark },
+  { poste: 'Charges fixes', a1: -20.0, a2: -24.0, a3: -30.0, bold: true, color: C.danger },
+  { poste: '  Salaires & charges sociales', a1: -8.5, a2: -10.5, a3: -13.0, bold: false, color: C.text },
+  { poste: '  Marketing & communication', a1: -5.5, a2: -7.0, a3: -9.0, bold: false, color: C.text },
+  { poste: '  Loyer & charges bureaux', a1: -2.4, a2: -2.8, a3: -3.2, bold: false, color: C.text },
+  { poste: '  Amortissements', a1: -1.8, a2: -1.8, a3: -2.0, bold: false, color: C.text },
+  { poste: '  Assurances & divers', a1: -1.8, a2: -1.9, a3: -2.8, bold: false, color: C.text },
+  { poste: 'Résultat opérationnel (EBIT)', a1: -14.6, a2: 12.0, a3: 60.0, bold: true, color: null },
+  { poste: 'Charges financières', a1: 0, a2: -1.0, a3: -1.5, bold: false, color: C.text },
+  { poste: 'Résultat avant impôt', a1: -14.6, a2: 11.0, a3: 58.5, bold: true, color: null },
+  { poste: 'Impôt sur les sociétés (25%)', a1: 0, a2: -2.0, a3: -13.7, bold: false, color: C.text },
+  { poste: 'Résultat net', a1: -14.6, a2: 9.0, a3: 44.8, bold: true, color: null },
+]
+
+const bilanData = [
+  { poste: 'ACTIF', a1: '', a2: '', a3: '', header: true },
+  { poste: '  Immobilisations nettes', a1: 12.0, a2: 10.2, a3: 8.4, bold: false },
+  { poste: '  Stocks', a1: 3.0, a2: 8.0, a3: 15.0, bold: false },
+  { poste: '  Créances clients', a1: 2.5, a2: 9.0, a3: 18.0, bold: false },
+  { poste: '  Trésorerie', a1: 2.0, a2: 12.0, a3: 45.0, bold: false },
+  { poste: 'Total Actif', a1: 19.5, a2: 39.2, a3: 86.4, bold: true },
+  { poste: 'PASSIF', a1: '', a2: '', a3: '', header: true },
+  { poste: '  Capital social', a1: 20.0, a2: 20.0, a3: 20.0, bold: false },
+  { poste: '  Réserves & RAN', a1: -14.6, a2: -5.6, a3: 39.2, bold: false },
+  { poste: '  Dettes financières', a1: 8.0, a2: 15.0, a3: 10.0, bold: false },
+  { poste: '  Dettes fournisseurs', a1: 4.1, a2: 6.8, a3: 12.2, bold: false },
+  { poste: '  Dettes fiscales & sociales', a1: 2.0, a2: 3.0, a3: 5.0, bold: false },
+  { poste: 'Total Passif', a1: 19.5, a2: 39.2, a3: 86.4, bold: true },
+]
+
+const ratiosData = [
+  { category: 'Rentabilité', ratios: [
+    { name: 'Marge brute', formula: 'MB/CA', a1: '31.0%', a2: '56.3%', a3: '66.7%', target: '>60%', status: 'warning' },
+    { name: 'Marge opérationnelle (EBIT)', formula: 'EBIT/CA', a1: '-84.1%', a2: '18.8%', a3: '44.4%', target: '>25%', status: 'success' },
+    { name: 'Marge nette', formula: 'RN/CA', a1: '-84.1%', a2: '14.1%', a3: '33.2%', target: '>20%', status: 'success' },
+    { name: 'ROE (Rentabilité des capitaux)', formula: 'RN/Capitaux propres', a1: '-72.9%', a2: '65.2%', a3: '75.7%', target: '>30%', status: 'success' },
+    { name: 'ROA (Rentabilité de l\'actif)', formula: 'RN/Total actif', a1: '-74.9%', a2: '23.0%', a3: '51.9%', target: '>15%', status: 'success' },
+    { name: 'ROCE (Rentabilité capitaux engagés)', formula: 'EBIT/CE', a1: '-72.9%', a2: '40.5%', a3: '63.8%', target: '>25%', status: 'success' },
+  ]},
+  { category: 'Liquidité', ratios: [
+    { name: 'Ratio de liquidité générale', formula: 'AC/PC', a1: '0.52', a2: '1.38', a3: '2.60', target: '>1.5', status: 'warning' },
+    { name: 'Ratio de liquidité immédiate', formula: '(AC-Stocks)/PC', a1: '0.44', a2: '1.10', a3: '2.15', target: '>1.0', status: 'success' },
+    { name: 'Ratio de solvabilité', formula: 'CP/Total actif', a1: '27.7%', a2: '36.7%', a3: '68.5%', target: '>40%', status: 'warning' },
+    { name: 'Dette/Équité', formula: 'DF/CP', a1: '1.97', a2: '1.41', a3: '0.25', target: '<1.0', status: 'warning' },
+  ]},
+  { category: 'Activité & Efficacité', ratios: [
+    { name: 'Rotation des stocks (jours)', formula: 'Stock/CA×365', a1: '63', a2: '46', a3: '41', target: '<60j', status: 'success' },
+    { name: 'Délai paiement clients (jours)', formula: 'Créances/CA×365', a1: '53', a2: '51', a3: '49', target: '<60j', status: 'success' },
+    { name: 'Délai paiement fournisseurs (jours)', formula: 'Dettes/CA×365', a1: '86', a2: '39', a3: '33', target: '>30j', status: 'success' },
+    { name: 'CA par employé (M Fcfa)', formula: 'CA/Effectif', a1: '1.2', a2: '3.6', a3: '6.4', target: '>3M', status: 'success' },
+  ]},
+  { category: 'Croissance', ratios: [
+    { name: 'Croissance CA', formula: '(CA n - CA n-1)/CA n-1', a1: 'N/A', a2: '+268%', a3: '+111%', target: '>50%', status: 'success' },
+    { name: 'Croissance résultat net', formula: '(RN n - RN n-1)/RN n-1', a1: 'N/A', a2: 'N/A', a3: '+398%', target: '>30%', status: 'success' },
+    { name: 'Part de marché visée (biofertilisants CI)', formula: 'Estimé', a1: '2%', a2: '8%', a3: '18%', target: '>10%', status: 'warning' },
+  ]},
+]
+
+const vanTriData = [
+  { scenario: 'Pessimiste', taux: '8%', van: 12.5, tri: 22.0, delai: 36, color: C.warning },
+  { scenario: 'Base', taux: '10%', van: 28.4, tri: 34.5, delai: 24, color: C.accent },
+  { scenario: 'Optimiste', taux: '10%', van: 52.8, tri: 48.2, delai: 18, color: C.success },
+]
+
+const sensitivityData = [
+  { param: 'Prix de vente -10%', impactCA: -1.74, impactRN: -1.74, impactTRI: -8.2, risque: 'Moyen' },
+  { param: 'Volume vendu -20%', impactCA: -3.48, impactRN: -3.48, impactTRI: -12.5, risque: 'Élevé' },
+  { param: 'Coût matières +15%', impactCA: 0, impactRN: -0.83, impactTRI: -4.1, risque: 'Moyen' },
+  { param: 'Retard lancement 3 mois', impactCA: -4.35, impactRN: -4.35, impactTRI: -9.8, risque: 'Élevé' },
+  { param: 'Taux de conversion -50%', impactCA: -8.7, impactRN: -8.7, impactTRI: -18.3, risque: 'Critique' },
+  { param: 'Subvention gouvernementale', impactCA: 0, impactRN: +3.0, impactTRI: +6.5, risque: 'Opportunité' },
+]
+
+const breakevenData = [
+  { ca: 0, coutsTotal: 20, profit: -20 },
+  { ca: 10, coutsTotal: 25.2, profit: -15.2 },
+  { ca: 20, coutsTotal: 30.4, profit: -10.4 },
+  { ca: 30, coutsTotal: 35.6, profit: -5.6 },
+  { ca: 40, coutsTotal: 40.8, profit: -0.8 },
+  { ca: 47.6, coutsTotal: 47.6, profit: 0 },
+  { ca: 60, coutsTotal: 53.6, profit: 6.4 },
+  { ca: 80, coutsTotal: 62.4, profit: 17.6 },
+  { ca: 100, coutsTotal: 71.2, profit: 28.8 },
+  { ca: 135, coutsTotal: 85, profit: 50 },
+]
+
+const cashFlow3YData = [
+  { year: 'A1 T1', exploitation: -3.5, investissement: -8.0, financement: 12.0, total: 0.5 },
+  { year: 'A1 T2', exploitation: -4.0, investissement: -2.0, financement: 0, total: -6.0 },
+  { year: 'A1 T3', exploitation: -3.5, investissement: 0, financement: 0, total: -3.5 },
+  { year: 'A1 T4', exploitation: -3.6, investissement: 0, financement: 0, total: -3.6 },
+  { year: 'A2 T1', exploitation: 2.0, investissement: -5.0, financement: 5.0, total: 2.0 },
+  { year: 'A2 T2', exploitation: 3.5, investissement: -2.0, financement: 0, total: 1.5 },
+  { year: 'A2 T3', exploitation: 4.0, investissement: 0, financement: 0, total: 4.0 },
+  { year: 'A2 T4', exploitation: 4.5, investissement: 0, financement: -3.0, total: 1.5 },
+  { year: 'A3 T1', exploitation: 12.0, investissement: -8.0, financement: 0, total: 4.0 },
+  { year: 'A3 T2', exploitation: 15.0, investissement: 0, financement: 0, total: 15.0 },
+  { year: 'A3 T3', exploitation: 18.0, investissement: 0, financement: -2.0, total: 16.0 },
+  { year: 'A3 T4', exploitation: 20.0, investissement: 0, financement: -5.0, total: 15.0 },
 ]
 
 // ─── Section IDs for navigation ───
@@ -146,8 +333,7 @@ const sections = [
   { id: 'marche', label: 'Marché', icon: TrendingUp },
   { id: 'produit', label: 'Produit', icon: Leaf },
   { id: 'modele', label: 'Modèle', icon: DollarSign },
-  { id: 'strategie', label: 'Stratégie', icon: Lightbulb },
-  { id: 'operations', label: 'Opérations', icon: Calendar },
+  { id: 'marketing', label: 'Marketing', icon: Megaphone },
   { id: 'financier', label: 'Financier', icon: BarChart3 },
   { id: 'risques', label: 'Risques', icon: Shield },
   { id: 'vision', label: 'Vision', icon: Award },
@@ -156,7 +342,7 @@ const sections = [
 // ─── Animated Section Component ───
 function AnimatedSection({ id, children, className = '' }: { id: string; children: React.ReactNode; className?: string }) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const isInView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
     <motion.section
@@ -192,9 +378,47 @@ function StatCard({ icon: Icon, value, label, color = C.accent }: { icon: any; v
   )
 }
 
-// ─── Format number ───
-function fmt(n: number) {
-  return n.toLocaleString('fr-FR')
+// ─── Section Header ───
+function SectionHeader({ icon: Icon, title, subtitle, color = C.accent }: { icon: any; title: string; subtitle: string; color?: string }) {
+  return (
+    <div className="flex items-center gap-3 mb-8">
+      <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${color}15` }}>
+        <Icon size={24} style={{ color }} />
+      </div>
+      <div>
+        <h2 className="text-3xl font-bold" style={{ color: C.primary }}>{title}</h2>
+        <p className="text-sm" style={{ color: C.muted }}>{subtitle}</p>
+      </div>
+    </div>
+  )
+}
+
+// ─── Table row helper ───
+function FinRow({ poste, a1, a2, a3, bold, header, color }: { poste: string; a1: string | number; a2: string | number; a3: string | number; bold?: boolean; header?: boolean; color?: string }) {
+  const isNeg = (v: string | number) => typeof v === 'number' && v < 0
+  const isPos = (v: string | number) => typeof v === 'number' && v > 0
+  const fmtVal = (v: string | number) => typeof v === 'number' ? `${v > 0 ? '+' : ''}${v.toFixed(1)}M` : v
+
+  if (header) {
+    return (
+      <tr style={{ backgroundColor: C.primary }}>
+        <td className="p-3 text-white font-bold text-sm" colSpan={4}>{poste}</td>
+      </tr>
+    )
+  }
+
+  return (
+    <tr className={bold ? 'border-t-2' : ''} style={{ backgroundColor: bold ? `${C.accent}06` : 'transparent' }}>
+      <td className={`p-3 ${bold ? 'font-bold' : ''}`} style={{ color: bold ? C.primary : C.text, paddingLeft: poste.startsWith('  ') ? '2rem' : '0.75rem' }}>
+        {poste.replace(/^  /, '')}
+      </td>
+      {[a1, a2, a3].map((v, i) => (
+        <td key={i} className={`p-3 text-right ${bold ? 'font-bold' : ''}`} style={{ color: isNeg(v) ? C.danger : isPos(v) ? C.success : C.text }}>
+          {fmtVal(v)}
+        </td>
+      ))}
+    </tr>
+  )
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -215,9 +439,7 @@ export default function BusinessPlanApp() {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id)
-          }
+          if (entry.isIntersecting) setActiveSection(entry.target.id)
         }
       },
       { rootMargin: '-20% 0px -70% 0px' }
@@ -255,55 +477,29 @@ export default function BusinessPlanApp() {
                 <span className="text-xs block" style={{ color: C.accent }}>Business Plan 2025-2028</span>
               </div>
             </div>
-
-            {/* Desktop Nav */}
             <nav className="hidden lg:flex items-center gap-1">
               {sections.map(s => (
-                <button
-                  key={s.id}
-                  onClick={() => scrollTo(s.id)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                    activeSection === s.id
-                      ? 'text-white'
-                      : 'text-white/60 hover:text-white/90'
-                  }`}
+                <button key={s.id} onClick={() => scrollTo(s.id)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${activeSection === s.id ? 'text-white' : 'text-white/60 hover:text-white/90'}`}
                   style={activeSection === s.id ? { backgroundColor: `${C.accent}30` } : {}}
-                >
-                  {s.label}
-                </button>
+                >{s.label}</button>
               ))}
             </nav>
-
-            {/* Mobile Menu Toggle */}
             <button className="lg:hidden text-white p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
-
-        {/* Mobile Nav Dropdown */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden overflow-hidden"
-              style={{ backgroundColor: C.primary }}
-            >
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden overflow-hidden" style={{ backgroundColor: C.primary }}>
               <div className="px-4 py-3 space-y-1">
                 {sections.map(s => (
-                  <button
-                    key={s.id}
-                    onClick={() => scrollTo(s.id)}
-                    className={`w-full text-left px-4 py-2.5 rounded-lg text-sm flex items-center gap-3 ${
-                      activeSection === s.id ? 'text-white' : 'text-white/70'
-                    }`}
+                  <button key={s.id} onClick={() => scrollTo(s.id)}
+                    className={`w-full text-left px-4 py-2.5 rounded-lg text-sm flex items-center gap-3 ${activeSection === s.id ? 'text-white' : 'text-white/70'}`}
                     style={activeSection === s.id ? { backgroundColor: `${C.accent}25` } : {}}
-                  >
-                    <s.icon size={16} />
-                    {s.label}
-                  </button>
+                  ><s.icon size={16} />{s.label}</button>
                 ))}
               </div>
             </motion.div>
@@ -317,22 +513,13 @@ export default function BusinessPlanApp() {
           <img src="/hero-agriculture.png" alt="Agriculture biodynamique en Côte d'Ivoire" className="w-full h-full object-cover opacity-30" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${C.primary}EE 0%, ${C.primary}BB 50%, ${C.accent}20 100%)` }} />
         </div>
-
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-3xl"
-          >
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl">
             <Badge className="mb-6 text-xs font-medium px-4 py-1.5 border-0" style={{ backgroundColor: `${C.accent}25`, color: C.accent }}>
               Business Plan 2025 – 2028
             </Badge>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Centre de Recherche
-              <br />
-              Agricole{' '}
-              <span style={{ color: C.accent }}>LIAMBOU GISELE</span>
+              Centre de Recherche<br />Agricole <span style={{ color: C.accent }}>LIAMBOU GISELE</span>
             </h1>
             <p className="text-lg sm:text-xl text-white/80 mb-4 max-w-2xl leading-relaxed">
               Implantation en Côte d&apos;Ivoire — Lancement du Biofertilisant <strong className="text-white">Biodynamie</strong>
@@ -340,44 +527,25 @@ export default function BusinessPlanApp() {
             <p className="text-base text-white/60 mb-10 max-w-2xl">
               Partenaire Exclusif : <strong className="text-white/80">Comptoir Agropastoral CI</strong>
             </p>
-
             <div className="flex flex-wrap gap-4 mb-12">
               <StatCard icon={Target} value="29 t" label="Objectif de vente Année 1" color={C.accent} />
               <StatCard icon={Users} value="500" label="Agriculteurs formés" color={C.gold} />
               <StatCard icon={Handshake} value="3–5" label="Partenariats majeurs" color={C.accentDark} />
               <StatCard icon={TrendingUp} value="+80%" label="Augmentation rendements" color={C.success} />
             </div>
-
             <div className="flex flex-wrap gap-4">
-              <Button
-                size="lg"
-                className="text-base px-8 py-6 border-0 shadow-lg"
-                style={{ backgroundColor: C.accent, color: C.primary }}
-                onClick={() => scrollTo('resume')}
-              >
-                Découvrir le Business Plan
-                <ChevronDown className="ml-2" size={18} />
+              <Button size="lg" className="text-base px-8 py-6 border-0 shadow-lg" style={{ backgroundColor: C.accent, color: C.primary }} onClick={() => scrollTo('resume')}>
+                Découvrir le Business Plan <ChevronDown className="ml-2" size={18} />
               </Button>
               <a href="/Business_Plan_LIG_Biodynamie_CI.docx" download>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="text-base px-8 py-6 border-white/30 text-white hover:bg-white/10"
-                >
-                  <Download className="mr-2" size={18} />
-                  Télécharger le DOCX
+                <Button size="lg" variant="outline" className="text-base px-8 py-6 border-white/30 text-white hover:bg-white/10">
+                  <Download className="mr-2" size={18} /> Télécharger le DOCX
                 </Button>
               </a>
             </div>
           </motion.div>
         </div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-        >
+        <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2" animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
           <ChevronDown size={28} className="text-white/40" />
         </motion.div>
       </section>
@@ -388,16 +556,7 @@ export default function BusinessPlanApp() {
 
           {/* ═══════ RÉSUMÉ EXÉCUTIF ═══════ */}
           <AnimatedSection id="resume">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <Target size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Résumé Exécutif</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Synthèse du projet LIG Biodynamie</p>
-              </div>
-            </div>
-
+            <SectionHeader icon={Target} title="Résumé Exécutif" subtitle="Synthèse du projet LIG Biodynamie" />
             <div className="grid md:grid-cols-2 gap-6">
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
@@ -414,7 +573,6 @@ export default function BusinessPlanApp() {
                   </p>
                 </CardContent>
               </Card>
-
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold mb-4" style={{ color: C.primary }}>Objectifs Clés</h3>
@@ -437,63 +595,30 @@ export default function BusinessPlanApp() {
                 </CardContent>
               </Card>
             </div>
-
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-              <motion.div whileHover={{ scale: 1.03 }} className="p-5 rounded-2xl text-center" style={{ backgroundColor: `${C.accent}10` }}>
-                <DollarSign size={28} className="mx-auto mb-2" style={{ color: C.accent }} />
-                <p className="text-2xl font-bold" style={{ color: C.primary }}>46M</p>
-                <p className="text-xs" style={{ color: C.muted }}>Fcfa Budget Marketing</p>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.03 }} className="p-5 rounded-2xl text-center" style={{ backgroundColor: `${C.gold}10` }}>
-                <Sprout size={28} className="mx-auto mb-2" style={{ color: C.gold }} />
-                <p className="text-2xl font-bold" style={{ color: C.primary }}>25%</p>
-                <p className="text-xs" style={{ color: C.muted }}>PIB Agricole CI</p>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.03 }} className="p-5 rounded-2xl text-center" style={{ backgroundColor: `${C.accentDark}10` }}>
-                <Microscope size={28} className="mx-auto mb-2" style={{ color: C.accentDark }} />
-                <p className="text-2xl font-bold" style={{ color: C.primary }}>20+</p>
-                <p className="text-xs" style={{ color: C.muted }}>Années de R&D</p>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.03 }} className="p-5 rounded-2xl text-center" style={{ backgroundColor: `${C.success}10` }}>
-                <Droplets size={28} className="mx-auto mb-2" style={{ color: C.success }} />
-                <p className="text-2xl font-bold" style={{ color: C.primary }}>10j</p>
-                <p className="text-xs" style={{ color: C.muted }}>Résultats visibles</p>
-              </motion.div>
+              {[
+                { icon: DollarSign, value: '46M', label: 'Fcfa Budget Marketing', color: C.accent },
+                { icon: Sprout, value: '25%', label: 'PIB Agricole CI', color: C.gold },
+                { icon: Microscope, value: '20+', label: 'Années de R&D', color: C.accentDark },
+                { icon: Droplets, value: '10j', label: 'Résultats visibles', color: C.success },
+              ].map((s, i) => (
+                <motion.div key={i} whileHover={{ scale: 1.03 }} className="p-5 rounded-2xl text-center" style={{ backgroundColor: `${s.color}10` }}>
+                  <s.icon size={28} className="mx-auto mb-2" style={{ color: s.color }} />
+                  <p className="text-2xl font-bold" style={{ color: C.primary }}>{s.value}</p>
+                  <p className="text-xs" style={{ color: C.muted }}>{s.label}</p>
+                </motion.div>
+              ))}
             </div>
           </AnimatedSection>
 
           {/* ═══════ PRÉSENTATION DU PROJET ═══════ */}
           <AnimatedSection id="projet">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <Sprout size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Présentation du Projet</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Vision, Mission et Partenaire</p>
-              </div>
-            </div>
-
+            <SectionHeader icon={Sprout} title="Présentation du Projet" subtitle="Vision, Mission et Partenaire" />
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               {[
-                {
-                  title: 'Vision',
-                  desc: 'Faire de la Côte d\'Ivoire le fer de lance d\'une Afrique qui nourrit l\'Afrique, grâce à une agriculture durable, rentable et souveraine.',
-                  icon: Lightbulb,
-                  color: C.accent,
-                },
-                {
-                  title: 'Mission',
-                  desc: 'Produire et diffuser des solutions biofertilisantes écologiques et performantes, accessibles à tous les acteurs agricoles ivoiriens et ouest-africains.',
-                  icon: Target,
-                  color: C.gold,
-                },
-                {
-                  title: 'Valeurs',
-                  desc: 'Nature • Science • Résultats • Afrique — Un ADN ancré dans le respect de la terre et la performance agricole prouvée.',
-                  icon: Award,
-                  color: C.accentDark,
-                },
+                { title: 'Vision', desc: 'Faire de la Côte d\'Ivoire le fer de lance d\'une Afrique qui nourrit l\'Afrique, grâce à une agriculture durable, rentable et souveraine.', icon: Lightbulb, color: C.accent },
+                { title: 'Mission', desc: 'Produire et diffuser des solutions biofertilisantes écologiques et performantes, accessibles à tous les acteurs agricoles ivoiriens et ouest-africains.', icon: Target, color: C.gold },
+                { title: 'Valeurs', desc: 'Nature • Science • Résultats • Afrique — Un ADN ancré dans le respect de la terre et la performance agricole prouvée.', icon: Award, color: C.accentDark },
               ].map((item, i) => (
                 <motion.div key={i} whileHover={{ y: -4 }}>
                   <Card className="border-0 shadow-md h-full">
@@ -508,14 +633,12 @@ export default function BusinessPlanApp() {
                 </motion.div>
               ))}
             </div>
-
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4" style={{ color: C.primary }}>Partenaire Exclusif : Comptoir Agropastoral CI</h3>
                 <p className="leading-relaxed mb-4" style={{ color: C.text }}>
                   Le Comptoir Agropastoral CI est le partenaire exclusif de LIG en Côte d&apos;Ivoire. Implanté localement, il assure la distribution,
-                  la logistique, les relations institutionnelles et le suivi terrain. Cette alliance stratégique garantit une ancrage local solide,
-                  une compréhension approfondie du marché ivoirien et un réseau établi auprès des coopératives et agro-industries.
+                  la logistique, les relations institutionnelles et le suivi terrain.
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm" style={{ color: C.muted }}>
                   <div className="flex items-center gap-2"><Phone size={14} /> +225 07070707 / 05050505</div>
@@ -528,21 +651,9 @@ export default function BusinessPlanApp() {
 
           {/* ═══════ ANALYSE DU MARCHÉ ═══════ */}
           <AnimatedSection id="marche">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <TrendingUp size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Analyse du Marché</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Environnement, SWOT et Concurrence</p>
-              </div>
-            </div>
-
-            {/* PESTEL */}
+            <SectionHeader icon={TrendingUp} title="Analyse du Marché" subtitle="Environnement, SWOT et Concurrence" />
             <Card className="border-0 shadow-md mb-8">
-              <CardHeader>
-                <CardTitle style={{ color: C.primary }}>Analyse PESTEL — Côte d&apos;Ivoire</CardTitle>
-              </CardHeader>
+              <CardHeader><CardTitle style={{ color: C.primary }}>Analyse PESTEL — Côte d&apos;Ivoire</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[
@@ -561,8 +672,7 @@ export default function BusinessPlanApp() {
                       <ul className="space-y-1">
                         {item.items.map((it, j) => (
                           <li key={j} className="text-xs flex items-start gap-1.5" style={{ color: C.text }}>
-                            <CheckCircle2 size={12} className="mt-0.5 shrink-0" style={{ color: item.color }} />
-                            {it}
+                            <CheckCircle2 size={12} className="mt-0.5 shrink-0" style={{ color: item.color }} />{it}
                           </li>
                         ))}
                       </ul>
@@ -571,12 +681,8 @@ export default function BusinessPlanApp() {
                 </div>
               </CardContent>
             </Card>
-
-            {/* SWOT */}
             <Card className="border-0 shadow-md mb-8">
-              <CardHeader>
-                <CardTitle style={{ color: C.primary }}>Analyse SWOT</CardTitle>
-              </CardHeader>
+              <CardHeader><CardTitle style={{ color: C.primary }}>Analyse SWOT</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-4">
                   {[
@@ -590,8 +696,7 @@ export default function BusinessPlanApp() {
                       <ul className="space-y-2">
                         {quad.items.map((it, j) => (
                           <li key={j} className="text-sm flex items-start gap-2" style={{ color: C.text }}>
-                            <ChevronRight size={14} className="mt-0.5 shrink-0" style={{ color: quad.color }} />
-                            {it}
+                            <ChevronRight size={14} className="mt-0.5 shrink-0" style={{ color: quad.color }} />{it}
                           </li>
                         ))}
                       </ul>
@@ -600,12 +705,8 @@ export default function BusinessPlanApp() {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Radar Chart - Biodynamie vs Engrais chimiques */}
             <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle style={{ color: C.primary }}>Biodynamie vs Engrais Chimiques</CardTitle>
-              </CardHeader>
+              <CardHeader><CardTitle style={{ color: C.primary }}>Biodynamie vs Engrais Chimiques</CardTitle></CardHeader>
               <CardContent>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -625,16 +726,7 @@ export default function BusinessPlanApp() {
 
           {/* ═══════ PRODUIT ═══════ */}
           <AnimatedSection id="produit">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <Leaf size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Produit &amp; Innovation</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Le biofertilisant Biodynamie</p>
-              </div>
-            </div>
-
+            <SectionHeader icon={Leaf} title="Produit & Innovation" subtitle="Le biofertilisant Biodynamie" />
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
@@ -660,7 +752,6 @@ export default function BusinessPlanApp() {
                   </div>
                 </CardContent>
               </Card>
-
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold mb-4" style={{ color: C.primary }}>Gamme de Produits</h3>
@@ -686,7 +777,6 @@ export default function BusinessPlanApp() {
                   </div>
                   <p className="text-xs mt-4" style={{ color: C.muted }}>
                     * Prix de lancement (10 déc. 2025 – 31 mars 2026). Réduction -20% pour commandes groupées.
-                    1 tonne réservée aux tests gratuits officiels.
                   </p>
                 </CardContent>
               </Card>
@@ -695,29 +785,16 @@ export default function BusinessPlanApp() {
 
           {/* ═══════ MODÈLE ÉCONOMIQUE ═══════ */}
           <AnimatedSection id="modele">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <DollarSign size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Modèle Économique</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Business Model Canvas</p>
-              </div>
-            </div>
-
+            <SectionHeader icon={DollarSign} title="Modèle Économique" subtitle="Business Model Canvas" />
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               <Card className="border-0 shadow-md">
-                <CardHeader>
-                  <CardTitle style={{ color: C.primary }}>Segments de Clientèle</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle style={{ color: C.primary }}>Segments de Clientèle</CardTitle></CardHeader>
                 <CardContent>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie data={revenueMixData} cx="50%" cy="50%" innerRadius={50} outerRadius={90} paddingAngle={3} dataKey="value">
-                          {revenueMixData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
+                          {revenueMixData.map((entry, index) => (<Cell key={`cell-${index}`} fill={entry.color} />))}
                         </Pie>
                         <Tooltip formatter={(value: number) => `${value}%`} />
                         <Legend />
@@ -726,19 +803,15 @@ export default function BusinessPlanApp() {
                   </div>
                 </CardContent>
               </Card>
-
               <Card className="border-0 shadow-md">
-                <CardHeader>
-                  <CardTitle style={{ color: C.primary }}>Canaux &amp; Revenus</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle style={{ color: C.primary }}>Canaux & Revenus</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   <div>
                     <h4 className="font-semibold text-sm mb-2" style={{ color: C.accentDark }}>Canaux de Distribution</h4>
                     <div className="grid grid-cols-2 gap-2">
                       {['Vente directe Centre LIG Abidjan', 'E-commerce ligbiodynamie.ci', 'Coopératives partenaires', 'ANADER (diffusion nationale)', 'Magasins bio / intrants verts', '10 technico-commerciaux'].map((ch, i) => (
                         <div key={i} className="flex items-center gap-2 text-xs" style={{ color: C.text }}>
-                          <ChevronRight size={12} style={{ color: C.accent }} />
-                          {ch}
+                          <ChevronRight size={12} style={{ color: C.accent }} />{ch}
                         </div>
                       ))}
                     </div>
@@ -770,309 +843,326 @@ export default function BusinessPlanApp() {
             </div>
           </AnimatedSection>
 
-          {/* ═══════ STRATÉGIE COMMERCIALE ═══════ */}
-          <AnimatedSection id="strategie">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <Lightbulb size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Stratégie Commerciale</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Marketing, Communication &amp; Partenariats</p>
-              </div>
-            </div>
+          {/* ═══════════════════════════════════════════════════════════════ */}
+          {/* ═══════ VOLET MARKETING ULTRA DÉTAILLÉ ═══════ */}
+          {/* ═══════════════════════════════════════════════════════════════ */}
+          <AnimatedSection id="marketing">
+            <SectionHeader icon={Megaphone} title="Stratégie Marketing & Commerciale" subtitle="Volet ultra détaillé — Segmentation, Positionnement, Mix, KPIs" color={C.purple} />
 
-            {/* Positioning */}
-            <Card className="border-0 shadow-md mb-8">
-              <CardContent className="p-8 text-center">
-                <p className="text-2xl font-bold italic mb-4" style={{ color: C.accentDark }}>
-                  &ldquo;Biodynamie : la puissance de la nature au service de vos sols.&rdquo;
-                </p>
-                <div className="flex flex-wrap justify-center gap-3 mt-6">
-                  {[
-                    { label: '+80% rendements', icon: TrendingUp, color: C.success },
-                    { label: 'Coûts /3', icon: DollarSign, color: C.gold },
-                    { label: 'Zéro chimie', icon: Leaf, color: C.accent },
-                    { label: 'Sols régénérés', icon: Sprout, color: C.accentDark },
-                  ].map((p, i) => (
-                    <Badge key={i} className="px-4 py-2 text-sm border-0" style={{ backgroundColor: `${p.color}15`, color: p.color }}>
-                      <p.icon size={14} className="mr-1.5" />
-                      {p.label}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Timeline */}
-            <Card className="border-0 shadow-md mb-8">
-              <CardHeader>
-                <CardTitle style={{ color: C.primary }}>Calendrier de Communication</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-0">
-                  {timelineData.map((item, i) => (
-                    <div key={i} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        <div className="w-4 h-4 rounded-full border-2" style={{ borderColor: C.accent, backgroundColor: i === 0 ? C.accent : 'transparent' }} />
-                        {i < timelineData.length - 1 && <div className="w-0.5 h-16" style={{ backgroundColor: `${C.accent}30` }} />}
-                      </div>
-                      <div className="pb-6">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Badge className="text-xs border-0" style={{ backgroundColor: `${C.accent}15`, color: C.accentDark }}>
-                            {item.period}
-                          </Badge>
-                          <span className="font-semibold text-sm" style={{ color: C.primary }}>{item.title}</span>
-                        </div>
-                        <p className="text-sm" style={{ color: C.muted }}>{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Partners */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle style={{ color: C.primary }}>Partenaires Stratégiques</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {[
-                    { category: 'Agro-industries', partners: ['PALMCI', 'SAPH', 'SIFCA', 'SUCAF'], color: C.accentDark },
-                    { category: 'Institutions publiques', partners: ['MINADER', 'CNRA', 'FIRCA'], color: C.accent },
-                    { category: 'Bailleurs & ONG', partners: ['FAO', 'BAD', 'FIDA', 'PNUD'], color: C.gold },
-                    { category: 'Recherche & Formation', partners: ['INPHB', 'Univ. Nangui Abrogoua'], color: C.info },
-                  ].map((cat, i) => (
-                    <div key={i} className="p-4 rounded-xl" style={{ backgroundColor: `${cat.color}08`, border: `1px solid ${cat.color}20` }}>
-                      <h4 className="font-semibold text-sm mb-3" style={{ color: cat.color }}>{cat.category}</h4>
-                      <div className="space-y-1.5">
-                        {cat.partners.map((p, j) => (
-                          <div key={j} className="flex items-center gap-2 text-xs" style={{ color: C.text }}>
-                            <Handshake size={12} style={{ color: cat.color }} />
-                            {p}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </AnimatedSection>
-
-          {/* ═══════ OPÉRATIONS ═══════ */}
-          <AnimatedSection id="operations">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <Calendar size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Plan Opérationnel</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Production, Logistique &amp; RH</p>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="border-0 shadow-md">
-                <CardHeader>
-                  <CardTitle style={{ color: C.primary }}>Production &amp; Approvisionnement</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm" style={{ color: C.text }}>
-                  <p>La production du biofertilisant Biodynamie repose sur un processus exclusif de pisciculture sans nourrissage,
-                    garantissant un produit 100% naturel. L&apos;unité de production sera établie à Abidjan avec une capacité
-                    initiale de 50 tonnes/an, extensible à 200 tonnes.</p>
-                  <div className="grid grid-cols-2 gap-3 mt-4">
-                    <div className="p-3 rounded-lg" style={{ backgroundColor: `${C.accent}08` }}>
-                      <p className="font-bold text-lg" style={{ color: C.accent }}>50 t/an</p>
-                      <p className="text-xs" style={{ color: C.muted }}>Capacité initiale</p>
-                    </div>
-                    <div className="p-3 rounded-lg" style={{ backgroundColor: `${C.gold}08` }}>
-                      <p className="font-bold text-lg" style={{ color: C.gold }}>200 t/an</p>
-                      <p className="text-xs" style={{ color: C.muted }}>Capacité cible (Année 3)</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-md">
-                <CardHeader>
-                  <CardTitle style={{ color: C.primary }}>Ressources Humaines</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {[
-                      { role: 'Directeur Général CI', count: 1, color: C.accentDark },
-                      { role: 'Responsable Commercial', count: 1, color: C.accent },
-                      { role: 'Technico-commerciaux ambassadeurs', count: 10, color: C.gold },
-                      { role: 'Responsable R&D / Production', count: 1, color: C.info },
-                      { role: 'Community Manager', count: 2, color: C.success },
-                      { role: 'Assistante administrative', count: 1, color: C.muted },
-                    ].map((r, i) => (
-                      <div key={i} className="flex items-center justify-between p-2 rounded-lg" style={{ backgroundColor: `${r.color}06` }}>
-                        <span className="text-sm" style={{ color: C.text }}>{r.role}</span>
-                        <Badge className="border-0 text-xs" style={{ backgroundColor: `${r.color}15`, color: r.color }}>{r.count}</Badge>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </AnimatedSection>
-
-          {/* ═══════ PLAN FINANCIER ═══════ */}
-          <AnimatedSection id="financier">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <BarChart3 size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Plan Financier Prévisionnel</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Projections sur 3 ans (en millions Fcfa)</p>
-              </div>
-            </div>
-
-            <Tabs defaultValue="projections" className="space-y-6">
-              <TabsList className="bg-white shadow-sm">
-                <TabsTrigger value="projections">Projections</TabsTrigger>
-                <TabsTrigger value="budget">Budget Marketing</TabsTrigger>
-                <TabsTrigger value="tresorerie">Trésorerie</TabsTrigger>
-                <TabsTrigger value="rentabilite">Rentabilité</TabsTrigger>
+            <Tabs defaultValue="personas" className="space-y-6">
+              <TabsList className="bg-white shadow-sm flex-wrap h-auto gap-1 p-1">
+                <TabsTrigger value="personas">Personas</TabsTrigger>
+                <TabsTrigger value="funnel">Entonnoir</TabsTrigger>
+                <TabsTrigger value="mix4p">Mix 4P</TabsTrigger>
+                <TabsTrigger value="canaux">Canaux & Budget</TabsTrigger>
+                <TabsTrigger value="kpis">KPIs Marketing</TabsTrigger>
+                <TabsTrigger value="calendrier">Calendrier</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="projections">
+              {/* ─── PERSONAS ─── */}
+              <TabsContent value="personas">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {personas.map((p, i) => (
+                    <motion.div key={i} whileHover={{ y: -3 }}>
+                      <Card className="border-0 shadow-md h-full overflow-hidden">
+                        <div className="h-1.5" style={{ backgroundColor: p.color }} />
+                        <CardContent className="p-6">
+                          <div className="flex items-start gap-4 mb-4">
+                            <div className="p-3 rounded-xl" style={{ backgroundColor: `${p.color}15` }}>
+                              <p.icon size={24} style={{ color: p.color }} />
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-lg" style={{ color: C.primary }}>{p.name}</h4>
+                              <p className="text-sm font-medium" style={{ color: p.color }}>{p.role}</p>
+                              <p className="text-xs" style={{ color: C.muted }}>{p.org} — {p.age} ans</p>
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="p-3 rounded-lg" style={{ backgroundColor: `${C.danger}08` }}>
+                              <p className="text-xs font-semibold mb-1" style={{ color: C.danger }}>Douleur</p>
+                              <p className="text-sm" style={{ color: C.text }}>{p.pain}</p>
+                            </div>
+                            <div className="p-3 rounded-lg" style={{ backgroundColor: `${C.success}08` }}>
+                              <p className="text-xs font-semibold mb-1" style={{ color: C.success }}>Objectif</p>
+                              <p className="text-sm" style={{ color: C.text }}>{p.goal}</p>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-xs" style={{ color: C.muted }}>Budget</p>
+                                <p className="text-sm font-semibold" style={{ color: p.color }}>{p.budget}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-xs" style={{ color: C.muted }}>Canal préféré</p>
+                                <p className="text-sm font-medium" style={{ color: C.text }}>{p.channel}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </TabsContent>
+
+              {/* ─── ENTONNOIR DE CONVERSION ─── */}
+              <TabsContent value="funnel">
                 <div className="grid lg:grid-cols-2 gap-6">
                   <Card className="border-0 shadow-md">
-                    <CardHeader>
-                      <CardTitle style={{ color: C.primary }}>Compte de Résultat Prévisionnel</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle style={{ color: C.primary }}>Entonnoir de Conversion</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {funnelData.map((step, i) => (
+                          <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}>
+                            <div className="flex items-center gap-4">
+                              <div className="w-28 text-right">
+                                <p className="text-sm font-semibold" style={{ color: step.color }}>{step.step}</p>
+                              </div>
+                              <div className="flex-1">
+                                <div className="h-10 rounded-lg flex items-center px-4 justify-between" style={{ backgroundColor: `${step.color}15`, width: `${step.pct}%`, minWidth: '60px' }}>
+                                  <span className="text-xs font-medium" style={{ color: step.color }}>{fmt(step.value)}</span>
+                                  <span className="text-xs" style={{ color: C.muted }}>{step.pct}%</span>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                      <div className="mt-6 p-4 rounded-xl" style={{ backgroundColor: `${C.accent}08` }}>
+                        <h4 className="font-semibold text-sm mb-2" style={{ color: C.accentDark }}>Taux de conversion global</h4>
+                        <div className="flex items-center gap-4">
+                          <p className="text-3xl font-bold" style={{ color: C.accent }}>0.5%</p>
+                          <p className="text-sm" style={{ color: C.muted }}>de la population ciblée → achat (500 clients sur 100K touchés)</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-0 shadow-md">
+                    <CardHeader><CardTitle style={{ color: C.primary }}>CAC / LTV Analysis</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="p-4 rounded-xl" style={{ backgroundColor: `${C.accentDark}08`, borderLeft: `4px solid ${C.accentDark}` }}>
+                          <h4 className="font-semibold text-sm mb-1" style={{ color: C.accentDark }}>CAC (Coût d&apos;Acquisition Client)</h4>
+                          <p className="text-3xl font-bold" style={{ color: C.accentDark }}>25 000 <span className="text-base font-normal">Fcfa</span></p>
+                          <p className="text-xs mt-1" style={{ color: C.muted }}>Budget marketing (46M) / 500 nouveaux clients prévus Année 1</p>
+                          <div className="grid grid-cols-3 gap-2 mt-3">
+                            <div className="text-center p-2 rounded-lg bg-white/60">
+                              <p className="text-xs" style={{ color: C.muted }}>A1</p>
+                              <p className="text-sm font-bold" style={{ color: C.danger }}>25 000 F</p>
+                            </div>
+                            <div className="text-center p-2 rounded-lg bg-white/60">
+                              <p className="text-xs" style={{ color: C.muted }}>A2</p>
+                              <p className="text-sm font-bold" style={{ color: C.gold }}>18 000 F</p>
+                            </div>
+                            <div className="text-center p-2 rounded-lg bg-white/60">
+                              <p className="text-xs" style={{ color: C.muted }}>A3</p>
+                              <p className="text-sm font-bold" style={{ color: C.success }}>12 000 F</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-4 rounded-xl" style={{ backgroundColor: `${C.success}08`, borderLeft: `4px solid ${C.success}` }}>
+                          <h4 className="font-semibold text-sm mb-1" style={{ color: C.success }}>LTV (Vie Client Moyenne)</h4>
+                          <p className="text-3xl font-bold" style={{ color: C.success }}>120 000 <span className="text-base font-normal">Fcfa</span></p>
+                          <p className="text-xs mt-1" style={{ color: C.muted }}>Panier moyen (80K) × taux réachat (40%) × durée client (3.75 ans)</p>
+                          <div className="grid grid-cols-3 gap-2 mt-3">
+                            <div className="text-center p-2 rounded-lg bg-white/60">
+                              <p className="text-xs" style={{ color: C.muted }}>A1</p>
+                              <p className="text-sm font-bold" style={{ color: C.muted }}>120K F</p>
+                            </div>
+                            <div className="text-center p-2 rounded-lg bg-white/60">
+                              <p className="text-xs" style={{ color: C.muted }}>A2</p>
+                              <p className="text-sm font-bold" style={{ color: C.gold }}>350K F</p>
+                            </div>
+                            <div className="text-center p-2 rounded-lg bg-white/60">
+                              <p className="text-xs" style={{ color: C.muted }}>A3</p>
+                              <p className="text-sm font-bold" style={{ color: C.success }}>600K F</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-4 rounded-xl text-center" style={{ backgroundColor: `${C.accent}10` }}>
+                          <p className="text-xs font-medium mb-1" style={{ color: C.muted }}>Ratio LTV / CAC (Année 1)</p>
+                          <p className="text-4xl font-bold" style={{ color: C.accent }}>4.8x</p>
+                          <p className="text-xs mt-1" style={{ color: C.success }}>Ratio sain : au-dessus de 3x = modèle viable</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              {/* ─── MIX 4P ─── */}
+              <TabsContent value="mix4p">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {mix4P.map((p, i) => (
+                    <motion.div key={i} whileHover={{ y: -3 }}>
+                      <Card className="border-0 shadow-md h-full overflow-hidden">
+                        <div className="h-1.5" style={{ backgroundColor: p.color }} />
+                        <CardContent className="p-6">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${p.color}15` }}>
+                              <p.icon size={22} style={{ color: p.color }} />
+                            </div>
+                            <h4 className="text-xl font-bold" style={{ color: p.color }}>{p.P}</h4>
+                          </div>
+                          <ul className="space-y-2">
+                            {p.items.map((item, j) => (
+                              <li key={j} className="text-sm flex items-start gap-2" style={{ color: C.text }}>
+                                <CheckCircle2 size={14} className="mt-0.5 shrink-0" style={{ color: p.color }} />{item}
+                              </li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </TabsContent>
+
+              {/* ─── CANAUX & BUDGET ─── */}
+              <TabsContent value="canaux">
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <Card className="border-0 shadow-md">
+                    <CardHeader><CardTitle style={{ color: C.primary }}>Budget par Canal (M Fcfa)</CardTitle></CardHeader>
                     <CardContent>
                       <div className="h-72">
                         <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={financialData}>
+                          <BarChart data={channelBudgetData} layout="vertical">
                             <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
-                            <XAxis dataKey="year" tick={{ fontSize: 11, fill: C.muted }} />
-                            <YAxis tick={{ fontSize: 11, fill: C.muted }} />
+                            <XAxis type="number" tick={{ fontSize: 11, fill: C.muted }} />
+                            <YAxis type="category" dataKey="canal" width={140} tick={{ fontSize: 11, fill: C.muted }} />
                             <Tooltip formatter={(value: number) => `${value}M Fcfa`} />
-                            <Legend />
-                            <Bar dataKey="CA" name="Chiffre d'affaires" fill={C.accent} radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="couts" name="Coûts totaux" fill={C.gold} radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="resultat" name="Résultat net" fill={C.accentDark} radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="budget" name="Budget" fill={C.accent} radius={[0, 4, 4, 0]} />
                           </BarChart>
                         </ResponsiveContainer>
                       </div>
                     </CardContent>
                   </Card>
-
                   <Card className="border-0 shadow-md">
-                    <CardHeader>
-                      <CardTitle style={{ color: C.primary }}>Détail Financier</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle style={{ color: C.primary }}>ROI & Performance par Canal</CardTitle></CardHeader>
                     <CardContent>
                       <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
+                        <table className="w-full text-xs">
                           <thead>
                             <tr style={{ backgroundColor: `${C.accentDark}10` }}>
-                              <th className="text-left p-3 font-semibold" style={{ color: C.accentDark }}>Poste</th>
-                              <th className="text-right p-3 font-semibold" style={{ color: C.accentDark }}>Année 1</th>
-                              <th className="text-right p-3 font-semibold" style={{ color: C.accentDark }}>Année 2</th>
-                              <th className="text-right p-3 font-semibold" style={{ color: C.accentDark }}>Année 3</th>
+                              <th className="text-left p-2.5 font-semibold" style={{ color: C.accentDark }}>Canal</th>
+                              <th className="text-right p-2.5 font-semibold" style={{ color: C.accentDark }}>Budget</th>
+                              <th className="text-right p-2.5 font-semibold" style={{ color: C.accentDark }}>Leads</th>
+                              <th className="text-right p-2.5 font-semibold" style={{ color: C.accentDark }}>Conv.</th>
+                              <th className="text-right p-2.5 font-semibold" style={{ color: C.accentDark }}>ROI</th>
+                              <th className="text-right p-2.5 font-semibold" style={{ color: C.accentDark }}>CAC</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {[
-                              ['Chiffre d\'affaires', '17,4M', '64,0M', '135,0M', C.accent],
-                              ['Coûts de production', '-12,0M', '-28,0M', '-45,0M', C.muted],
-                              ['Coûts marketing', '-12,0M', '-14,0M', '-18,0M', C.muted],
-                              ['Charges fixes', '-8,0M', '-10,0M', '-12,0M', C.muted],
-                              ['Coûts totaux', '-32,0M', '-52,0M', '-75,0M', C.gold],
-                              ['Résultat net', '-14,6M', '+9,0M', '+39,8M', null],
-                            ].map((row, i) => (
-                              <tr key={i} className={i % 2 === 0 ? '' : ''} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
-                                <td className="p-3 font-medium" style={{ color: C.primary }}>{row[0]}</td>
-                                <td className="p-3 text-right" style={{ color: String(row[1]).startsWith('-') ? C.danger : C.text }}>{row[1]}</td>
-                                <td className="p-3 text-right" style={{ color: String(row[2]).startsWith('-') ? C.danger : C.text }}>{row[2]}</td>
-                                <td className="p-3 text-right font-semibold" style={{ color: String(row[3]).startsWith('-') ? C.danger : (row[4] as string || C.success) }}>{row[3]}</td>
+                            {channelBudgetData.map((ch, i) => (
+                              <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                                <td className="p-2.5 font-medium" style={{ color: C.text }}>{ch.canal}</td>
+                                <td className="p-2.5 text-right" style={{ color: C.text }}>{ch.budget}M</td>
+                                <td className="p-2.5 text-right" style={{ color: C.text }}>{fmt(ch.leads)}</td>
+                                <td className="p-2.5 text-right" style={{ color: C.gold }}>{ch.conversion}%</td>
+                                <td className="p-2.5 text-right font-semibold" style={{ color: ch.roi >= 5 ? C.success : ch.roi >= 3 ? C.gold : C.danger }}>{ch.roi}x</td>
+                                <td className="p-2.5 text-right" style={{ color: C.text }}>{fmt(ch.cac)} F</td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
+                      </div>
+                      <div className="mt-4 p-3 rounded-lg" style={{ backgroundColor: `${C.accent}08` }}>
+                        <p className="text-xs" style={{ color: C.text }}>
+                          <strong>Insight :</strong> Les partenariats institutionnels (ANADER, FIRCA) offrent le meilleur ROI (8.5x)
+                          grâce à la crédibilité et au taux de conversion élevé (12%). Les formations terrain génèrent le taux de
+                          conversion le plus fort (15%) mais sont plus coûteuses en personnel.
+                        </p>
                       </div>
                     </CardContent>
                   </Card>
                 </div>
               </TabsContent>
 
-              <TabsContent value="budget">
-                <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle style={{ color: C.primary }}>Répartition du Budget Marketing (46M Fcfa)</CardTitle>
-                  </CardHeader>
+              {/* ─── KPIs MARKETING ─── */}
+              <TabsContent value="kpis">
+                <Card className="border-0 shadow-md mb-6">
+                  <CardHeader><CardTitle style={{ color: C.primary }}>Tableau de Bord KPIs Marketing</CardTitle></CardHeader>
                   <CardContent>
-                    <div className="h-80">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie data={budgetData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={3} dataKey="value" label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
-                            {budgetData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Tooltip formatter={(value: number) => `${fmt(value)} Fcfa`} />
-                        </PieChart>
-                      </ResponsiveContainer>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr style={{ backgroundColor: C.primary }}>
+                            <th className="text-left p-3 text-white font-semibold">KPI</th>
+                            <th className="text-center p-3 text-white font-semibold">Année 1</th>
+                            <th className="text-center p-3 text-white font-semibold">Année 2</th>
+                            <th className="text-center p-3 text-white font-semibold">Année 3</th>
+                            <th className="text-center p-3 text-white font-semibold">Cible</th>
+                            <th className="text-center p-3 text-white font-semibold">Statut A3</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {marketingKPIData.map((kpi, i) => (
+                            <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                              <td className="p-3">
+                                <div className="flex items-center gap-2">
+                                  <kpi.icon size={16} style={{ color: kpi.color }} />
+                                  <span className="font-medium" style={{ color: C.text }}>{kpi.kpi}</span>
+                                </div>
+                              </td>
+                              <td className="p-3 text-center" style={{ color: C.muted }}>{kpi.an1}</td>
+                              <td className="p-3 text-center" style={{ color: C.text }}>{kpi.an2}</td>
+                              <td className="p-3 text-center font-semibold" style={{ color: kpi.color }}>{kpi.an3}</td>
+                              <td className="p-3 text-center" style={{ color: C.muted }}>{kpi.target}</td>
+                              <td className="p-3 text-center">
+                                <Badge className="border-0 text-xs" style={{ backgroundColor: `${C.success}15`, color: C.success }}>Atteint</Badge>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </CardContent>
                 </Card>
+                <div className="grid sm:grid-cols-4 gap-4">
+                  {[
+                    { label: 'CAC Année 1', value: '25 000 F', desc: 'Coût acquisition', icon: UserPlus, color: C.danger },
+                    { label: 'LTV Année 3', value: '600 000 F', desc: 'Vie client moyenne', icon: Repeat, color: C.success },
+                    { label: 'LTV/CAC (A3)', value: '50x', desc: 'Ratio rentabilité', icon: Scale, color: C.accent },
+                    { label: 'NPS Année 3', value: '70', desc: 'Net Promoter Score', icon: Star, color: C.gold },
+                  ].map((s, i) => (
+                    <motion.div key={i} whileHover={{ scale: 1.03 }} className="p-4 rounded-xl text-center" style={{ backgroundColor: `${s.color}10` }}>
+                      <s.icon size={22} className="mx-auto mb-2" style={{ color: s.color }} />
+                      <p className="text-xl font-bold" style={{ color: C.primary }}>{s.value}</p>
+                      <p className="text-xs" style={{ color: C.muted }}>{s.desc}</p>
+                    </motion.div>
+                  ))}
+                </div>
               </TabsContent>
 
-              <TabsContent value="tresorerie">
+              {/* ─── CALENDRIER ÉDITORIAL ─── */}
+              <TabsContent value="calendrier">
                 <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle style={{ color: C.primary }}>Plan de Trésorerie Prévisionnel (Année 1)</CardTitle>
-                  </CardHeader>
+                  <CardHeader><CardTitle style={{ color: C.primary }}>Calendrier Marketing Opérationnel</CardTitle></CardHeader>
                   <CardContent>
-                    <div className="h-72">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={cashFlowData}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
-                          <XAxis dataKey="month" tick={{ fontSize: 11, fill: C.muted }} />
-                          <YAxis tick={{ fontSize: 11, fill: C.muted }} />
-                          <Tooltip formatter={(value: number) => `${value}M Fcfa`} />
-                          <Legend />
-                          <Area type="monotone" dataKey="encaissements" name="Encaissements" stroke={C.accent} fill={C.accent} fillOpacity={0.2} />
-                          <Area type="monotone" dataKey="decaissements" name="Décaissements" stroke={C.danger} fill={C.danger} fillOpacity={0.1} />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="rentabilite">
-                <Card className="border-0 shadow-md">
-                  <CardContent className="p-8">
-                    <div className="text-center mb-8">
-                      <h3 className="text-2xl font-bold mb-2" style={{ color: C.primary }}>Seuil de Rentabilité</h3>
-                      <p className="text-4xl font-bold" style={{ color: C.accent }}>47,6M Fcfa</p>
-                      <p className="text-sm mt-2" style={{ color: C.muted }}>Chiffre d&apos;affaires nécessaire pour atteindre l&apos;équilibre — Prévu en Année 2</p>
-                    </div>
-                    <div className="grid sm:grid-cols-3 gap-6">
-                      <div className="text-center p-5 rounded-xl" style={{ backgroundColor: `${C.danger}08` }}>
-                        <p className="text-sm font-medium" style={{ color: C.danger }}>Année 1</p>
-                        <p className="text-xl font-bold" style={{ color: C.danger }}>-14,6M</p>
-                        <p className="text-xs" style={{ color: C.muted }}>Perte initiale prévue</p>
-                      </div>
-                      <div className="text-center p-5 rounded-xl" style={{ backgroundColor: `${C.gold}08` }}>
-                        <p className="text-sm font-medium" style={{ color: C.gold }}>Année 2</p>
-                        <p className="text-xl font-bold" style={{ color: C.gold }}>+9,0M</p>
-                        <p className="text-xs" style={{ color: C.muted }}>Seuil de rentabilité franchi</p>
-                      </div>
-                      <div className="text-center p-5 rounded-xl" style={{ backgroundColor: `${C.success}08` }}>
-                        <p className="text-sm font-medium" style={{ color: C.success }}>Année 3</p>
-                        <p className="text-xl font-bold" style={{ color: C.success }}>+39,8M</p>
-                        <p className="text-xs" style={{ color: C.muted }}>Croissance rentable</p>
-                      </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr style={{ backgroundColor: C.primary }}>
+                            <th className="text-left p-3 text-white font-semibold">Période</th>
+                            <th className="text-left p-3 text-white font-semibold">Thème</th>
+                            <th className="text-left p-3 text-white font-semibold">Actions clés</th>
+                            <th className="text-left p-3 text-white font-semibold">Canaux</th>
+                            <th className="text-right p-3 text-white font-semibold">Budget</th>
+                            <th className="text-left p-3 text-white font-semibold">KPI visé</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {contentCalendar.map((row, i) => (
+                            <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                              <td className="p-3 font-medium" style={{ color: C.accentDark }}>{row.periode}</td>
+                              <td className="p-3 font-semibold" style={{ color: C.primary }}>{row.theme}</td>
+                              <td className="p-3" style={{ color: C.text }}>{row.actions}</td>
+                              <td className="p-3" style={{ color: C.muted }}>{row.canaux}</td>
+                              <td className="p-3 text-right font-semibold" style={{ color: C.gold }}>{row.budget}</td>
+                              <td className="p-3" style={{ color: C.text }}>{row.kpi}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </CardContent>
                 </Card>
@@ -1080,18 +1170,463 @@ export default function BusinessPlanApp() {
             </Tabs>
           </AnimatedSection>
 
+          {/* ═══════════════════════════════════════════════════════════════ */}
+          {/* ═══════ VOLET FINANCIER ULTRA DÉTAILLÉ ═══════ */}
+          {/* ═══════════════════════════════════════════════════════════════ */}
+          <AnimatedSection id="financier">
+            <SectionHeader icon={BarChart3} title="Plan Financier Prévisionnel" subtitle="Volet ultra détaillé — Comptes, Ratios, VAN/TRI, Sensibilité" color={C.accentDark} />
+
+            <Tabs defaultValue="resultat" className="space-y-6">
+              <TabsList className="bg-white shadow-sm flex-wrap h-auto gap-1 p-1">
+                <TabsTrigger value="resultat">Compte de Résultat</TabsTrigger>
+                <TabsTrigger value="bilan">Bilan</TabsTrigger>
+                <TabsTrigger value="tresorerie">Trésorerie</TabsTrigger>
+                <TabsTrigger value="ratios">Ratios</TabsTrigger>
+                <TabsTrigger value="rentabilite">Rentabilité</TabsTrigger>
+                <TabsTrigger value="vantri">VAN / TRI</TabsTrigger>
+                <TabsTrigger value="sensibilite">Sensibilité</TabsTrigger>
+              </TabsList>
+
+              {/* ─── COMPTE DE RÉSULTAT ─── */}
+              <TabsContent value="resultat">
+                <div className="grid lg:grid-cols-5 gap-6">
+                  <div className="lg:col-span-3">
+                    <Card className="border-0 shadow-md">
+                      <CardHeader><CardTitle style={{ color: C.primary }}>Compte de Résultat Prévisionnel Détaillé (M Fcfa)</CardTitle></CardHeader>
+                      <CardContent>
+                        <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
+                          <table className="w-full text-sm">
+                            <thead className="sticky top-0">
+                              <tr style={{ backgroundColor: C.primary }}>
+                                <th className="text-left p-3 text-white font-semibold">Poste</th>
+                                <th className="text-right p-3 text-white font-semibold">Année 1</th>
+                                <th className="text-right p-3 text-white font-semibold">Année 2</th>
+                                <th className="text-right p-3 text-white font-semibold">Année 3</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {compteResultatData.map((row, i) => (
+                                <FinRow key={i} poste={row.poste} a1={row.a1} a2={row.a2} a3={row.a3} bold={row.bold} header={row.header} color={row.color} />
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  <div className="lg:col-span-2 space-y-6">
+                    <Card className="border-0 shadow-md">
+                      <CardHeader><CardTitle style={{ color: C.primary }}>Évolution CA & Résultat</CardTitle></CardHeader>
+                      <CardContent>
+                        <div className="h-64">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <ComposedChart data={financialData}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
+                              <XAxis dataKey="year" tick={{ fontSize: 10, fill: C.muted }} />
+                              <YAxis tick={{ fontSize: 10, fill: C.muted }} />
+                              <Tooltip formatter={(value: number) => `${value}M Fcfa`} />
+                              <Bar dataKey="CA" name="CA" fill={C.accent} radius={[4, 4, 0, 0]} />
+                              <Line type="monotone" dataKey="resultat" name="Résultat net" stroke={C.success} strokeWidth={2} dot={{ r: 4 }} />
+                            </ComposedChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card className="border-0 shadow-md">
+                      <CardContent className="p-6">
+                        <h4 className="font-semibold mb-3" style={{ color: C.primary }}>Marge brute par année</h4>
+                        <div className="space-y-3">
+                          {[
+                            { label: 'Année 1', mb: 5.4, ca: 17.4, pct: 31.0 },
+                            { label: 'Année 2', mb: 36.0, ca: 64.0, pct: 56.3 },
+                            { label: 'Année 3', mb: 90.0, ca: 135.0, pct: 66.7 },
+                          ].map((r, i) => (
+                            <div key={i}>
+                              <div className="flex justify-between text-xs mb-1">
+                                <span style={{ color: C.text }}>{r.label}</span>
+                                <span className="font-semibold" style={{ color: C.accentDark }}>{r.pct}% ({fmtM(r.mb)})</span>
+                              </div>
+                              <div className="w-full h-2 rounded-full" style={{ backgroundColor: `${C.accent}20` }}>
+                                <div className="h-2 rounded-full transition-all" style={{ width: `${r.pct}%`, backgroundColor: C.accent }} />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* ─── BILAN ─── */}
+              <TabsContent value="bilan">
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <Card className="border-0 shadow-md">
+                    <CardHeader><CardTitle style={{ color: C.primary }}>Bilan Prévisionnel (M Fcfa)</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr style={{ backgroundColor: C.primary }}>
+                              <th className="text-left p-3 text-white font-semibold">Poste</th>
+                              <th className="text-right p-3 text-white font-semibold">Année 1</th>
+                              <th className="text-right p-3 text-white font-semibold">Année 2</th>
+                              <th className="text-right p-3 text-white font-semibold">Année 3</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {bilanData.map((row, i) => (
+                              <FinRow key={i} poste={row.poste} a1={row.a1} a2={row.a2} a3={row.a3} bold={row.bold} header={row.header} />
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-0 shadow-md">
+                    <CardHeader><CardTitle style={{ color: C.primary }}>Structure du Bilan</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="h-72">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={[
+                            { year: 'Année 1', 'Immobilisations': 12.0, 'Stocks': 3.0, 'Créances': 2.5, 'Trésorerie': 2.0 },
+                            { year: 'Année 2', 'Immobilisations': 10.2, 'Stocks': 8.0, 'Créances': 9.0, 'Trésorerie': 12.0 },
+                            { year: 'Année 3', 'Immobilisations': 8.4, 'Stocks': 15.0, 'Créances': 18.0, 'Trésorerie': 45.0 },
+                          ]}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
+                            <XAxis dataKey="year" tick={{ fontSize: 11, fill: C.muted }} />
+                            <YAxis tick={{ fontSize: 11, fill: C.muted }} />
+                            <Tooltip formatter={(value: number) => `${value}M Fcfa`} />
+                            <Legend />
+                            <Bar dataKey="Immobilisations" stackId="a" fill={C.accentDark} />
+                            <Bar dataKey="Stocks" stackId="a" fill={C.gold} />
+                            <Bar dataKey="Créances" stackId="a" fill={C.info} />
+                            <Bar dataKey="Trésorerie" stackId="a" fill={C.accent} radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="mt-4 grid grid-cols-3 gap-3">
+                        {[
+                          { label: 'Solvabilité A1', value: '27.7%', color: C.danger },
+                          { label: 'Solvabilité A2', value: '36.7%', color: C.warning },
+                          { label: 'Solvabilité A3', value: '68.5%', color: C.success },
+                        ].map((s, i) => (
+                          <div key={i} className="text-center p-2 rounded-lg" style={{ backgroundColor: `${s.color}08` }}>
+                            <p className="text-lg font-bold" style={{ color: s.color }}>{s.value}</p>
+                            <p className="text-xs" style={{ color: C.muted }}>{s.label}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              {/* ─── TRÉSORERIE ─── */}
+              <TabsContent value="tresorerie">
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <Card className="border-0 shadow-md">
+                    <CardHeader><CardTitle style={{ color: C.primary }}>Plan de Trésorerie Année 1 (M Fcfa)</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="h-72">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <ComposedChart data={cashFlowData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
+                            <XAxis dataKey="month" tick={{ fontSize: 11, fill: C.muted }} />
+                            <YAxis tick={{ fontSize: 11, fill: C.muted }} />
+                            <Tooltip formatter={(value: number) => `${value}M Fcfa`} />
+                            <Legend />
+                            <Area type="monotone" dataKey="encaissements" name="Encaissements" stroke={C.accent} fill={C.accent} fillOpacity={0.2} />
+                            <Area type="monotone" dataKey="decaissements" name="Décaissements" stroke={C.danger} fill={C.danger} fillOpacity={0.1} />
+                            <Line type="monotone" dataKey="solde" name="Solde cumulé" stroke={C.warning} strokeWidth={2} dot={{ r: 3 }} />
+                          </ComposedChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-0 shadow-md">
+                    <CardHeader><CardTitle style={{ color: C.primary }}>Flux de Trésorerie 3 Ans (M Fcfa)</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="h-72">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={cashFlow3YData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
+                            <XAxis dataKey="year" tick={{ fontSize: 10, fill: C.muted }} />
+                            <YAxis tick={{ fontSize: 10, fill: C.muted }} />
+                            <Tooltip formatter={(value: number) => `${value}M Fcfa`} />
+                            <Legend />
+                            <Bar dataKey="exploitation" name="Exploitation" fill={C.accent} radius={[2, 2, 0, 0]} />
+                            <Bar dataKey="investissement" name="Investissement" fill={C.danger} radius={[2, 2, 0, 0]} />
+                            <Bar dataKey="financement" name="Financement" fill={C.info} radius={[2, 2, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="mt-4 p-3 rounded-lg" style={{ backgroundColor: `${C.warning}08` }}>
+                        <p className="text-xs" style={{ color: C.text }}>
+                          <strong>Besoin en Fonds de Roulement :</strong> Le BFR est négatif en Année 1 (-10.9M) nécessitant
+                          un financement initial de 20M Fcfa. Le passage en positif est prévu au T3 de l&apos;Année 2.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              {/* ─── RATIOS ─── */}
+              <TabsContent value="ratios">
+                <div className="space-y-6">
+                  {ratiosData.map((cat, ci) => (
+                    <Card key={ci} className="border-0 shadow-md">
+                      <CardHeader>
+                        <CardTitle style={{ color: C.primary }}>{cat.category}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr style={{ backgroundColor: `${C.accentDark}10` }}>
+                                <th className="text-left p-3 font-semibold" style={{ color: C.accentDark }}>Ratio</th>
+                                <th className="text-center p-3 font-semibold" style={{ color: C.accentDark }}>Formule</th>
+                                <th className="text-center p-3 font-semibold" style={{ color: C.accentDark }}>Année 1</th>
+                                <th className="text-center p-3 font-semibold" style={{ color: C.accentDark }}>Année 2</th>
+                                <th className="text-center p-3 font-semibold" style={{ color: C.accentDark }}>Année 3</th>
+                                <th className="text-center p-3 font-semibold" style={{ color: C.accentDark }}>Cible</th>
+                                <th className="text-center p-3 font-semibold" style={{ color: C.accentDark }}>Statut</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {cat.ratios.map((r, ri) => {
+                                const statusColor = r.status === 'success' ? C.success : r.status === 'warning' ? C.warning : C.danger
+                                const statusLabel = r.status === 'success' ? 'Atteint' : r.status === 'warning' ? 'En progression' : 'Critique'
+                                return (
+                                  <tr key={ri} style={{ backgroundColor: ri % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                                    <td className="p-3 font-medium" style={{ color: C.primary }}>{r.name}</td>
+                                    <td className="p-3 text-center text-xs" style={{ color: C.muted }}>{r.formula}</td>
+                                    <td className="p-3 text-center" style={{ color: String(r.a1).startsWith('-') ? C.danger : C.text }}>{r.a1}</td>
+                                    <td className="p-3 text-center" style={{ color: String(r.a2).startsWith('-') ? C.danger : C.text }}>{r.a2}</td>
+                                    <td className="p-3 text-center font-semibold" style={{ color: statusColor }}>{r.a3}</td>
+                                    <td className="p-3 text-center" style={{ color: C.muted }}>{r.target}</td>
+                                    <td className="p-3 text-center">
+                                      <Badge className="border-0 text-xs" style={{ backgroundColor: `${statusColor}15`, color: statusColor }}>{statusLabel}</Badge>
+                                    </td>
+                                  </tr>
+                                )
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+
+              {/* ─── RENTABILITÉ / SEUIL ─── */}
+              <TabsContent value="rentabilite">
+                <div className="grid lg:grid-cols-2 gap-6 mb-6">
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-8 text-center">
+                      <h3 className="text-2xl font-bold mb-2" style={{ color: C.primary }}>Seuil de Rentabilité</h3>
+                      <p className="text-5xl font-bold mb-2" style={{ color: C.accent }}>47,6M Fcfa</p>
+                      <p className="text-sm mb-6" style={{ color: C.muted }}>Chiffre d&apos;affaires nécessaire pour atteindre l&apos;équilibre</p>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="p-4 rounded-xl" style={{ backgroundColor: `${C.danger}08` }}>
+                          <p className="text-xs font-medium" style={{ color: C.danger }}>Année 1</p>
+                          <p className="text-xl font-bold" style={{ color: C.danger }}>-14,6M</p>
+                          <p className="text-xs" style={{ color: C.muted }}>Perte initiale</p>
+                        </div>
+                        <div className="p-4 rounded-xl" style={{ backgroundColor: `${C.gold}08` }}>
+                          <p className="text-xs font-medium" style={{ color: C.gold }}>Année 2</p>
+                          <p className="text-xl font-bold" style={{ color: C.gold }}>+9,0M</p>
+                          <p className="text-xs" style={{ color: C.muted }}>Seuil franchi</p>
+                        </div>
+                        <div className="p-4 rounded-xl" style={{ backgroundColor: `${C.success}08` }}>
+                          <p className="text-xs font-medium" style={{ color: C.success }}>Année 3</p>
+                          <p className="text-xl font-bold" style={{ color: C.success }}>+44,8M</p>
+                          <p className="text-xs" style={{ color: C.muted }}>Croissance</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-0 shadow-md">
+                    <CardHeader><CardTitle style={{ color: C.primary }}>Point Mort Graphique</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="h-72">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <ComposedChart data={breakevenData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
+                            <XAxis dataKey="ca" tick={{ fontSize: 10, fill: C.muted }} label={{ value: 'CA (M Fcfa)', position: 'insideBottom', offset: -5, fontSize: 10 }} />
+                            <YAxis tick={{ fontSize: 10, fill: C.muted }} />
+                            <Tooltip formatter={(value: number, name: string) => [`${value}M Fcfa`, name]} />
+                            <Legend />
+                            <Line type="monotone" dataKey="coutsTotal" name="Coûts totaux" stroke={C.danger} strokeWidth={2} dot={false} />
+                            <Line type="linear" dataKey="ca" name="CA" stroke={C.accent} strokeWidth={2} dot={false} strokeDasharray="5 5" />
+                            <Area type="monotone" dataKey="profit" name="Profit" stroke={C.success} fill={C.success} fillOpacity={0.15} />
+                          </ComposedChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                <Card className="border-0 shadow-md">
+                  <CardHeader><CardTitle style={{ color: C.primary }}>Détail du Calcul du Seuil de Rentabilité</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {[
+                        { label: 'Charges fixes annuelles', value: '20,0M Fcfa', icon: Wallet, color: C.accentDark },
+                        { label: 'Taux de marge sur coût variable', value: '42,0%', icon: Percent, color: C.accent },
+                        { label: 'Seuil de rentabilité (CA)', value: '47,6M Fcfa', icon: Target, color: C.gold },
+                        { label: 'Mois d&apos;atteinte du seuil', value: 'Mois 14 (Fév A2)', icon: Clock, color: C.success },
+                      ].map((d, i) => (
+                        <div key={i} className="p-4 rounded-xl" style={{ backgroundColor: `${d.color}08`, borderLeft: `3px solid ${d.color}` }}>
+                          <d.icon size={20} className="mb-2" style={{ color: d.color }} />
+                          <p className="text-xs" style={{ color: C.muted }}>{d.label}</p>
+                          <p className="text-lg font-bold" style={{ color: d.color }}>{d.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* ─── VAN / TRI ─── */}
+              <TabsContent value="vantri">
+                <div className="grid lg:grid-cols-2 gap-6 mb-6">
+                  <Card className="border-0 shadow-md">
+                    <CardHeader><CardTitle style={{ color: C.primary }}>VAN & TRI par Scénario</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {vanTriData.map((s, i) => (
+                          <motion.div key={i} whileHover={{ x: 4 }} className="p-5 rounded-xl" style={{ backgroundColor: `${s.color}08`, borderLeft: `4px solid ${s.color}` }}>
+                            <div className="flex justify-between items-center mb-3">
+                              <h4 className="text-lg font-bold" style={{ color: s.color }}>{s.scenario}</h4>
+                              <Badge className="border-0" style={{ backgroundColor: `${s.color}15`, color: s.color }}>Taux {s.taux}</Badge>
+                            </div>
+                            <div className="grid grid-cols-3 gap-3">
+                              <div className="text-center">
+                                <p className="text-xs" style={{ color: C.muted }}>VAN</p>
+                                <p className="text-xl font-bold" style={{ color: s.color }}>{fmtM(s.van)}</p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-xs" style={{ color: C.muted }}>TRI</p>
+                                <p className="text-xl font-bold" style={{ color: s.color }}>{s.tri}%</p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-xs" style={{ color: C.muted }}>Délai récup. (mois)</p>
+                                <p className="text-xl font-bold" style={{ color: s.color }}>{s.delai}</p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-0 shadow-md">
+                    <CardHeader><CardTitle style={{ color: C.primary }}>Cash-flows Actualisés (Scénario Base, 10%)</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={[
+                            { year: 'A1', flux: -14.6, actualise: -13.3 },
+                            { year: 'A2', flux: 9.0, actualise: 7.4 },
+                            { year: 'A3', flux: 44.8, actualise: 33.7 },
+                            { year: 'A4 (proj.)', flux: 55.0, actualise: 37.6 },
+                            { year: 'A5 (proj.)', flux: 65.0, actualise: 40.4 },
+                          ]}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E8" />
+                            <XAxis dataKey="year" tick={{ fontSize: 11, fill: C.muted }} />
+                            <YAxis tick={{ fontSize: 11, fill: C.muted }} />
+                            <Tooltip formatter={(value: number) => `${value}M Fcfa`} />
+                            <Legend />
+                            <Bar dataKey="flux" name="Flux nominal" fill={C.accent} radius={[2, 2, 0, 0]} />
+                            <Bar dataKey="actualise" name="Flux actualisé" fill={C.gold} radius={[2, 2, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="mt-4 p-4 rounded-xl" style={{ backgroundColor: `${C.accent}08` }}>
+                        <p className="text-sm" style={{ color: C.text }}>
+                          <strong>VAN cumulée (5 ans) :</strong> <span style={{ color: C.success, fontWeight: 'bold' }}>+105.8M Fcfa</span>
+                          — Le projet crée de la valeur dès l&apos;Année 2. Le TRI de 34.5% est bien au-dessus du coût du capital (10%),
+                          confirmant la viabilité financière du projet.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              {/* ─── ANALYSE DE SENSIBILITÉ ─── */}
+              <TabsContent value="sensibilite">
+                <Card className="border-0 shadow-md mb-6">
+                  <CardHeader><CardTitle style={{ color: C.primary }}>Analyse de Sensibilité — Impact sur la Rentabilité</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr style={{ backgroundColor: C.primary }}>
+                            <th className="text-left p-3 text-white font-semibold">Variation de paramètre</th>
+                            <th className="text-right p-3 text-white font-semibold">Impact CA (M Fcfa)</th>
+                            <th className="text-right p-3 text-white font-semibold">Impact RN (M Fcfa)</th>
+                            <th className="text-right p-3 text-white font-semibold">Impact TRI</th>
+                            <th className="text-center p-3 text-white font-semibold">Niveau de risque</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sensitivityData.map((row, i) => {
+                            const riskColor = row.risque === 'Critique' ? C.danger : row.risque === 'Élevé' ? C.warning : row.risque === 'Moyen' ? C.gold : row.risque === 'Opportunité' ? C.success : C.info
+                            return (
+                              <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                                <td className="p-3 font-medium" style={{ color: C.primary }}>{row.param}</td>
+                                <td className="p-3 text-right" style={{ color: row.impactCA < 0 ? C.danger : row.impactCA > 0 ? C.success : C.muted }}>
+                                  {row.impactCA > 0 ? '+' : ''}{row.impactCA === 0 ? '—' : fmtM(row.impactCA)}
+                                </td>
+                                <td className="p-3 text-right" style={{ color: row.impactRN < 0 ? C.danger : row.impactRN > 0 ? C.success : C.muted }}>
+                                  {row.impactRN > 0 ? '+' : ''}{row.impactRN === 0 ? '—' : fmtM(row.impactRN)}
+                                </td>
+                                <td className="p-3 text-right font-semibold" style={{ color: row.impactTRI < 0 ? C.danger : C.success }}>
+                                  {row.impactTRI > 0 ? '+' : ''}{row.impactTRI} pts
+                                </td>
+                                <td className="p-3 text-center">
+                                  <Badge className="border-0 text-xs" style={{ backgroundColor: `${riskColor}15`, color: riskColor }}>{row.risque}</Badge>
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-5 text-center">
+                      <AlertTriangle size={28} className="mx-auto mb-3" style={{ color: C.danger }} />
+                      <h4 className="font-bold mb-2" style={{ color: C.danger }}>Risque Critique</h4>
+                      <p className="text-sm" style={{ color: C.text }}>Taux de conversion -50% : impact de -18.3 pts sur le TRI. Nécessite un plan de secours marketing renforcé.</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-5 text-center">
+                      <AlertTriangle size={28} className="mx-auto mb-3" style={{ color: C.warning }} />
+                      <h4 className="font-bold mb-2" style={{ color: C.warning }}>Risques Élevés</h4>
+                      <p className="text-sm" style={{ color: C.text }}>Volume -20% et retard 3 mois : impacts de -12.5 et -9.8 pts sur le TRI. Diversification des canaux recommandée.</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-5 text-center">
+                      <CheckCircle2 size={28} className="mx-auto mb-3" style={{ color: C.success }} />
+                      <h4 className="font-bold mb-2" style={{ color: C.success }}>Opportunité</h4>
+                      <p className="text-sm" style={{ color: C.text }}>Subvention gouvernementale : +3M RN et +6.5 pts TRI. Forte probabilité via Stratégie Bio 2030 et FIRCA.</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </AnimatedSection>
+
           {/* ═══════ RISQUES ═══════ */}
           <AnimatedSection id="risques">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <Shield size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Analyse des Risques</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Identification et mitigation</p>
-              </div>
-            </div>
-
+            <SectionHeader icon={Shield} title="Analyse des Risques" subtitle="Identification et mitigation" />
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
                 <div className="grid gap-3">
@@ -1105,16 +1640,12 @@ export default function BusinessPlanApp() {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium" style={{ color: C.primary }}>{risk.name}</p>
                         </div>
-                        <Badge className="text-xs border-0 shrink-0" style={{ backgroundColor: `${levelColor}15`, color: levelColor }}>
-                          {risk.category}
-                        </Badge>
+                        <Badge className="text-xs border-0 shrink-0" style={{ backgroundColor: `${levelColor}15`, color: levelColor }}>{risk.category}</Badge>
                         <div className="flex items-center gap-1 shrink-0">
                           <span className="text-xs" style={{ color: C.muted }}>P:{risk.likelihood}</span>
                           <span className="text-xs" style={{ color: C.muted }}>I:{risk.impact}</span>
                         </div>
-                        <Badge className="text-xs border-0 shrink-0" style={{ backgroundColor: `${levelColor}15`, color: levelColor }}>
-                          {level}
-                        </Badge>
+                        <Badge className="text-xs border-0 shrink-0" style={{ backgroundColor: `${levelColor}15`, color: levelColor }}>{level}</Badge>
                       </div>
                     )
                   })}
@@ -1125,22 +1656,13 @@ export default function BusinessPlanApp() {
 
           {/* ═══════ VISION 5 ANS ═══════ */}
           <AnimatedSection id="vision">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${C.accent}15` }}>
-                <Award size={24} style={{ color: C.accent }} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold" style={{ color: C.primary }}>Vision à 5 Ans</h2>
-                <p className="text-sm" style={{ color: C.muted }}>Plan de développement 2025–2030</p>
-              </div>
-            </div>
-
+            <SectionHeader icon={Award} title="Vision à 5 Ans" subtitle="Plan de développement 2025–2030" />
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {[
-                { year: '2026', title: 'Implantation', desc: '29t vendues, 500 agriculteurs, 3–5 partenariats, lancement officiel', color: C.accent },
-                { year: '2027', title: 'Expansion', desc: '80t, couverture 10 régions, label Fermes Biodynamiques, seuil rentabilité', color: C.gold },
-                { year: '2028', title: 'Consolidation', desc: '150t, export sous-régional, plate-forme e-commerce mature, +39,8M bénéfice', color: C.accentDark },
-                { year: '2030', title: 'Leadership', desc: 'Leader Afrique de l\'Ouest fertilisants écologiques, 500t+, 5 pays couverts', color: C.success },
+                { year: '2026', title: 'Implantation', desc: '29t vendues, 500 agriculteurs, 3–5 partenariats', color: C.accent },
+                { year: '2027', title: 'Expansion', desc: '80t, 10 régions, label Fermes Bio, seuil rentabilité', color: C.gold },
+                { year: '2028', title: 'Consolidation', desc: '150t, export sous-régional, +44.8M bénéfice', color: C.accentDark },
+                { year: '2030', title: 'Leadership', desc: 'Leader Afrique de l\'Ouest, 500t+, 5 pays couverts', color: C.success },
               ].map((m, i) => (
                 <motion.div key={i} whileHover={{ y: -4 }}>
                   <Card className="border-0 shadow-md h-full">
@@ -1153,12 +1675,8 @@ export default function BusinessPlanApp() {
                 </motion.div>
               ))}
             </div>
-
-            {/* KPIs */}
             <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle style={{ color: C.primary }}>Indicateurs de Performance (KPI)</CardTitle>
-              </CardHeader>
+              <CardHeader><CardTitle style={{ color: C.primary }}>Indicateurs de Performance (KPI)</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
                   {[
@@ -1198,10 +1716,8 @@ export default function BusinessPlanApp() {
               </div>
               <p className="text-sm text-white/60 leading-relaxed">
                 Le Centre LIAMBOU GISELE porte la vision d&apos;une Côte d&apos;Ivoire autosuffisante et durable.
-                Avec Biodynamie, la nature redevient le moteur de la souveraineté agricole africaine.
               </p>
             </div>
-
             <div>
               <h4 className="font-semibold text-white mb-4">LIG Côte d&apos;Ivoire</h4>
               <div className="space-y-2 text-sm text-white/60">
@@ -1209,26 +1725,21 @@ export default function BusinessPlanApp() {
                 <div className="flex items-center gap-2"><Phone size={14} /> +225 21271010</div>
               </div>
             </div>
-
             <div>
               <h4 className="font-semibold text-white mb-4">Comptoir Agropastoral CI</h4>
               <div className="space-y-2 text-sm text-white/60">
                 <div className="flex items-center gap-2"><Phone size={14} /> WhatsApp: +225 07070707</div>
-                <div className="flex items-center gap-2"><Phone size={14} /> WhatsApp: +225 05050505</div>
                 <div className="flex items-center gap-2"><Mail size={14} /> info@biodynamie.ci</div>
                 <div className="flex items-center gap-2"><Globe size={14} /> ligbiodynamie.ci</div>
               </div>
             </div>
           </div>
-
           <Separator className="bg-white/10 mb-6" />
-
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-xs text-white/40">&copy; 2025 Comptoir Agropastoral CI. Tous droits réservés.</p>
             <a href="/Business_Plan_LIG_Biodynamie_CI.docx" download>
               <Button variant="outline" size="sm" className="border-white/20 text-white/60 hover:bg-white/10 hover:text-white text-xs">
-                <Download size={14} className="mr-1.5" />
-                Télécharger le Business Plan (DOCX)
+                <Download size={14} className="mr-1.5" /> Télécharger le Business Plan (DOCX)
               </Button>
             </a>
           </div>
@@ -1238,8 +1749,7 @@ export default function BusinessPlanApp() {
       {/* ─── Back to top ─── */}
       {scrollY > 500 && (
         <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="fixed bottom-6 right-6 z-40 p-3 rounded-full shadow-lg"
           style={{ backgroundColor: C.accent, color: C.primary }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -1248,14 +1758,5 @@ export default function BusinessPlanApp() {
         </motion.button>
       )}
     </div>
-  )
-}
-
-// Missing icon definition
-function Zap(props: any) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
-    </svg>
   )
 }
