@@ -528,7 +528,7 @@ export default function BusinessPlanApp() {
             <p className="text-base text-white/60 mb-10 max-w-2xl">
               Partenaire Exclusif : <strong className="text-white/80">Comptoir Agropastoral CI</strong>
             </p>
-            <div className="flex flex-wrap gap-4 mb-12">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
               <StatCard icon={Target} value="29 t" label="Objectif de vente Année 1" color={C.accent} />
               <StatCard icon={Users} value="500" label="Agriculteurs formés" color={C.gold} />
               <StatCard icon={Handshake} value="3–5" label="Partenariats majeurs" color={C.accentDark} />
