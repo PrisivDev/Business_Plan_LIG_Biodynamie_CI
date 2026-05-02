@@ -84,3 +84,26 @@ Stage Summary:
 - All 3 tiers show preview financial data (CA, Seuil, Marge brute, RN)
 - Selecting a tier dynamically updates all business plan data via the existing `dyn` useMemo
 - App compiles and renders correctly (verified via dev server logs and lint)
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Convert Risk Analysis section to accordion with detailed descriptions
+
+Work Log:
+- Enriched `riskData` with 3 new fields per risk: `description`, `mitigation`, `consequences`
+- Added import for Accordion, AccordionItem, AccordionTrigger, AccordionContent from shadcn/ui
+- Added summary bar at top showing count of risks by severity (Critique, Élevé, Moyen, Faible)
+- Organized risks by category in separate Cards (Commercial, Technique, Financier, Réglementaire, Stratégique)
+- Each category card has a colored header with icon and risk count badge
+- Each risk is an accordion item with:
+  - Trigger: risk name + probability/impact badges + severity level badge
+  - Content: visual score bar, Description block, Plan de mitigation block, Conséquences block
+  - Each block has a distinct color (neutral for description, green for mitigation, red for consequences)
+  - Each block has a colored left border and labeled header
+
+Stage Summary:
+- Risk Analysis section now uses accordion layout grouped by category
+- 8 risks fully described with mitigation plans and consequence analysis
+- Visual summary bar shows risk distribution at a glance
+- App compiles and renders correctly

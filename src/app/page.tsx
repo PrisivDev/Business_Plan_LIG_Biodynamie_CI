@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
 
 // ─── Color Palette (FG-1 Forest Mint inspired) ───
 const C = {
@@ -154,14 +155,62 @@ const swotData = {
 }
 
 const riskData = [
-  { name: 'Réticence agriculteurs', likelihood: 4, impact: 3, category: 'commercial' },
-  { name: 'Concurrence engrais chimiques', likelihood: 5, impact: 4, category: 'commercial' },
-  { name: 'Capacité production', likelihood: 3, impact: 4, category: 'technique' },
-  { name: 'Retard réglementaire', likelihood: 2, impact: 3, category: 'reglementaire' },
-  { name: 'Instabilité prix matières', likelihood: 3, impact: 2, category: 'financier' },
-  { name: 'Dépendance partenaire', likelihood: 2, impact: 4, category: 'stratégique' },
-  { name: 'Conditions météorologiques', likelihood: 3, impact: 2, category: 'technique' },
-  { name: 'Contrefaçon produit', likelihood: 2, impact: 3, category: 'commercial' },
+  {
+    name: 'Réticence des agriculteurs',
+    likelihood: 4, impact: 3, category: 'commercial',
+    description: 'Les agriculteurs ivoiriens, habitués aux engrais chimiques depuis des décennies, peuvent manifester une forte résistance au changement. Le passage à un biofertilisant naturel est perçu comme un risque pour leurs récoltes et leurs revenus, malgré les preuves scientifiques. Cette méfiance est accentuée par un manque de références locales et le poids des habitudes d\'achat chez les distributeurs d\'intrants.',
+    mitigation: 'Programme "1 tonne test" gratuit pour démontrer les résultats sur le terrain, formations pratiques via l\'ANADER, collecte de témoignages vidéo d\'agriculteurs convaincus, campagnes de démonstration dans 5 régions agricoles, partenariats avec des leaders d\'opinion agricoles.',
+    consequences: 'Ralentissement de l\'adoption, CA inférieur aux prévisions de 20 à 30%, allongement du cycle de vente de 45 à 90 jours.',
+  },
+  {
+    name: 'Concurrence des engrais chimiques',
+    likelihood: 5, impact: 4, category: 'commercial',
+    description: 'Le marché des engrais en Côte d\'Ivoire est dominé par des multinationales bien implantées (Yara, OCP) disposant de budgets marketing colossaux et de réseaux de distribution établis. Ces acteurs peuvent réagir agressivement par des baisses de prix ou des campagnes de dénigrement contre les solutions biologiques, et bénéficient de subventions gouvernementales sur les intrants chimiques.',
+    mitigation: 'Positionnement différencié sur le segment bio (pas de concurrence directe), argumentaire "coût total" (intrants 3x moins chers), lobbying pour l\'égalité des subventions bio/chimique, certification Ecocert comme gage de qualité, contrats long terme avec les agro-industries.',
+    consequences: 'Guerre des prix, augmentation du CAC, difficulté à pénétrer les réseaux de distribution traditionnels, part de marché limitée à 5% au lieu de 18% ciblé.',
+  },
+  {
+    name: 'Capacité de production insuffisante',
+    likelihood: 3, impact: 4, category: 'technique',
+    description: 'La production de biofertilisant repose sur un processus biologique spécifique nécessitant des conditions contrôlées. L\'unité de production initiale peut ne pas suffire à répondre à la demande si celle-ci dépasse les prévisions, créant des ruptures de stock et des retards de livraison. Le processus de fermentation et de conditionnement a une capacité maximale qui ne peut être étendue rapidement.',
+    mitigation: 'Investissement progressif dans la capacité (extension prévue Année 2), stock tampon de 3 mois, contrat de sous-traitance avec un partenaire local, pré-commandes pour anticiper la demande, plan d\'expansion modulaire de l\'unité de production.',
+    consequences: 'Perte de ventes estimée à 15-25% du CA potentiel, insatisfaction client, risques de retournement vers la concurrence chimique, dégradation de la réputation.',
+  },
+  {
+    name: 'Retard réglementaire et certification',
+    likelihood: 2, impact: 3, category: 'reglementaire',
+    description: 'L\'homologation et la certification des biofertilisants en Côte d\'Ivoire impliquent des procédures administratives longues (DPVC, Ministère de l\'Agriculture). Les délais peuvent s\'étirer au-delà de 6 mois en raison de la complexité du cadre réglementaire pour les produits biologiques, qui est encore en construction. L\'absence de normes spécifiques aux biofertilisants ajoute de l\'incertitude.',
+    mitigation: 'Engagement précoce avec les autorités (DPVC, FIRCA), constitution du dossier réglementaire dès le lancement, recours à un cabinet spécialisé en homologation, appui du Ministère de l\'Agriculture via la Stratégie Bio 2030, certificat Ecocert international en parallèle.',
+    consequences: 'Retard du lancement de 3 à 6 mois, impossibilité de vendre légalement pendant la période d\'homologation, perte de CA estimée à 4-5M Fcfa par trimestre de retard.',
+  },
+  {
+    name: 'Instabilité des prix des matières premières',
+    likelihood: 3, impact: 2, category: 'financier',
+    description: 'Les matières premières entrant dans la fabrication du biofertilisant (composants biologiques, emballages, additifs) sont sujettes à des fluctuations de prix liées au marché mondial, à la disponibilité locale et aux taux de change (Franc CFA / Euro). Une hausse des coûts d\'intrants réduit directement la marge brute et peut compromettre la rentabilité du projet.',
+    mitigation: 'Contrats d\'approvisionnement à prix fixe sur 12 mois, diversification des fournisseurs (minimum 3 par matière), constitution de stocks de sécurité, clause d\'indexation dans les contrats commerciaux, ajustement tarifaire progressif.',
+    consequences: 'Réduction de la marge brute de 5 à 10 points, pression sur les prix de vente, nécessité d\'augmenter les tarifs ce qui affecte la compétitivité.',
+  },
+  {
+    name: 'Dépendance au partenaire exclusif',
+    likelihood: 2, impact: 4, category: 'stratégique',
+    description: 'Le partenariat exclusif avec le Comptoir Agropastoral CI concentre un risque important : en cas de désaccord, de retrait ou de défaillance du partenaire, l\'ensemble de la stratégie d\'implantation est compromise. Le partenaire détient un pouvoir de négociation élevé et contrôle l\'accès au marché local, les relations institutionnelles et une partie de la logistique.',
+    mitigation: 'Négociation d\'un contrat cadre avec clauses de protection (préavis 12 mois, non-concurrence, transfert de savoir-faire), développement progressif d\'une équipe locale indépendante, diversification des partenariats (ANADER, FIRCA, CNRA), clause d\'exclusivité limitée dans le temps (3 ans renouvelable).',
+    consequences: 'Perte d\'accès au marché ivoirien, retrait des relations institutionnelles, interruption de la distribution, coûts de restructuration estimés à 10-15M Fcfa.',
+  },
+  {
+    name: 'Conditions météorologiques défavorables',
+    likelihood: 3, impact: 2, category: 'technique',
+    description: 'Le changement climatique expose la Côte d\'Ivoire à des épisodes de sécheresse accrue, d\'inondations ou de perturbations saisonnières. Ces aléas affectent directement les campagnes agricoles, réduisant la demande en fertilisants et pouvant endommager les cultures témoins utilisées pour les démonstrations. Ils impactent aussi les conditions de production du biofertilisant.',
+    mitigation: 'Calendrier de production adapté aux saisons, stockage sécurisé anti-humidité, assurance catastrophe naturelle, démonstrations en conditions contrôlées (serres), diversification géographique des zones de démonstration, communication sur la résilience du produit face au stress hydrique.',
+    consequences: 'Baisse temporaire de la demande de 10-20%, annulation de démonstrations terrain, retard dans le cycle de preuves de résultat.',
+  },
+  {
+    name: 'Contrefaçon et violation de propriété intellectuelle',
+    likelihood: 2, impact: 3, category: 'commercial',
+    description: 'Le succès du produit pourrait attirer des contrefacteurs proposant des imitations de qualité inférieure sous une apparence similaire. En Afrique de l\'Ouest, la protection de la propriété intellectuelle est difficile à faire respecter. Des produits contrefaits pourraient nuire gravement à la réputation du biofertilisant Biodynamie et créer une confusion chez les agriculteurs.',
+    mitigation: 'Dépôt de marque OAPI (Organisation Africaine de la Propriété Intellectuelle), hologrammes et codes QR authentification sur chaque packaging, programme de sensibilisation des distributeurs, actions juridiques rapides, certificat d\'authenticité numéroté, collaboration avec les autorités douanières.',
+    consequences: 'Atteinte à la réputation, perte de confiance des clients, CA détourné estimé à 5-10% du marché, coûts juridiques et d\'anti-contrefaçon.',
+  },
 ]
 
 const timelineData = [
@@ -1991,32 +2040,123 @@ export default function BusinessPlanApp() {
 
           {/* ═══════ RISQUES ═══════ */}
           <AnimatedSection id="risques">
-            <SectionHeader icon={Shield} title="Analyse des Risques" subtitle="Identification et mitigation" />
-            <Card className="border-0 shadow-md">
-              <CardContent className="p-6">
-                <div className="grid gap-3">
-                  {riskData.map((risk, i) => {
-                    const score = risk.likelihood * risk.impact
-                    const level = score >= 12 ? 'Critique' : score >= 8 ? 'Élevé' : score >= 4 ? 'Moyen' : 'Faible'
-                    const levelColor = score >= 12 ? C.danger : score >= 8 ? C.warning : score >= 4 ? C.gold : C.success
-                    return (
-                      <div key={i} className="flex items-center gap-4 p-3 rounded-lg" style={{ backgroundColor: `${levelColor}06` }}>
-                        <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: levelColor }} />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium" style={{ color: C.primary }}>{risk.name}</p>
+            <SectionHeader icon={Shield} title="Analyse des Risques" subtitle="Identification, évaluation et mitigation" />
+
+            {/* ─── Summary bar ─── */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {(() => {
+                const levels = riskData.map(r => {
+                  const s = r.likelihood * r.impact
+                  return s >= 12 ? 'Critique' : s >= 8 ? 'Élevé' : s >= 4 ? 'Moyen' : 'Faible'
+                })
+                const counts = { Critique: levels.filter(l => l === 'Critique').length, Élevé: levels.filter(l => l === 'Élevé').length, Moyen: levels.filter(l => l === 'Moyen').length, Faible: levels.filter(l => l === 'Faible').length }
+                return [
+                  { label: 'Critique', count: counts.Critique, color: C.danger, icon: AlertTriangle },
+                  { label: 'Élevé', count: counts.Élevé, color: C.warning, icon: Shield },
+                  { label: 'Moyen', count: counts.Moyen, color: C.gold, icon: Info },
+                  { label: 'Faible', count: counts.Faible, color: C.success, icon: CheckCircle2 },
+                ].map((s, i) => (
+                  <motion.div key={i} whileHover={{ scale: 1.03 }} className="p-4 rounded-xl text-center" style={{ backgroundColor: `${s.color}08`, border: `1px solid ${s.color}20` }}>
+                    <s.icon size={20} className="mx-auto mb-1.5" style={{ color: s.color }} />
+                    <p className="text-2xl font-bold" style={{ color: s.color }}>{s.count}</p>
+                    <p className="text-xs" style={{ color: C.muted }}>{s.label}</p>
+                  </motion.div>
+                ))
+              })()}
+            </div>
+
+            {/* ─── Accordion détaillé par catégorie ─── */}
+            {(() => {
+              const categories = [
+                { key: 'commercial', label: 'Risques Commerciaux', icon: Megaphone, color: C.warning },
+                { key: 'technique', label: 'Risques Techniques', icon: Zap, color: C.orange },
+                { key: 'financier', label: 'Risques Financiers', icon: DollarSign, color: C.gold },
+                { key: 'reglementaire', label: 'Risques Réglementaires', icon: Scale, color: C.info },
+                { key: 'stratégique', label: 'Risques Stratégiques', icon: Target, color: C.purple },
+              ]
+              return categories.map(cat => {
+                const risks = riskData.filter(r => r.category === cat.key)
+                if (risks.length === 0) return null
+                return (
+                  <Card key={cat.key} className="border-0 shadow-md mb-4">
+                    <CardContent className="p-0">
+                      <div className="flex items-center gap-3 px-5 py-3.5 rounded-t-xl" style={{ backgroundColor: `${cat.color}08`, borderBottom: `2px solid ${cat.color}20` }}>
+                        <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${cat.color}15` }}>
+                          <cat.icon size={16} style={{ color: cat.color }} />
                         </div>
-                        <Badge className="text-xs border-0 shrink-0" style={{ backgroundColor: `${levelColor}15`, color: levelColor }}>{risk.category}</Badge>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <span className="text-xs" style={{ color: C.muted }}>P:{risk.likelihood}</span>
-                          <span className="text-xs" style={{ color: C.muted }}>I:{risk.impact}</span>
-                        </div>
-                        <Badge className="text-xs border-0 shrink-0" style={{ backgroundColor: `${levelColor}15`, color: levelColor }}>{level}</Badge>
+                        <h3 className="text-sm font-bold" style={{ color: cat.color }}>{cat.label}</h3>
+                        <Badge className="text-[10px] border-0 ml-auto" style={{ backgroundColor: `${cat.color}15`, color: cat.color }}>{risks.length} risque{risks.length > 1 ? 's' : ''}</Badge>
                       </div>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
+                      <Accordion type="multiple" className="px-2">
+                        {risks.map((risk, ri) => {
+                          const score = risk.likelihood * risk.impact
+                          const level = score >= 12 ? 'Critique' : score >= 8 ? 'Élevé' : score >= 4 ? 'Moyen' : 'Faible'
+                          const levelColor = score >= 12 ? C.danger : score >= 8 ? C.warning : score >= 4 ? C.gold : C.success
+                          return (
+                            <AccordionItem key={ri} value={`${cat.key}-${ri}`} className="border-b last:border-b-0">
+                              <AccordionTrigger className="hover:no-underline py-3 px-2">
+                                <div className="flex items-center gap-3 flex-1 min-w-0 text-left">
+                                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: levelColor }} />
+                                  <span className="text-sm font-semibold" style={{ color: C.primary }}>{risk.name}</span>
+                                  <div className="ml-auto flex items-center gap-2 shrink-0 mr-2">
+                                    <div className="flex items-center gap-1">
+                                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: `${C.info}10`, color: C.info }}>P:{risk.likelihood}</span>
+                                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: `${C.warning}10`, color: C.warning }}>I:{risk.impact}</span>
+                                    </div>
+                                    <Badge className="text-[10px] border-0" style={{ backgroundColor: `${levelColor}15`, color: levelColor }}>{level}</Badge>
+                                  </div>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent className="px-2 pb-4">
+                                <div className="space-y-4 pl-5">
+                                  {/* Score visuel */}
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <span className="text-xs font-medium" style={{ color: C.muted }}>Score de risque :</span>
+                                    <div className="flex items-center gap-1.5">
+                                      {Array.from({ length: 5 }).map((_, si) => (
+                                        <div key={si} className="w-5 h-2 rounded-sm" style={{ backgroundColor: si < score / 4 ? levelColor : `${levelColor}20` }} />
+                                      ))}
+                                    </div>
+                                    <span className="text-xs font-bold" style={{ color: levelColor }}>{score}/20</span>
+                                  </div>
+
+                                  {/* Description */}
+                                  <div className="p-4 rounded-xl" style={{ backgroundColor: `${C.primary}04`, borderLeft: `3px solid ${cat.color}` }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <Info size={14} style={{ color: cat.color }} />
+                                      <h4 className="text-xs font-bold uppercase tracking-wider" style={{ color: cat.color }}>Description</h4>
+                                    </div>
+                                    <p className="text-sm leading-relaxed" style={{ color: C.text }}>{risk.description}</p>
+                                  </div>
+
+                                  {/* Mitigation */}
+                                  <div className="p-4 rounded-xl" style={{ backgroundColor: `${C.success}06`, borderLeft: `3px solid ${C.success}` }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <Shield size={14} style={{ color: C.success }} />
+                                      <h4 className="text-xs font-bold uppercase tracking-wider" style={{ color: C.success }}>Plan de mitigation</h4>
+                                    </div>
+                                    <p className="text-sm leading-relaxed" style={{ color: C.text }}>{risk.mitigation}</p>
+                                  </div>
+
+                                  {/* Conséquences */}
+                                  <div className="p-4 rounded-xl" style={{ backgroundColor: `${C.danger}04`, borderLeft: `3px solid ${C.danger}` }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <AlertTriangle size={14} style={{ color: C.danger }} />
+                                      <h4 className="text-xs font-bold uppercase tracking-wider" style={{ color: C.danger }}>Conséquences si non maîtrisé</h4>
+                                    </div>
+                                    <p className="text-sm leading-relaxed" style={{ color: C.text }}>{risk.consequences}</p>
+                                  </div>
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          )
+                        })}
+                      </Accordion>
+                    </CardContent>
+                  </Card>
+                )
+              })
+            })()}
           </AnimatedSection>
 
           {/* ═══════ VISION 5 ANS ═══════ */}
