@@ -169,7 +169,7 @@ const marketingKPIData = [
 const mix4P = [
   { P: 'Produit', icon: Leaf, color: C.accent, items: [
     'Biofertilisant 100% naturel, pH 7.5',
-    '3 conditionnements : 100g, 500g, 1kg',
+    '2 conditionnements : 500g, 1kg',
     'Certification bio en cours (Ecocert)',
     'Garantie "Résultats visibles sous 10 jours"',
     'Programme "1 tonne test" gratuit',
@@ -758,9 +758,8 @@ export default function BusinessPlanApp() {
                   <h3 className="text-xl font-semibold mb-4" style={{ color: C.primary }}>Gamme de Produits</h3>
                   <div className="space-y-4">
                     {[
-                      { name: 'Pack Découverte', weight: '100 g', price: '60 000', stdPrice: '100 000', target: 'Maraîchers urbains, testeurs', color: C.accent },
-                      { name: 'Pack Standard', weight: '500 g', price: '300 000', stdPrice: '500 000', target: 'Coopératives, exploitants', color: C.gold },
-                      { name: 'Pack Pro', weight: '1 kg', price: '600 000', stdPrice: '1 000 000', target: 'Agro-industries, R&D', color: C.accentDark },
+                      { name: 'Pack Standard', weight: '500 g', price: '300 000', stdPrice: '500 000', target: 'Maraîchers, coopératives, exploitants', color: C.accent },
+                      { name: 'Pack Pro', weight: '1 kg', price: '600 000', stdPrice: '1 000 000', target: 'Agro-industries, grandes exploitations, R&D', color: C.accentDark },
                     ].map((pack, i) => (
                       <motion.div key={i} whileHover={{ scale: 1.01 }} className="p-4 rounded-xl border" style={{ borderColor: `${pack.color}30`, backgroundColor: `${pack.color}08` }}>
                         <div className="flex justify-between items-start">
