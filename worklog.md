@@ -132,3 +132,30 @@ Stage Summary:
 - Accent bar uses spring animation for satisfying interaction feel
 - Consistent across all 3 tab sections (Marketing, Financial, Annexes)
 - App compiles and renders correctly
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Improve funnel (entonnoir) layout — data was stuck together and poorly arranged
+
+Work Log:
+- Analyzed user-uploaded screenshot showing original funnel issues:
+  - Values and percentages concatenated (e.g., "25 00025%") with no spacing
+  - Bars too narrow (8%, 2%, 0.5% width) making content unreadable
+  - Inconsistent layout between stages
+- Redesigned funnel section with modern card-based layout:
+  - Centered trapezoid-shaped bars with decreasing widths: [100%, 80%, 60%, 40%, 25%]
+  - Each bar has: colored left border, number badge, step name, bold value, percentage pill
+  - Values and percentages clearly separated in distinct styled elements
+  - Drop-off indicators between steps showing abandonment percentage
+  - Hover scale effect (1.02x) on each step
+  - Entry animation with staggered delays
+- Added border styling (left border solid, other borders semi-transparent)
+- Added conversion rate summary card with border accent
+
+Stage Summary:
+- Funnel now displays data with clear separation between labels, values, and percentages
+- Visual funnel shape achieved through decreasing widths
+- Drop-off indicators between steps provide conversion context
+- No more concatenated/stuck-together data
+- App compiles and renders correctly

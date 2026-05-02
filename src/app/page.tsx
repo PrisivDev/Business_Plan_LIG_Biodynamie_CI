@@ -1324,24 +1324,52 @@ export default function BusinessPlanApp() {
                   <Card className="border-0 shadow-md">
                     <CardHeader><CardTitle style={{ color: C.primary }}>Entonnoir de Conversion</CardTitle></CardHeader>
                     <CardContent>
-                      <div className="space-y-3">
-                        {funnelData.map((step, i) => (
-                          <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}>
-                            <div className="flex items-center gap-4">
-                              <div className="w-28 text-right">
-                                <p className="text-sm font-semibold" style={{ color: step.color }}>{step.step}</p>
-                              </div>
-                              <div className="flex-1">
-                                <div className="h-10 rounded-lg flex items-center px-4 justify-between" style={{ backgroundColor: `${step.color}15`, width: `${step.pct}%`, minWidth: '60px' }}>
-                                  <span className="text-xs font-medium" style={{ color: step.color }}>{fmt(step.value)}</span>
-                                  <span className="text-xs" style={{ color: C.muted }}>{step.pct}%</span>
+                      <div className="space-y-2">
+                        {funnelData.map((step, i) => {
+                          const widths = [100, 80, 60, 40, 25]
+                          const dropOff = i > 0 ? ((funnelData[i - 1].value - step.value) / funnelData[i - 1].value * 100).toFixed(0) : null
+                          return (
+                            <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
+                              {/* Funnel bar - centered, trapezoid shape */}
+                              <div className="flex justify-center">
+                                <div
+                                  className="rounded-xl px-5 py-3 transition-all duration-300 hover:scale-[1.02]"
+                                  style={{
+                                    width: `${widths[i]}%`,
+                                    backgroundColor: `${step.color}18`,
+                                    borderLeft: `4px solid ${step.color}`,
+                                    borderTop: `1px solid ${step.color}30`,
+                                    borderRight: `1px solid ${step.color}30`,
+                                    borderBottom: `1px solid ${step.color}30`,
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                      <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white shrink-0" style={{ backgroundColor: step.color }}>{i + 1}</span>
+                                      <span className="text-sm font-semibold truncate" style={{ color: step.color }}>{step.step}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 shrink-0">
+                                      <span className="text-sm font-bold" style={{ color: step.color }}>{fmt(step.value)}</span>
+                                      <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: `${step.color}20`, color: step.color }}>{step.pct}%</span>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </motion.div>
-                        ))}
+                              {/* Drop-off indicator between steps */}
+                              {i < funnelData.length - 1 && (
+                                <div className="flex justify-center py-1">
+                                  <div className="flex items-center gap-2 text-xs" style={{ color: C.muted }}>
+                                    <div className="w-px h-3" style={{ backgroundColor: `${C.muted}40` }} />
+                                    <span className="italic">-{dropOff}% d&apos;abandon</span>
+                                    <ChevronDown className="w-3 h-3" />
+                                  </div>
+                                </div>
+                              )}
+                            </motion.div>
+                          )
+                        })}
                       </div>
-                      <div className="mt-6 p-4 rounded-xl" style={{ backgroundColor: `${C.accent}08` }}>
+                      <div className="mt-6 p-4 rounded-xl" style={{ backgroundColor: `${C.accent}08`, border: `1px solid ${C.accent}20` }}>
                         <h4 className="font-semibold text-sm mb-2" style={{ color: C.accentDark }}>Taux de conversion global</h4>
                         <div className="flex items-center gap-4">
                           <p className="text-3xl font-bold" style={{ color: C.accent }}>0.5%</p>
