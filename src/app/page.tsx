@@ -1264,7 +1264,7 @@ export default function BusinessPlanApp() {
             <SectionHeader icon={Megaphone} title="Stratégie Marketing & Commerciale" subtitle="Volet ultra détaillé — Segmentation, Positionnement, Mix, KPIs" color={C.purple} />
 
             <Tabs defaultValue="personas" className="space-y-6">
-              <TabsList className="bg-white shadow-sm flex-wrap h-auto gap-1 p-1">
+              <TabsList className="w-full flex-wrap">
                 <TabsTrigger value="personas">Personas</TabsTrigger>
                 <TabsTrigger value="funnel">Entonnoir</TabsTrigger>
                 <TabsTrigger value="mix4p">Mix 4P</TabsTrigger>
@@ -1591,7 +1591,7 @@ export default function BusinessPlanApp() {
             <SectionHeader icon={BarChart3} title="Plan Financier Prévisionnel" subtitle="Volet ultra détaillé — Comptes, Ratios, VAN/TRI, Sensibilité" color={C.accentDark} />
 
             <Tabs defaultValue="resultat" className="space-y-6">
-              <TabsList className="bg-white shadow-sm flex-wrap h-auto gap-1 p-1">
+              <TabsList className="w-full flex-wrap">
                 <TabsTrigger value="resultat">Compte de Résultat</TabsTrigger>
                 <TabsTrigger value="bilan">Bilan</TabsTrigger>
                 <TabsTrigger value="tresorerie">Trésorerie</TabsTrigger>
@@ -2207,7 +2207,7 @@ export default function BusinessPlanApp() {
             <SectionHeader icon={BookOpen} title="Annexes" subtitle="Glossaire des abréviations et termes techniques" color={C.info} />
 
             <Tabs defaultValue="finance" className="space-y-6">
-              <TabsList className="bg-white shadow-sm flex-wrap h-auto gap-1 p-1">
+              <TabsList className="w-full flex-wrap">
                 <TabsTrigger value="finance">Finance & Comptabilité</TabsTrigger>
                 <TabsTrigger value="marketing-tab">Marketing & Vente</TabsTrigger>
                 <TabsTrigger value="institutions">Institutions & Partenaires</TabsTrigger>

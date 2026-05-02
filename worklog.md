@@ -107,3 +107,28 @@ Stage Summary:
 - 8 risks fully described with mitigation plans and consequence analysis
 - Visual summary bar shows risk distribution at a glance
 - App compiles and renders correctly
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Improve active/inactive tab styling with modernity and aesthetics
+
+Work Log:
+- Analyzed uploaded screenshots showing original tab design (flat, monochrome, no visual hierarchy)
+- Read current tabs.tsx component (shadcn/ui default with muted backgrounds)
+- Identified 3 TabsList usages across the app (Marketing, Financial, Annexes sections)
+- Redesigned the tabs.tsx component from scratch with:
+  - **TabsList**: Frosted glass container with `bg-[#0C1F1A]/[0.04]`, inset shadow, subtle border, rounded-2xl
+  - **TabsTrigger (inactive)**: Muted gray text (`text-[#5B6B7D]/50`), transparent background, hover shows white/40 bg
+  - **TabsTrigger (active)**: White background with green shadow, green ring, bold dark text, gradient accent bar
+  - **Accent bar**: `after:` pseudo-element with `bg-gradient-to-r from-[#3DDBB5] via-[#2A7A65] to-[#3DDBB5]`, animates with spring easing
+  - Hover state shows preview of accent bar (width 3, opacity 40%)
+- Updated all 3 TabsList classNames in page.tsx to remove conflicting classes
+- Verified via VLM analysis: active tab has white bg + green accent bar + shadow; inactive tabs are muted
+
+Stage Summary:
+- Tabs now have a distinctive, branded look matching the Biodynamie Forest Mint palette
+- Clear visual hierarchy: active = white + green accent bar + shadow; inactive = muted transparent
+- Accent bar uses spring animation for satisfying interaction feel
+- Consistent across all 3 tab sections (Marketing, Financial, Annexes)
+- App compiles and renders correctly
