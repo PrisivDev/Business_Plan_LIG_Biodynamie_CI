@@ -539,7 +539,7 @@ export default function BusinessPlanApp() {
                 Découvrir le Business Plan <ChevronDown className="ml-2" size={18} />
               </Button>
               <a href="/Business_Plan_LIG_Biodynamie_CI.docx" download>
-                <Button size="lg" variant="outline" className="text-base px-8 py-6 border-white/30 text-white hover:bg-white/10">
+                <Button size="lg" className="text-base px-8 py-6 border-2 border-white/40 bg-white/10 text-white hover:bg-white/20 hover:border-white/60">
                   <Download className="mr-2" size={18} /> Télécharger le DOCX
                 </Button>
               </a>
@@ -2015,7 +2015,7 @@ export default function BusinessPlanApp() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-xs text-white/40">&copy; 2026 Comptoir Agropastoral CI. Tous droits réservés.</p>
             <a href="/Business_Plan_LIG_Biodynamie_CI.docx" download>
-              <Button variant="outline" size="sm" className="border-white/20 text-white/60 hover:bg-white/10 hover:text-white text-xs">
+              <Button size="sm" className="border border-white/30 bg-white/10 text-white/80 hover:bg-white/20 hover:text-white text-xs">
                 <Download size={14} className="mr-1.5" /> Télécharger le Business Plan (DOCX)
               </Button>
             </a>
