@@ -15,7 +15,7 @@ import {
   Megaphone, Eye, MousePointerClick, UserPlus, Repeat, Clock,
   Wallet, PiggyBank, Scale, Activity, Percent, ArrowRight,
   BarChart2, LineChart as LineChartIcon, PieChart as PieChartIcon, Target as TargetIcon,
-  Zap, Building2, Truck, GraduationCap, Star, Timer
+  Zap, Building2, Truck, GraduationCap, Star, Timer, BookOpen, Info
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -337,6 +337,7 @@ const sections = [
   { id: 'financier', label: 'Financier', icon: BarChart3 },
   { id: 'risques', label: 'Risques', icon: Shield },
   { id: 'vision', label: 'Vision', icon: Award },
+  { id: 'annexes', label: 'Annexes', icon: BookOpen },
 ]
 
 // ─── Animated Section Component ───
@@ -1691,6 +1692,282 @@ export default function BusinessPlanApp() {
                       <p className="text-xl font-bold" style={{ color: C.primary }}>{kpi.value}</p>
                       <p className="text-xs" style={{ color: C.muted }}>{kpi.label}</p>
                     </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </AnimatedSection>
+
+          {/* ═══════ ANNEXES — GLOSSAIRE ═══════ */}
+          <AnimatedSection id="annexes">
+            <SectionHeader icon={BookOpen} title="Annexes" subtitle="Glossaire des abréviations et termes techniques" color={C.info} />
+
+            <Tabs defaultValue="finance" className="space-y-6">
+              <TabsList className="bg-white shadow-sm flex-wrap h-auto gap-1 p-1">
+                <TabsTrigger value="finance">Finance & Comptabilité</TabsTrigger>
+                <TabsTrigger value="marketing-tab">Marketing & Vente</TabsTrigger>
+                <TabsTrigger value="institutions">Institutions & Partenaires</TabsTrigger>
+                <TabsTrigger value="technique">Agronomie & Technique</TabsTrigger>
+                <TabsTrigger value="juridique">Juridique & Réglementaire</TabsTrigger>
+              </TabsList>
+
+              {/* ─── FINANCE & COMPTABILITÉ ─── */}
+              <TabsContent value="finance">
+                <Card className="border-0 shadow-md">
+                  <CardHeader><CardTitle style={{ color: C.primary }}>Finance & Comptabilité</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr style={{ backgroundColor: C.primary }}>
+                            <th className="text-left p-3 text-white font-semibold w-36">Abréviation</th>
+                            <th className="text-left p-3 text-white font-semibold w-56">Terme complet</th>
+                            <th className="text-left p-3 text-white font-semibold">Définition</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { abbr: 'CA', full: 'Chiffre d\'Affaires', def: 'Montant total des ventes de biens et services réalisées par une entreprise sur un exercice comptable. Indicateur clé de l\'activité commerciale.' },
+                            { abbr: 'EBIT', full: 'Earnings Before Interest and Taxes', def: 'Résultat opérationnel avant charges financières et impôts. Mesure la performance économique de l\'activité indépendamment de la structure financière.' },
+                            { abbr: 'RN', full: 'Résultat Net', def: 'Résultat après déduction de toutes les charges (exploitation, financières, impôts). C\'est le bénéfice ou la perte finale de l\'entreprise.' },
+                            { abbr: 'MB', full: 'Marge Brute', def: 'Différence entre le chiffre d\'affaires et les coûts variables (coût des marchandises vendues). Indicateur de la capacité à couvrir les charges fixes.' },
+                            { abbr: 'VAN', full: 'Valeur Actuelle Nette', def: 'Somme des flux de trésorerie actualisés au taux requis par l\'investisseur. Une VAN positive signifie que le projet crée de la valeur. Calcul : VAN = Σ(Flux / (1+t)^n) - Investissement initial.' },
+                            { abbr: 'TRI', full: 'Taux de Rendement Interne', def: 'Taux d\'actualisation pour lequel la VAN est égale à zéro. C\'est le rendement moyen annuel du projet. Si TRI > coût du capital, le projet est rentable.' },
+                            { abbr: 'ROE', full: 'Return on Equity', def: 'Rentabilité des capitaux propres = Résultat net / Capitaux propres. Mesure le rendement offert aux actionnaires sur leur investissement.' },
+                            { abbr: 'ROA', full: 'Return on Assets', def: 'Rentabilité de l\'actif = Résultat net / Total actif. Mesure l\'efficacité globale de l\'utilisation des actifs pour générer du profit.' },
+                            { abbr: 'ROCE', full: 'Return on Capital Employed', def: 'Résultat opérationnel / Capitaux engagés. Mesure la rentabilité des capitaux investis dans l\'activité (actif économique).' },
+                            { abbr: 'BFR', full: 'Besoin en Fonds de Roulement', def: 'Différence entre les actifs circulants (stocks + créances) et les dettes d\'exploitation. Un BFR négatif signifie un besoin de financement à court terme.' },
+                            { abbr: 'RAN', full: 'Report À Nouveau', def: 'Bénéfice ou perte des exercices antérieurs non distribués et non affectés dans les réserves. Figure au passif du bilan dans les capitaux propres.' },
+                            { abbr: 'Fcfa', full: 'Franc CFA (FCFA)', def: 'Monnaie utilisée par 14 pays d\'Afrique de l\'Ouest et centrale. Taux fixe : 1 EUR = 655,957 FCFA. Le FCFA est garanti par le Trésor français.' },
+                            { abbr: 'IS', full: 'Impôt sur les Sociétés', def: 'Impôt proportionnel sur les bénéfices des entreprises. En Côte d\'Ivoire, le taux standard est de 25%. S\'applique uniquement en cas de bénéfice.' },
+                          ].map((row, i) => (
+                            <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                              <td className="p-3 font-bold" style={{ color: C.accentDark }}>{row.abbr}</td>
+                              <td className="p-3 font-medium" style={{ color: C.primary }}>{row.full}</td>
+                              <td className="p-3" style={{ color: C.text }}>{row.def}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* ─── MARKETING & VENTE ─── */}
+              <TabsContent value="marketing-tab">
+                <Card className="border-0 shadow-md">
+                  <CardHeader><CardTitle style={{ color: C.primary }}>Marketing & Vente</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr style={{ backgroundColor: C.primary }}>
+                            <th className="text-left p-3 text-white font-semibold w-36">Abréviation</th>
+                            <th className="text-left p-3 text-white font-semibold w-56">Terme complet</th>
+                            <th className="text-left p-3 text-white font-semibold">Définition</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { abbr: 'CAC', full: 'Coût d\'Acquisition Client', def: 'Coût total pour acquérir un nouveau client (marketing + commerciaux / nombre de nouveaux clients). Un CAC faible est préférable. CAC = Budget acquisition / Nb clients acquis.' },
+                            { abbr: 'LTV', full: 'Lifetime Value', def: 'Valeur totale générée par un client sur toute la durée de sa relation avec l\'entreprise. LTV = Panier moyen × Fréquence d\'achat × Durée de vie client. Ratio LTV/CAC > 3x = modèle viable.' },
+                            { abbr: 'ROI', full: 'Return on Investment', def: 'Retour sur investissement = (Gain - Coût) / Coût × 100. Mesure la rentabilité d\'un investissement. Un ROI de 300% signifie que 1 FCFA investi rapporte 3 FCFA.' },
+                            { abbr: 'NPS', full: 'Net Promoter Score', def: 'Indice mesurant la fidélité et l\'ambassade client. Calcul : % Promoteurs (9-10/10) - % Détracteurs (0-6/10). Score > 50 = excellent, > 70 = exceptionnel.' },
+                            { abbr: 'KPI', full: 'Key Performance Indicator', def: 'Indicateur clé de performance. Mesure quantitative utilisée pour évaluer le succès par rapport à un objectif. Exemples : taux de conversion, CA, notoriété.' },
+                            { abbr: 'SEO', full: 'Search Engine Optimization', def: 'Optimisation pour les moteurs de recherche. Ensemble de techniques visant à améliorer le positionnement d\'un site web dans les résultats organiques de Google.' },
+                            { abbr: 'MoU', full: 'Memorandum of Understanding', def: 'Protocole d\'accord ou mémorandum d\'entente. Document pré-contractuel établissant les intentions de coopération entre deux parties avant la signature d\'un contrat définitif.' },
+                            { abbr: 'B2B', full: 'Business to Business', def: 'Commerce interentreprises. Modèle où l\'entreprise vend ses produits/services à d\'autres entreprises plutôt qu\'aux consommateurs finaux (ex : vente aux coopératives, agro-industries).' },
+                            { abbr: 'B2C', full: 'Business to Consumer', def: 'Commerce de l\'entreprise vers le consommateur final. Modèle de vente directe aux particuliers (ex : maraîchers urbains achetant en petite quantité).' },
+                          ].map((row, i) => (
+                            <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                              <td className="p-3 font-bold" style={{ color: C.accentDark }}>{row.abbr}</td>
+                              <td className="p-3 font-medium" style={{ color: C.primary }}>{row.full}</td>
+                              <td className="p-3" style={{ color: C.text }}>{row.def}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* ─── INSTITUTIONS & PARTENAIRES ─── */}
+              <TabsContent value="institutions">
+                <Card className="border-0 shadow-md">
+                  <CardHeader><CardTitle style={{ color: C.primary }}>Institutions & Partenaires</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr style={{ backgroundColor: C.primary }}>
+                            <th className="text-left p-3 text-white font-semibold w-36">Abréviation</th>
+                            <th className="text-left p-3 text-white font-semibold w-56">Nom complet</th>
+                            <th className="text-left p-3 text-white font-semibold">Description & Rôle</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { abbr: 'ANADER', full: 'Agence Nationale d\'Appui au Développement Rural', def: 'Établissement public ivoirien chargé de l\'encadrement technique des agriculteurs, de la vulgarisation agricole et de la formation rurale. Partenaire clé pour la diffusion du Biodynamie sur le terrain.' },
+                            { abbr: 'FIRCA', full: 'Fonds Interprofessionnel pour la Recherche et le Conseil Agricoles', def: 'Organisme ivoirien de financement de la recherche et du conseil agricoles. Finance des projets innovants dans le secteur agricole. Partenaire potentiel pour les programmes de test et de formation.' },
+                            { abbr: 'CNRA', full: 'Centre National de Recherche Agronomique', def: 'Principal organisme de recherche agronomique de Côte d\'Ivoire. Mène des recherches sur les cultures pérennes, vivrières et les systèmes de production. Partenaire de validation scientifique.' },
+                            { abbr: 'MINADER', full: 'Ministère de l\'Agriculture et du Développement Rural', def: 'Ministère ivoirien responsable de la politique agricole nationale. Pilote le PNIA II et la Stratégie Bio 2030. Cadre réglementaire et institutionnel pour les solutions biofertilisantes.' },
+                            { abbr: 'BAD', full: 'Banque Africaine de Développement', def: 'Institution financière panafricaine de développement. Finance des projets agricoles et de développement durable en Afrique. Source potentielle de financement pour le déploiement régional.' },
+                            { abbr: 'FAO', full: 'Organisation des Nations Unies pour l\'Alimentation et l\'Agriculture', def: 'Agence spécialisée de l\'ONU menant des programmes de sécurité alimentaire, d\'agriculture durable et de développement rural. Partenaire institutionnel de référence.' },
+                            { abbr: 'PNUD', full: 'Programme des Nations Unies pour le Développement', def: 'Réseau mondial de l\'ONU pour le développement. Soutient les pays dans leurs objectifs de développement durable. Partenaire potentiel pour les projets d\'agriculture écologique.' },
+                            { abbr: 'FIDA', full: 'Fonds International de Développement Agricole', def: 'Institution financière internationale spécialisée dans la réduction de la pauvreté rurale dans les pays en développement. Finance des projets d\'agriculture durable.' },
+                            { abbr: 'PALMCI', full: 'Palm-CI (Groupe SIFCA)', def: 'Leader ivoirien de la filière palmier à huile, filiale du groupe SIFCA. Utilise des milliers d\'hectares de plantations. Client cible majeur pour les biofertilisants à grande échelle.' },
+                            { abbr: 'SIFCA', full: 'Société Financière de la Côte d\'Ivoire', def: 'Groupe agro-industriel ouest-africain leader dans l\'hévéa, le palmier à huile et le sucre. Partenaire stratégique potentiel pour les tests à grande échelle et les contrats pluriannuels.' },
+                            { abbr: 'SAPH', full: 'Société Africaine de Plantations d\'Hévéas', def: 'Entreprise ivoirienne spécialisée dans la production de caoutchouc naturel. Filiale du groupe SIFCA. Client cible pour les plantations d\'hévéas.' },
+                            { abbr: 'SUCAF', full: 'Société Sucrière de la Côte d\'Ivoire', def: 'Entreprise agro-industrielle productrice de sucre en Côte d\'Ivoire. Exploite des milliers d\'hectares de canne à sucre. Client cible pour les grandes cultures.' },
+                            { abbr: 'RTI', full: 'Radiodiffusion Télévision Ivoirienne', def: 'Chaîne de télévision et radio publique de Côte d\'Ivoire. Couverture nationale. Partenaire média pour la couverture du lancement officiel et des événements.' },
+                            { abbr: 'INPHB', full: 'Institut National Polytechnique Félix Houphouët-Boigny', def: 'Grande école d\'ingénieurs de Côte d\'Ivoire à Yamoussoukro. Partenaire académique potentiel pour la R&D et la formation d\'ingénieurs agronomes.' },
+                          ].map((row, i) => (
+                            <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                              <td className="p-3 font-bold" style={{ color: C.accentDark }}>{row.abbr}</td>
+                              <td className="p-3 font-medium" style={{ color: C.primary }}>{row.full}</td>
+                              <td className="p-3" style={{ color: C.text }}>{row.def}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* ─── AGRONOMIE & TECHNIQUE ─── */}
+              <TabsContent value="technique">
+                <Card className="border-0 shadow-md">
+                  <CardHeader><CardTitle style={{ color: C.primary }}>Agronomie & Technique</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr style={{ backgroundColor: C.primary }}>
+                            <th className="text-left p-3 text-white font-semibold w-36">Terme</th>
+                            <th className="text-left p-3 text-white font-semibold w-56">Catégorie</th>
+                            <th className="text-left p-3 text-white font-semibold">Définition</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { abbr: 'Biofertilisant', cat: 'Agronomie', def: 'Substance contenant des micro-organismes vivants qui favorisent la croissance des plantes en augmentant la disponibilité des nutriments dans le sol. Contrairement aux engrais chimiques, il régénère l\'écosystème du sol.' },
+                            { abbr: 'Biodynamie', cat: 'Agronomie', def: 'Méthode agricole écologique intégrant les principes de l\'agriculture biologique avec des pratiques spirituelles et cosmiques. Dans notre contexte, désigne le biofertilisant breveté du Centre LIG.' },
+                            { abbr: 'Intrant', cat: 'Agronomie', def: 'Tout produit ou matière utilisé dans le processus de production agricole : engrais, pesticides, semences, traitements. Les intrants chimiques sont progressivement remplacés par des alternatives biologiques.' },
+                            { abbr: 'pH', cat: 'Chimie du sol', def: 'Potentiel hydrogène, mesure de l\'acidité ou de l\'alcalinité d\'un sol. Échelle de 0 à 14. Un pH de 7,5 (Biodynamie) est légèrement alcalin et compatible avec la plupart des cultures tropicales.' },
+                            { abbr: 'Rendement', cat: 'Agronomie', def: 'Quantité de production récoltée par unité de surface (ex : tonnes/hectare). L\'objectif de Biodynamie est d\'augmenter les rendements de +80% par rapport aux pratiques conventionnelles.' },
+                            { abbr: 'Biodégradable', cat: 'Écologie', def: 'Qui peut être décomposé par des organismes vivants (bactéries, champignons) en éléments naturels sans pollution. Le biofertilisant Biodynamie est 100% biodégradable contrairement aux engrais chimiques.' },
+                            { abbr: 'Sols tropicaux', cat: 'Pédologie', def: 'Sols caractéristiques des régions tropicales, souvent ferrallitiques, acides et appauvris en matière organique. Nécessitent des amendements spécifiques que le Biodynamie apporte.' },
+                            { abbr: 'R&D', full: 'Recherche et Développement', def: 'Activités de recherche fondamentale et appliquée visant à créer de nouveaux produits ou améliorer les existants. Le Centre LIG a plus de 20 ans de R&D sur le biofertilisant Biodynamie.' },
+                            { abbr: 'Pisciculture zéro nourrissage', cat: 'Innovation LIG', def: 'Technique exclusive du Centre LIG consistant à élever des poissons sans apport alimentaire externe. Les rejets piscicoles servent de base au biofertilisant, garantissant un produit 100% naturel et économique.' },
+                            { abbr: 'Rotation des stocks', cat: 'Logistique', def: 'Indicateur mesurant la vitesse à laquelle les stocks sont renouvelés. Calcul : Stock moyen / Coût des marchandises vendues × 365. Une rotation rapide indique une gestion efficace.' },
+                            { abbr: 'Ecocert', cat: 'Certification', def: 'Organisme de certification internationale spécialisé dans l\'agriculture biologique et le développement durable. La certification Ecocert garantit le respect des normes bio européennes et internationales.' },
+                          ].map((row, i) => (
+                            <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                              <td className="p-3 font-bold" style={{ color: C.accentDark }}>{row.abbr}</td>
+                              <td className="p-3 font-medium" style={{ color: C.primary }}>{row.cat}{row.full ? ` — ${row.full}` : ''}</td>
+                              <td className="p-3" style={{ color: C.text }}>{row.def}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* ─── JURIDIQUE & RÉGLEMENTAIRE ─── */}
+              <TabsContent value="juridique">
+                <Card className="border-0 shadow-md">
+                  <CardHeader><CardTitle style={{ color: C.primary }}>Juridique & Réglementaire</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr style={{ backgroundColor: C.primary }}>
+                            <th className="text-left p-3 text-white font-semibold w-36">Référence</th>
+                            <th className="text-left p-3 text-white font-semibold w-56">Intitulé</th>
+                            <th className="text-left p-3 text-white font-semibold">Description & Impact pour LIG</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { abbr: 'Loi n°2015-537', full: 'Loi relative à la modernisation agricole', def: 'Loi ivoirienne encadrant la modernisation du secteur agricole. Favorise l\'innovation, l\'adoption de nouvelles technologies et l\'accès aux financements pour les acteurs agricoles. Cadre favorable pour l\'introduction de biofertilisants.' },
+                            { abbr: 'PNIA II', full: 'Programme National d\'Investissement Agricole II', def: 'Plan stratégique ivoirien (2018-2025) pour le développement du secteur agricole. Priorise la sécurité alimentaire, l\'agro-industrie et l\'agriculture durable. Alignement stratégique direct avec les objectifs de LIG Biodynamie.' },
+                            { abbr: 'PNDAD', full: 'Programme National de Développement Agricole Durable', def: 'Programme gouvernemental ivoirien visant à concilier développement agricole et durabilité environnementale. Soutient les pratiques agro-écologiques et la transition vers le bio.' },
+                            { abbr: 'Stratégie Bio 2030', full: 'Stratégie Nationale de l\'Agriculture Biologique', def: 'Politique gouvernementale ivoirienne ambitionnant de développer l\'agriculture biologique d\'ici 2030. Crée des opportunités de subventions, de certifications et de marchés pour les produits bio comme Biodynamie.' },
+                            { abbr: 'PIB', full: 'Produit Intérieur Brut', def: 'Valeur totale des biens et services produits dans un pays sur une année. En Côte d\'Ivoire, l\'agriculture représente 25% du PIB, soulignant l\'importance stratégique du secteur.' },
+                            { abbr: 'SARA', full: 'Salon de l\'Agriculture et des Ressources Animales', def: 'Plus grand salon agricole de Côte d\'Ivoire et d\'Afrique de l\'Ouest. Se tient tous les 2 ans à Abidjan. Opportunité majeure de visibilité, de networking et de démonstration pour LIG Biodynamie.' },
+                            { abbr: 'Capital social', full: 'Capital Social de l\'Entreprise', def: 'Montant des apports des associés constituant les ressources permanentes de l\'entreprise. Figure au passif du bilan. Pour LIG CI, le capital social initial est de 20M FCFA.' },
+                            { abbr: 'Amortissement', full: 'Amortissement comptable', def: 'Constatation comptable de la dépréciation irréversible d\'un actif immobilisé (matériel, bâtiments) sur sa durée de vie utile. Charge non décaissable qui réduit le résultat imposable.' },
+                          ].map((row, i) => (
+                            <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
+                              <td className="p-3 font-bold" style={{ color: C.accentDark }}>{row.abbr}</td>
+                              <td className="p-3 font-medium" style={{ color: C.primary }}>{row.full}</td>
+                              <td className="p-3" style={{ color: C.text }}>{row.def}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+
+            {/* ─── INDEX ALPHABÉTIQUE ─── */}
+            <Card className="border-0 shadow-md mt-8">
+              <CardHeader><CardTitle style={{ color: C.primary }}>Index Alphabétique Rapide</CardTitle></CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                  {[
+                    { term: 'ANADER', desc: 'Agence nationale d\'appui rural' },
+                    { term: 'BAD', desc: 'Banque Africaine de Développement' },
+                    { term: 'BFR', desc: 'Besoin en Fonds de Roulement' },
+                    { term: 'B2B', desc: 'Business to Business' },
+                    { term: 'B2C', desc: 'Business to Consumer' },
+                    { term: 'CA', desc: 'Chiffre d\'Affaires' },
+                    { term: 'CAC', desc: 'Coût d\'Acquisition Client' },
+                    { term: 'CNRA', desc: 'Centre National Recherche Agronomique' },
+                    { term: 'EBIT', desc: 'Résultat opérationnel' },
+                    { term: 'Ecocert', desc: 'Certification biologique' },
+                    { term: 'FAO', desc: 'Organisation ONU Alimentation' },
+                    { term: 'Fcfa', desc: 'Franc CFA (655,957/EUR)' },
+                    { term: 'FIDA', desc: 'Fonds Intl Dév. Agricole' },
+                    { term: 'FIRCA', desc: 'Fonds Recherche Conseil Agricoles' },
+                    { term: 'IS', desc: 'Impôt sur les Sociétés (25%)' },
+                    { term: 'KPI', desc: 'Indicateur clé de performance' },
+                    { term: 'LTV', desc: 'Lifetime Value' },
+                    { term: 'MB', desc: 'Marge Brute' },
+                    { term: 'MINADER', desc: 'Ministère Agriculture CI' },
+                    { term: 'MoU', desc: 'Protocole d\'accord' },
+                    { term: 'NPS', desc: 'Net Promoter Score' },
+                    { term: 'PALMCI', desc: 'Leader palmier à huile CI' },
+                    { term: 'PESTEL', desc: 'Politique Éco. Social Tech. Env. Légal' },
+                    { term: 'pH', desc: 'Potentiel hydrogène' },
+                    { term: 'PIB', desc: 'Produit Intérieur Brut' },
+                    { term: 'PNIA II', desc: 'Prog. Natl Investissement Agricole' },
+                    { term: 'PNUD', desc: 'Prog. Nations Unies Développement' },
+                    { term: 'R&D', desc: 'Recherche et Développement' },
+                    { term: 'RAN', desc: 'Report À Nouveau' },
+                    { term: 'ROA', desc: 'Rentabilité de l\'actif' },
+                    { term: 'ROCE', desc: 'Rentabilité capitaux engagés' },
+                    { term: 'ROE', desc: 'Rentabilité capitaux propres' },
+                    { term: 'ROI', desc: 'Retour sur investissement' },
+                    { term: 'RTI', desc: 'Radio Télévision Ivoirienne' },
+                    { term: 'SARA', desc: 'Salon Agriculture Ressources Animales' },
+                    { term: 'SIFCA', desc: 'Groupe agro-industriel' },
+                    { term: 'SEO', desc: 'Optimisation moteurs recherche' },
+                    { term: 'SWOT', desc: 'Forces Faiblesses Opportunités Menaces' },
+                    { term: 'TRI', desc: 'Taux de Rendement Interne' },
+                    { term: 'VAN', desc: 'Valeur Actuelle Nette' },
+                  ].map((item, i) => (
+                    <motion.div key={i} whileHover={{ scale: 1.02 }} className="p-3 rounded-lg" style={{ backgroundColor: `${C.accent}06`, border: `1px solid ${C.accent}15` }}>
+                      <p className="text-sm font-bold" style={{ color: C.accentDark }}>{item.term}</p>
+                      <p className="text-xs" style={{ color: C.muted }}>{item.desc}</p>
+                    </motion.div>
                   ))}
                 </div>
               </CardContent>
