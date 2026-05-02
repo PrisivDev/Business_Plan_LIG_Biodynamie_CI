@@ -120,11 +120,11 @@ const riskData = [
 ]
 
 const timelineData = [
-  { period: 'Nov 2025', title: 'Pré-lancement', desc: 'Campagne de teasing digitale, signature des MoU avec FIRCA et PALMCI', status: 'upcoming' },
-  { period: '10 Déc 2025', title: 'Lancement officiel', desc: 'Cérémonie à Abidjan avec partenaires, démonstration live, couverture médiatique RTI/Business24', status: 'upcoming' },
-  { period: 'Jan–Mars 2026', title: 'LIG Biodynamie Tour', desc: 'Tournée dans 5 régions agricoles, formations gratuites, campagne influenceurs verts', status: 'upcoming' },
-  { period: 'Avr–Jun 2026', title: 'Évaluation & Consolidation', desc: 'Évaluation des résultats, collecte témoignages, signature nouveaux contrats', status: 'upcoming' },
-  { period: 'Jul–Déc 2026', title: 'Extension régionale', desc: 'Extension distribution régionale, lancement label "Fermes Biodynamiques", salons (SARA)', status: 'upcoming' },
+  { period: 'Mai 2026', title: 'Pré-lancement', desc: 'Campagne de teasing digitale, signature des MoU avec FIRCA et PALMCI', status: 'upcoming' },
+  { period: '10 Juin 2026', title: 'Lancement officiel', desc: 'Cérémonie à Abidjan avec partenaires, démonstration live, couverture médiatique RTI/Business24', status: 'upcoming' },
+  { period: 'Juil–Sept 2026', title: 'LIG Biodynamie Tour', desc: 'Tournée dans 5 régions agricoles, formations gratuites, campagne influenceurs verts', status: 'upcoming' },
+  { period: 'Oct–Déc 2026', title: 'Évaluation & Consolidation', desc: 'Évaluation des résultats, collecte témoignages, signature nouveaux contrats', status: 'upcoming' },
+  { period: 'Jan–Jun 2027', title: 'Extension régionale', desc: 'Extension distribution régionale, lancement label "Fermes Biodynamiques", salons (SARA)', status: 'upcoming' },
 ]
 
 // ═══════════════════════════════════════════════════════════
@@ -192,7 +192,7 @@ const mix4P = [
     '10 technico-commerciaux terrain',
   ]},
   { P: 'Promotion', icon: Megaphone, color: C.purple, items: [
-    'Lancement 10 déc. 2025 (événement premium)',
+    'Lancement 10 juin 2026 (événement premium)',
     'LIG Biodynamie Tour (5 régions)',
     'Influenceurs verts & ambassadeurs',
     'Témoignages vidéo agriculteurs',
@@ -202,11 +202,11 @@ const mix4P = [
 ]
 
 const contentCalendar = [
-  { periode: 'Nov 2025', theme: 'Teasing & Anticipation', actions: 'Compte à rebours, révélations produit, MoU partenaires', canaux: 'Social media, WhatsApp, Presse', budget: '3M Fcfa', kpi: 'Impressions: 500K, Engagements: 25K' },
-  { periode: 'Déc 2025', theme: 'Lancement Officiel', actions: 'Cérémonie, démonstrations live, couverture RTI', canaux: 'Tous canaux, TV, Presse, Événement', budget: '12M Fcfa', kpi: 'Participants: 500, Leads: 2000' },
-  { periode: 'Jan-Mar 2026', theme: 'Tournée & Formations', actions: '5 régions, formations gratuites, "1 tonne test"', canaux: 'Terrain, ANADER, Radio rurale, WhatsApp', budget: '10M Fcfa', kpi: 'Agriculteurs formés: 500, Tests: 1000' },
-  { periode: 'Avr-Jun 2026', theme: 'Témoignages & Preuve Sociale', actions: 'Collecte résultats, vidéos témoignages, études de cas', canaux: 'Social media, Site web, Salons', budget: '6M Fcfa', kpi: 'Témoignages: 50, Taux conversion: 25%' },
-  { periode: 'Jul-Déc 2026', theme: 'Consolidation & Expansion', actions: 'Label "Fermes Biodynamiques", salons, partenariats', canaux: 'B2B, Institutions, Événements', budget: '15M Fcfa', kpi: 'Contrats signés: 15, CA: 17.4M' },
+  { periode: 'Mai 2026', theme: 'Teasing & Anticipation', actions: 'Compte à rebours, révélations produit, MoU partenaires', canaux: 'Social media, WhatsApp, Presse', budget: '3M Fcfa', kpi: 'Impressions: 500K, Engagements: 25K' },
+  { periode: 'Juin 2026', theme: 'Lancement Officiel', actions: 'Cérémonie, démonstrations live, couverture RTI', canaux: 'Tous canaux, TV, Presse, Événement', budget: '12M Fcfa', kpi: 'Participants: 500, Leads: 2000' },
+  { periode: 'Juil-Sept 2026', theme: 'Tournée & Formations', actions: '5 régions, formations gratuites, "1 tonne test"', canaux: 'Terrain, ANADER, Radio rurale, WhatsApp', budget: '10M Fcfa', kpi: 'Agriculteurs formés: 500, Tests: 1000' },
+  { periode: 'Oct-Déc 2026', theme: 'Témoignages & Preuve Sociale', actions: 'Collecte résultats, vidéos témoignages, études de cas', canaux: 'Social media, Site web, Salons', budget: '6M Fcfa', kpi: 'Témoignages: 50, Taux conversion: 25%' },
+  { periode: 'Jan-Jun 2027', theme: 'Consolidation & Expansion', actions: 'Label "Fermes Biodynamiques", salons, partenariats', canaux: 'B2B, Institutions, Événements', budget: '15M Fcfa', kpi: 'Contrats signés: 15, CA: 17.4M' },
 ]
 
 // ═══════════════════════════════════════════════════════════
@@ -475,7 +475,7 @@ export default function BusinessPlanApp() {
               </div>
               <div className="hidden sm:block">
                 <span className="font-bold text-white text-sm">LIG Biodynamie</span>
-                <span className="text-xs block" style={{ color: C.accent }}>Business Plan 2025-2028</span>
+                <span className="text-xs block" style={{ color: C.accent }}>Business Plan Juin 2026-2028</span>
               </div>
             </div>
             <nav className="hidden lg:flex items-center gap-1">
@@ -517,7 +517,7 @@ export default function BusinessPlanApp() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl">
             <Badge className="mb-6 text-xs font-medium px-4 py-1.5 border-0" style={{ backgroundColor: `${C.accent}25`, color: C.accent }}>
-              Business Plan 2025 – 2028
+              Business Plan Juin 2026 – 2028
             </Badge>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
               Centre de Recherche<br />Agricole <span style={{ color: C.accent }}>LIAMBOU GISELE</span>
@@ -579,10 +579,10 @@ export default function BusinessPlanApp() {
                   <h3 className="text-lg font-semibold mb-4" style={{ color: C.primary }}>Objectifs Clés</h3>
                   <div className="space-y-4">
                     {[
-                      { label: 'Commercialiser 29 tonnes de Biodynamie', sub: 'Déc 2025 – Mars 2026', pct: 100, color: C.accent },
+                      { label: 'Commercialiser 29 tonnes de Biodynamie', sub: 'Juin 2026 – Sept 2026', pct: 100, color: C.accent },
                       { label: 'Former 500 agriculteurs ivoiriens', sub: 'Programme "1 tonne test"', pct: 85, color: C.gold },
                       { label: 'Obtenir 3–5 partenariats majeurs', sub: 'PALMCI, SIFCA, CNRA, FIRCA', pct: 70, color: C.accentDark },
-                      { label: 'Leader fertilisants écologiques Afrique de l\'Ouest', sub: 'Objectif 2026', pct: 60, color: C.success },
+                      { label: 'Leader fertilisants écologiques Afrique de l\'Ouest', sub: 'Objectif 2028', pct: 60, color: C.success },
                     ].map((obj, i) => (
                       <div key={i}>
                         <div className="flex justify-between mb-1">
@@ -777,7 +777,7 @@ export default function BusinessPlanApp() {
                     ))}
                   </div>
                   <p className="text-xs mt-4" style={{ color: C.muted }}>
-                    * Prix de lancement (10 déc. 2025 – 31 mars 2026). Réduction -20% pour commandes groupées.
+                    * Prix de lancement (10 juin 2026 – 30 sept 2026). Réduction -20% pour commandes groupées.
                   </p>
                 </CardContent>
               </Card>
@@ -1657,7 +1657,7 @@ export default function BusinessPlanApp() {
 
           {/* ═══════ VISION 5 ANS ═══════ */}
           <AnimatedSection id="vision">
-            <SectionHeader icon={Award} title="Vision à 5 Ans" subtitle="Plan de développement 2025–2030" />
+            <SectionHeader icon={Award} title="Vision à 5 Ans" subtitle="Plan de développement Juin 2026–2030" />
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {[
                 { year: '2026', title: 'Implantation', desc: '29t vendues, 500 agriculteurs, 3–5 partenariats', color: C.accent },
@@ -1895,7 +1895,7 @@ export default function BusinessPlanApp() {
                         <tbody>
                           {[
                             { abbr: 'Loi n°2015-537', full: 'Loi relative à la modernisation agricole', def: 'Loi ivoirienne encadrant la modernisation du secteur agricole. Favorise l\'innovation, l\'adoption de nouvelles technologies et l\'accès aux financements pour les acteurs agricoles. Cadre favorable pour l\'introduction de biofertilisants.' },
-                            { abbr: 'PNIA II', full: 'Programme National d\'Investissement Agricole II', def: 'Plan stratégique ivoirien (2018-2025) pour le développement du secteur agricole. Priorise la sécurité alimentaire, l\'agro-industrie et l\'agriculture durable. Alignement stratégique direct avec les objectifs de LIG Biodynamie.' },
+                            { abbr: 'PNIA II', full: 'Programme National d\'Investissement Agricole II', def: 'Plan stratégique ivoirien (2018-2026) pour le développement du secteur agricole. Priorise la sécurité alimentaire, l\'agro-industrie et l\'agriculture durable. Alignement stratégique direct avec les objectifs de LIG Biodynamie.' },
                             { abbr: 'PNDAD', full: 'Programme National de Développement Agricole Durable', def: 'Programme gouvernemental ivoirien visant à concilier développement agricole et durabilité environnementale. Soutient les pratiques agro-écologiques et la transition vers le bio.' },
                             { abbr: 'Stratégie Bio 2030', full: 'Stratégie Nationale de l\'Agriculture Biologique', def: 'Politique gouvernementale ivoirienne ambitionnant de développer l\'agriculture biologique d\'ici 2030. Crée des opportunités de subventions, de certifications et de marchés pour les produits bio comme Biodynamie.' },
                             { abbr: 'PIB', full: 'Produit Intérieur Brut', def: 'Valeur totale des biens et services produits dans un pays sur une année. En Côte d\'Ivoire, l\'agriculture représente 25% du PIB, soulignant l\'importance stratégique du secteur.' },
@@ -2013,7 +2013,7 @@ export default function BusinessPlanApp() {
           </div>
           <Separator className="bg-white/10 mb-6" />
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-white/40">&copy; 2025 Comptoir Agropastoral CI. Tous droits réservés.</p>
+            <p className="text-xs text-white/40">&copy; 2026 Comptoir Agropastoral CI. Tous droits réservés.</p>
             <a href="/Business_Plan_LIG_Biodynamie_CI.docx" download>
               <Button variant="outline" size="sm" className="border-white/20 text-white/60 hover:bg-white/10 hover:text-white text-xs">
                 <Download size={14} className="mr-1.5" /> Télécharger le Business Plan (DOCX)
