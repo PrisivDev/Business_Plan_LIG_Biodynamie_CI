@@ -58,6 +58,43 @@ const PRICE_OPTIONS = [
 ]
 const BASE_PRICE = 9000
 
+// ─── Tier Preview Metrics (constant across sessions) ───
+const TIER_PREVIEWS = PRICE_OPTIONS.map(opt => {
+  const pf = opt.price / BASE_PRICE
+  const baseProductCA = [12.2, 44.8, 94.5]
+  const servicesCA = [5.2, 19.2, 40.5]
+  const productCA = baseProductCA.map(v => Math.round(v * pf * 10) / 10)
+  const totalCA = productCA.map((pc, i) => Math.round((pc + servicesCA[i]) * 10) / 10)
+  const commissions = totalCA.map(c => Math.round(-c * 0.08 * 10) / 10)
+  const matieres = [-5.5, -13.0, -20.0]
+  const conditionnement = [-2.0, -5.0, -8.0]
+  const logistique = [-2.5, -6.0, -10.0]
+  const tests = [-0.6, -1.5, -2.5]
+  const totalVar = matieres.map((m, i) => Math.round((m + conditionnement[i] + logistique[i] + tests[i] + commissions[i]) * 10) / 10)
+  const margeBrute = totalCA.map((c, i) => Math.round((c + totalVar[i]) * 10) / 10)
+  const mbPct = margeBrute.map((mb, i) => totalCA[i] > 0 ? Math.round(mb / totalCA[i] * 1000) / 10 : 0)
+  const fixedCosts = [-15.5, -19.5, -25.0]
+  const ebit = margeBrute.map((mb, i) => Math.round((mb + fixedCosts[i]) * 10) / 10)
+  const finCharges = [0, -1.0, -1.5]
+  const rbt = ebit.map((eb, i) => Math.round((eb + finCharges[i]) * 10) / 10)
+  const impot = rbt.map(r => r > 0 ? Math.round(-r * 0.25 * 10) / 10 : 0)
+  const rn = rbt.map((r, i) => Math.round((r + impot[i]) * 10) / 10)
+  const seuil = mbPct[0] > 0 ? Math.round(-fixedCosts[0] / (mbPct[0] / 100) * 10) / 10 : 0
+  return {
+    pricePerKg: opt.price,
+    pricePer500g: opt.price / 2,
+    caY1: totalCA[0],
+    caY3: totalCA[2],
+    seuil,
+    mbPctY1: mbPct[0],
+    mbPctY3: mbPct[2],
+    rnY1: rn[0],
+    rnY3: rn[2],
+    ebitY1: ebit[0],
+    ebitY3: ebit[2],
+  }
+})
+
 // ═══════════════════════════════════════════════════════════
 // CHART DATA
 // ═══════════════════════════════════════════════════════════
@@ -723,17 +760,26 @@ export default function BusinessPlanApp() {
               <StatCard icon={Handshake} value="3–5" label="Partenariats majeurs" color={C.accentDark} />
               <StatCard icon={TrendingUp} value="+80%" label="Augmentation rendements" color={C.success} />
             </div>
-            {/* ─── Price Selector ─── */}
-            <div className="flex flex-wrap items-center gap-3 mb-8">
-              <span className="text-white/60 text-sm font-medium">Prix 1 kg :</span>
-              {PRICE_OPTIONS.map((opt, i) => (
-                <button key={i} onClick={() => setPriceIdx(i)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${priceIdx === i ? 'text-white shadow-lg scale-105' : 'text-white/50 hover:text-white/80 border border-white/20 hover:border-white/40'}`}
-                  style={priceIdx === i ? { backgroundColor: opt.color } : {}}
-                >
-                  {opt.label} — {opt.price.toLocaleString('fr-FR')} F
-                </button>
-              ))}
+            {/* ─── Price Selector (Hero compact) ─── */}
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-3">
+                <DollarSign size={16} className="text-white/50" />
+                <span className="text-white/50 text-xs font-medium uppercase tracking-wider">Scénario tarifaire — Prix 1 kg</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {PRICE_OPTIONS.map((opt, i) => (
+                  <button key={i} onClick={() => setPriceIdx(i)}
+                    className={`group relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${priceIdx === i ? 'text-white shadow-lg scale-105' : 'text-white/50 hover:text-white/80 border border-white/15 hover:border-white/30 hover:scale-102'}`}
+                    style={priceIdx === i ? { backgroundColor: opt.color, boxShadow: `0 4px 20px ${opt.color}40` } : {}}
+                  >
+                    {i === 1 && priceIdx !== i && (
+                      <span className="absolute -top-2 -right-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold text-white" style={{ backgroundColor: opt.color }}>★</span>
+                    )}
+                    <span className="mr-1.5">{opt.label}</span>
+                    <span className="font-bold">{opt.price.toLocaleString('fr-FR')} F</span>
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="flex flex-wrap gap-4">
               <Button size="lg" className="text-base px-8 py-6 border-0 shadow-lg" style={{ backgroundColor: C.accent, color: C.primary }} onClick={() => scrollTo('resume')}>
@@ -982,6 +1028,124 @@ export default function BusinessPlanApp() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* ─── CARTE DE CHOIX DES TARIFS ─── */}
+            <Card className="border-0 shadow-lg overflow-hidden mt-8">
+              <div className="relative">
+                {/* Header bar */}
+                <div className="px-6 pt-6 pb-4" style={{ background: `linear-gradient(135deg, ${C.primary} 0%, ${C.accentDark} 100%)` }}>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
+                      <DollarSign size={22} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">Choix du Tarif</h3>
+                      <p className="text-sm text-white/60">Sélectionnez un scénario tarifaire — toutes les données du BU s&apos;ajustent automatiquement</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tier cards */}
+                <div className="p-6 grid md:grid-cols-3 gap-5" style={{ backgroundColor: `${C.surface}` }}>
+                  {PRICE_OPTIONS.map((opt, i) => {
+                    const isSelected = priceIdx === i
+                    const preview = TIER_PREVIEWS[i]
+                    const metrics = [
+                      { label: 'CA Année 1', value: `${preview.caY1}M`, icon: TrendingUp },
+                      { label: 'Seuil rentabilité', value: `${preview.seuil}M`, icon: Target },
+                      { label: 'Marge brute A3', value: `${preview.mbPctY3}%`, icon: Percent },
+                      { label: 'Résultat net A3', value: `${preview.rnY3 > 0 ? '+' : ''}${preview.rnY3}M`, icon: preview.rnY3 >= 0 ? ArrowUpRight : AlertTriangle },
+                    ]
+                    return (
+                      <motion.div
+                        key={i}
+                        whileHover={{ y: -4, boxShadow: isSelected ? `0 12px 40px ${opt.color}30` : '0 8px 30px rgba(0,0,0,0.08)' }}
+                        onClick={() => setPriceIdx(i)}
+                        className={`relative cursor-pointer rounded-2xl transition-all duration-300 overflow-hidden ${isSelected ? 'ring-2 shadow-xl' : 'shadow-md'}`}
+                        style={{
+                          backgroundColor: isSelected ? `${opt.color}06` : C.white,
+                          ringColor: opt.color,
+                          border: isSelected ? `2px solid ${opt.color}` : `2px solid ${opt.color}20`,
+                        }}
+                      >
+                        {/* Recommended badge */}
+                        {i === 1 && (
+                          <div className="absolute top-0 right-0 px-3 py-1 rounded-bl-lg text-[10px] font-bold text-white tracking-wider uppercase" style={{ backgroundColor: opt.color }}>
+                            Recommandé
+                          </div>
+                        )}
+
+                        {/* Selected checkmark */}
+                        {isSelected && (
+                          <div className="absolute top-3 left-3">
+                            <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: opt.color }}>
+                              <CheckCircle2 size={14} className="text-white" />
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="p-5 pt-6">
+                          {/* Tier name */}
+                          <div className="text-center mb-4">
+                            <h4 className="text-lg font-bold mb-1" style={{ color: opt.color }}>{opt.label}</h4>
+                            <div className="w-12 h-0.5 mx-auto rounded-full" style={{ backgroundColor: opt.color }} />
+                          </div>
+
+                          {/* Price display */}
+                          <div className="text-center mb-5">
+                            <div className="flex items-baseline justify-center gap-1">
+                              <span className="text-3xl font-bold" style={{ color: C.primary }}>{opt.price.toLocaleString('fr-FR')}</span>
+                              <span className="text-sm font-medium" style={{ color: C.muted }}>Fcfa</span>
+                            </div>
+                            <p className="text-xs mt-1" style={{ color: C.muted }}>par kg</p>
+                            <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs" style={{ backgroundColor: `${opt.color}10`, color: opt.color }}>
+                              <span>{(opt.price / 2).toLocaleString('fr-FR')} Fcfa / 500g</span>
+                            </div>
+                          </div>
+
+                          {/* Divider */}
+                          <div className="h-px mb-4" style={{ backgroundColor: `${opt.color}20` }} />
+
+                          {/* Key metrics */}
+                          <div className="space-y-2.5">
+                            {metrics.map((m, mi) => (
+                              <div key={mi} className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <m.icon size={13} style={{ color: C.muted }} />
+                                  <span className="text-xs" style={{ color: C.muted }}>{m.label}</span>
+                                </div>
+                                <span className="text-xs font-bold" style={{ color: typeof m.value === 'string' && m.value.startsWith('+') ? C.success : m.value.startsWith('-') ? C.danger : C.primary }}>
+                                  {m.value}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Select button */}
+                          <button
+                            className={`w-full mt-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${isSelected ? 'text-white shadow-md' : 'border-2 hover:shadow-sm'}`}
+                            style={isSelected
+                              ? { backgroundColor: opt.color, boxShadow: `0 4px 15px ${opt.color}30` }
+                              : { borderColor: `${opt.color}40`, color: opt.color, backgroundColor: 'transparent' }
+                            }
+                          >
+                            {isSelected ? '✓ Scénario actif' : 'Choisir ce scénario'}
+                          </button>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+
+                {/* Footer note */}
+                <div className="px-6 py-3 flex items-center gap-2 border-t" style={{ backgroundColor: C.white, borderColor: `${C.accent}15` }}>
+                  <Info size={14} style={{ color: C.muted }} />
+                  <p className="text-xs" style={{ color: C.muted }}>
+                    Le choix du tarif modifie dynamiquement le Chiffre d&apos;Affaires, le Compte de Résultat, le Bilan, les Ratios, la VAN/TRI et l&apos;analyse de sensibilité.
+                  </p>
+                </div>
+              </div>
+            </Card>
           </AnimatedSection>
 
           {/* ═══════ MODÈLE ÉCONOMIQUE ═══════ */}

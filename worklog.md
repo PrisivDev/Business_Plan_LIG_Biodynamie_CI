@@ -60,3 +60,27 @@
 - Best ROI channel: Partenariats institutionnels (8.5x), highest conversion: Formations terrain (15%)
 - Critical risk identified: Conversion rate -50% impacts TRI by -18.3 points
 - Opportunity identified: Government subsidy could add +3M to net result and +6.5 pts to TRI
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: Implement pricing selection card ("carte de choix des tarifs")
+
+Work Log:
+- Added `TIER_PREVIEWS` module-level constant that precomputes financial metrics for all 3 price tiers (Économique 7000F, Standard 9000F, Premium 14000F)
+- Metrics computed: CA Y1, CA Y3, Seuil rentabilité, Marge brute %, Résultat net, EBIT
+- Enhanced hero price selector with colored shadow effects, uppercase tracking label, and star badge on recommended tier
+- Created full "Choix du Tarif" pricing card in Product section with:
+  - Dark gradient header bar with DollarSign icon
+  - 3-column grid of pricing tier cards
+  - Each card shows: tier name, price per kg, price per 500g, 4 key financial metrics
+  - Selected tier has colored border, checkmark, and "Scénario actif" button
+  - "Recommandé" badge on Standard tier
+  - Footer note explaining dynamic data recalculation
+  - Hover animations with y-lift and shadow effects
+
+Stage Summary:
+- Pricing selection card is fully implemented and visually stunning
+- All 3 tiers show preview financial data (CA, Seuil, Marge brute, RN)
+- Selecting a tier dynamically updates all business plan data via the existing `dyn` useMemo
+- App compiles and renders correctly (verified via dev server logs and lint)
