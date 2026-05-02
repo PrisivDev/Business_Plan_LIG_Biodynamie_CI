@@ -520,7 +520,7 @@ export default function BusinessPlanApp() {
               Business Plan Juin 2026 – 2028
             </Badge>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Centre de Recherche<br />Agricole <span style={{ color: C.accent }}>LIAMBOU GISELE</span>
+              Projet <span style={{ color: C.accent }}>BIODYNAMIE</span>
             </h1>
             <p className="text-lg sm:text-xl text-white/80 mb-4 max-w-2xl leading-relaxed">
               Implantation en Côte d&apos;Ivoire — Lancement du Biofertilisant <strong className="text-white">Biodynamie</strong>
@@ -563,7 +563,7 @@ export default function BusinessPlanApp() {
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold mb-4" style={{ color: C.primary }}>Le Projet</h3>
                   <p className="leading-relaxed mb-4" style={{ color: C.text }}>
-                    Le Centre de Recherche Agricole LIAMBOU GISELE (LIG) s&apos;implante en Côte d&apos;Ivoire pour y déployer
+                    Le Projet BIODYNAMIE s&apos;implante en Côte d&apos;Ivoire pour y déployer
                     la révolution agricole biodynamique africaine à travers la production et la commercialisation du
                     biofertilisant <strong>&quot;Biodynamie&quot;</strong>, en partenariat exclusif avec le Comptoir Agropastoral CI.
                   </p>
@@ -1992,7 +1992,7 @@ export default function BusinessPlanApp() {
                 </div>
               </div>
               <p className="text-sm text-white/60 leading-relaxed">
-                Le Centre LIAMBOU GISELE porte la vision d&apos;une Côte d&apos;Ivoire autosuffisante et durable.
+                Le Projet BIODYNAMIE porte la vision d&apos;une Côte d&apos;Ivoire autosuffisante et durable.
               </p>
             </div>
             <div>
