@@ -74,7 +74,12 @@ const TIER_PREVIEWS = PRICE_OPTIONS.map(opt => {
   const totalVar = matieres.map((m, i) => Math.round((m + conditionnement[i] + logistique[i] + tests[i] + commissions[i]) * 10) / 10)
   const margeBrute = totalCA.map((c, i) => Math.round((c + totalVar[i]) * 10) / 10)
   const mbPct = margeBrute.map((mb, i) => totalCA[i] > 0 ? Math.round(mb / totalCA[i] * 1000) / 10 : 0)
-  const fixedCosts = [-15.5, -19.5, -25.0]
+  const salaires = [0, -10.5, -13.0]
+  const loyer = [0, -2.8, -3.2]
+  const marketing = [-1.0, -2.5, -4.0]
+  const amort = [-1.8, -1.8, -2.0]
+  const assurances = [-1.8, -1.9, -2.8]
+  const fixedCosts = salaires.map((s, i) => Math.round((s + loyer[i] + marketing[i] + amort[i] + assurances[i]) * 10) / 10)
   const ebit = margeBrute.map((mb, i) => Math.round((mb + fixedCosts[i]) * 10) / 10)
   const finCharges = [0, -1.0, -1.5]
   const rbt = ebit.map((eb, i) => Math.round((eb + finCharges[i]) * 10) / 10)
@@ -109,7 +114,7 @@ const budgetData = [
 ]
 
 const financialData = [
-  { year: 'Année 1 (2026)', CA: 17.4, couts: 27.5, resultat: -10.1 },
+  { year: 'Année 1 (2026)', CA: 17.4, couts: 16.6, resultat: 0.6 },
   { year: 'Année 2 (2027)', CA: 64, couts: 47.5, resultat: 16.5 },
   { year: 'Année 3 (2028)', CA: 135, couts: 70, resultat: 65 },
 ]
@@ -320,17 +325,17 @@ const compteResultatData = [
   { poste: '  Commissions commerciales (8%)', a1: -1.4, a2: -2.5, a3: -4.5, bold: false, color: C.text },
   { poste: '  Tests gratuits (1 tonne)', a1: -0.6, a2: -1.5, a3: -2.5, bold: false, color: C.text },
   { poste: 'Marge brute', a1: 5.4, a2: 36.0, a3: 90.0, bold: true, color: C.accentDark },
-  { poste: 'Charges fixes', a1: -15.5, a2: -19.5, a3: -25.0, bold: true, color: C.danger },
-  { poste: '  Salaires & charges sociales', a1: -8.5, a2: -10.5, a3: -13.0, bold: false, color: C.text },
+  { poste: 'Charges fixes', a1: -4.6, a2: -19.5, a3: -25.0, bold: true, color: C.danger },
+  { poste: '  Salaires & charges sociales', a1: 0, a2: -10.5, a3: -13.0, bold: false, color: C.text },
   { poste: '  Marketing & communication', a1: -1.0, a2: -2.5, a3: -4.0, bold: false, color: C.text },
-  { poste: '  Loyer & charges bureaux', a1: -2.4, a2: -2.8, a3: -3.2, bold: false, color: C.text },
+  { poste: '  Loyer & charges bureaux', a1: 0, a2: -2.8, a3: -3.2, bold: false, color: C.text },
   { poste: '  Amortissements', a1: -1.8, a2: -1.8, a3: -2.0, bold: false, color: C.text },
   { poste: '  Assurances & divers', a1: -1.8, a2: -1.9, a3: -2.8, bold: false, color: C.text },
-  { poste: 'Résultat opérationnel (EBIT)', a1: -10.1, a2: 16.5, a3: 65.0, bold: true, color: null },
+  { poste: 'Résultat opérationnel (EBIT)', a1: 0.8, a2: 16.5, a3: 65.0, bold: true, color: null },
   { poste: 'Charges financières', a1: 0, a2: -1.0, a3: -1.5, bold: false, color: C.text },
-  { poste: 'Résultat avant impôt', a1: -10.1, a2: 15.5, a3: 63.5, bold: true, color: null },
-  { poste: 'Impôt sur les sociétés (25%)', a1: 0, a2: -3.9, a3: -15.9, bold: false, color: C.text },
-  { poste: 'Résultat net', a1: -10.1, a2: 11.6, a3: 47.6, bold: true, color: null },
+  { poste: 'Résultat avant impôt', a1: 0.8, a2: 15.5, a3: 63.5, bold: true, color: null },
+  { poste: 'Impôt sur les sociétés (25%)', a1: -0.2, a2: -3.9, a3: -15.9, bold: false, color: C.text },
+  { poste: 'Résultat net', a1: 0.6, a2: 11.6, a3: 47.6, bold: true, color: null },
 ]
 
 const bilanData = [
@@ -545,8 +550,13 @@ export default function BusinessPlanApp() {
     const totalVar = matieres.map((m, i) => Math.round((m + conditionnement[i] + logistique[i] + tests[i] + commissions[i]) * 10) / 10)
     const margeBrute = totalCA.map((c, i) => Math.round((c + totalVar[i]) * 10) / 10)
 
-    // Charges fixes (constant)
-    const fixedCosts = [-15.5, -19.5, -25.0]
+    // Charges fixes (Année 1 : pas de salaires ni loyer)
+    const salaires = [0, -10.5, -13.0]
+    const loyer = [0, -2.8, -3.2]
+    const marketing = [-1.0, -2.5, -4.0]
+    const amort = [-1.8, -1.8, -2.0]
+    const assurances = [-1.8, -1.9, -2.8]
+    const fixedCosts = salaires.map((s, i) => Math.round((s + loyer[i] + marketing[i] + amort[i] + assurances[i]) * 10) / 10)
     const ebit = margeBrute.map((mb, i) => Math.round((mb + fixedCosts[i]) * 10) / 10)
     const finCharges = [0, -1.0, -1.5]
     const rbt = ebit.map((eb, i) => Math.round((eb + finCharges[i]) * 10) / 10)
@@ -603,10 +613,10 @@ export default function BusinessPlanApp() {
       { poste: '  Commissions commerciales (8%)', a1: commissions[0], a2: commissions[1], a3: commissions[2], bold: false, color: C.text },
       { poste: '  Tests gratuits (1 tonne)', a1: -0.6, a2: -1.5, a3: -2.5, bold: false, color: C.text },
       { poste: 'Marge brute', a1: margeBrute[0], a2: margeBrute[1], a3: margeBrute[2], bold: true, color: C.accentDark },
-      { poste: 'Charges fixes', a1: -15.5, a2: -19.5, a3: -25.0, bold: true, color: C.danger },
-      { poste: '  Salaires & charges sociales', a1: -8.5, a2: -10.5, a3: -13.0, bold: false, color: C.text },
-      { poste: '  Marketing & communication', a1: -1.0, a2: -2.5, a3: -4.0, bold: false, color: C.text },
-      { poste: '  Loyer & charges bureaux', a1: -2.4, a2: -2.8, a3: -3.2, bold: false, color: C.text },
+      { poste: 'Charges fixes', a1: fixedCosts[0], a2: fixedCosts[1], a3: fixedCosts[2], bold: true, color: C.danger },
+      { poste: '  Salaires & charges sociales', a1: salaires[0], a2: salaires[1], a3: salaires[2], bold: false, color: C.text },
+      { poste: '  Marketing & communication', a1: marketing[0], a2: marketing[1], a3: marketing[2], bold: false, color: C.text },
+      { poste: '  Loyer & charges bureaux', a1: loyer[0], a2: loyer[1], a3: loyer[2], bold: false, color: C.text },
       { poste: '  Amortissements', a1: -1.8, a2: -1.8, a3: -2.0, bold: false, color: C.text },
       { poste: '  Assurances & divers', a1: -1.8, a2: -1.9, a3: -2.8, bold: false, color: C.text },
       { poste: 'Résultat opérationnel (EBIT)', a1: ebit[0], a2: ebit[1], a3: ebit[2], bold: true, color: null },
@@ -699,7 +709,7 @@ export default function BusinessPlanApp() {
 
     return {
       pricePerKg: p, pricePer500g: p / 2, pf,
-      totalCA, productCA, ebit, rn, margeBrute, seuil, mbPct,
+      totalCA, productCA, ebit, rn, margeBrute, seuil, mbPct, fixedCosts,
       financialData, compteResultatData, bilanData, ratiosData,
       vanTriData, sensitivityData, breakevenData, cashFlow3YData,
     }
@@ -1915,10 +1925,10 @@ export default function BusinessPlanApp() {
                   <CardContent>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                       {[
-                        { label: 'Charges fixes annuelles', value: '20,0M Fcfa', icon: Wallet, color: C.accentDark },
-                        { label: 'Taux de marge sur coût variable', value: '42,0%', icon: Percent, color: C.accent },
-                        { label: 'Seuil de rentabilité (CA)', value: '47,6M Fcfa', icon: Target, color: C.gold },
-                        { label: 'Mois d&apos;atteinte du seuil', value: 'Mois 14 (Fév A2)', icon: Clock, color: C.success },
+                        { label: 'Charges fixes annuelles', value: `${fmt(Math.abs(dyn.fixedCosts ? dyn.fixedCosts[0] : -4.6))}M Fcfa`, icon: Wallet, color: C.accentDark },
+                        { label: 'Taux de marge sur coût variable', value: `${dyn.mbPct ? dyn.mbPct[0] : 31.0}%`, icon: Percent, color: C.accent },
+                        { label: 'Seuil de rentabilité (CA)', value: `${dyn.seuil || 14.8}M Fcfa`, icon: Target, color: C.gold },
+                        { label: 'Mois d\'atteinte du seuil', value: dyn.seuil && dyn.totalCA ? (dyn.seuil / (dyn.totalCA[0] / 12) <= 12 ? `Mois ${Math.ceil(dyn.seuil / (dyn.totalCA[0] / 12))} (A1)` : `Mois ${Math.ceil(dyn.seuil / (dyn.totalCA[0] / 12))} (Fév A2)`) : 'Mois 11 (Nov A1)', icon: Clock, color: C.success },
                       ].map((d, i) => (
                         <div key={i} className="p-4 rounded-xl" style={{ backgroundColor: `${d.color}08`, borderLeft: `3px solid ${d.color}` }}>
                           <d.icon size={20} className="mb-2" style={{ color: d.color }} />
