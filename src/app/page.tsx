@@ -185,7 +185,7 @@ const mix4P = [
   ]},
   { P: 'Place', icon: Truck, color: C.accentDark, items: [
     'Centre LIG Abidjan (vente directe)',
-    'E-commerce ligbiodynamie.ci',
+    'E-commerce www.biodynamie.ci',
     'Réseau ANADER (diffusion nationale)',
     'Coopératives partenaires (10 régions)',
     'Magasins bio / intrants verts',
@@ -642,9 +642,9 @@ export default function BusinessPlanApp() {
                   la logistique, les relations institutionnelles et le suivi terrain.
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm" style={{ color: C.muted }}>
-                  <div className="flex items-center gap-2"><Phone size={14} /> +225 07070707 / 05050505</div>
+                  <div className="flex items-center gap-2"><Phone size={14} /> +225 0707884587 / 0586994662</div>
                   <div className="flex items-center gap-2"><Mail size={14} /> info@biodynamie.ci</div>
-                  <div className="flex items-center gap-2"><Globe size={14} /> ligbiodynamie.ci</div>
+                  <div className="flex items-center gap-2"><Globe size={14} /> www.biodynamie.ci</div>
                 </div>
               </CardContent>
             </Card>
@@ -810,7 +810,7 @@ export default function BusinessPlanApp() {
                   <div>
                     <h4 className="font-semibold text-sm mb-2" style={{ color: C.accentDark }}>Canaux de Distribution</h4>
                     <div className="grid grid-cols-2 gap-2">
-                      {['Vente directe Centre LIG Abidjan', 'E-commerce ligbiodynamie.ci', 'Coopératives partenaires', 'ANADER (diffusion nationale)', 'Magasins bio / intrants verts', '10 technico-commerciaux'].map((ch, i) => (
+                      {['Vente directe Centre LIG Abidjan', 'E-commerce www.biodynamie.ci', 'Coopératives partenaires', 'ANADER (diffusion nationale)', 'Magasins bio / intrants verts', '10 technico-commerciaux'].map((ch, i) => (
                         <div key={i} className="flex items-center gap-2 text-xs" style={{ color: C.text }}>
                           <ChevronRight size={12} style={{ color: C.accent }} />{ch}
                         </div>
@@ -2005,9 +2005,9 @@ export default function BusinessPlanApp() {
             <div>
               <h4 className="font-semibold text-white mb-4">Comptoir Agropastoral CI</h4>
               <div className="space-y-2 text-sm text-white/60">
-                <div className="flex items-center gap-2"><Phone size={14} /> WhatsApp: +225 07070707</div>
+                <div className="flex items-center gap-2"><Phone size={14} /> WhatsApp: +225 0707884587</div>
                 <div className="flex items-center gap-2"><Mail size={14} /> info@biodynamie.ci</div>
-                <div className="flex items-center gap-2"><Globe size={14} /> ligbiodynamie.ci</div>
+                <div className="flex items-center gap-2"><Globe size={14} /> www.biodynamie.ci</div>
               </div>
             </div>
           </div>
