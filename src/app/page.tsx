@@ -59,6 +59,14 @@ const PRICE_OPTIONS = [
 ]
 const BASE_PRICE = 9000
 
+// ─── Loan Scenarios ───
+const LOAN_OPTIONS = [
+  { label: 'Sans prêt', amount: 0, color: '#5B6B7D' },
+  { label: 'Prêt 10M', amount: 10, color: '#F3A847' },
+  { label: 'Prêt 15M', amount: 15, color: '#27AE60' },
+]
+const LOAN_RATE = 0.08 // 8% per year
+
 // ─── Tier Preview Metrics (constant across sessions) ───
 const TIER_PREVIEWS = PRICE_OPTIONS.map(opt => {
   const pf = opt.price / BASE_PRICE
@@ -529,11 +537,22 @@ export default function BusinessPlanApp() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrollY, setScrollY] = useState(0)
   const [priceIdx, setPriceIdx] = useState(1) // default: Standard 9000
+  const [loanIdx, setLoanIdx] = useState(0) // default: Sans prêt
 
   // ─── Dynamic Financial Computation ───
   const dyn = useMemo(() => {
     const p = PRICE_OPTIONS[priceIdx].price
     const pf = p / BASE_PRICE
+
+    // Loan calculations
+    const loanAmt = LOAN_OPTIONS[loanIdx].amount
+    const loanPrincipalRepay = loanAmt / 3
+    const loanRemaining = [loanAmt - loanPrincipalRepay, loanAmt - 2 * loanPrincipalRepay, 0]
+    const loanInterest = [
+      -Math.round(loanAmt * LOAN_RATE * 10) / 10,
+      -Math.round((loanAmt - loanPrincipalRepay) * LOAN_RATE * 10) / 10,
+      -Math.round((loanAmt - 2 * loanPrincipalRepay) * LOAN_RATE * 10) / 10,
+    ]
 
     // Revenus produits (échelle avec le prix)
     const baseProductCA = [12.2, 44.8, 94.5]
@@ -558,7 +577,8 @@ export default function BusinessPlanApp() {
     const assurances = [-1.8, -1.9, -2.8]
     const fixedCosts = salaires.map((s, i) => Math.round((s + loyer[i] + marketing[i] + amort[i] + assurances[i]) * 10) / 10)
     const ebit = margeBrute.map((mb, i) => Math.round((mb + fixedCosts[i]) * 10) / 10)
-    const finCharges = [0, -1.0, -1.5]
+    const baseFinCharges = [0, -1.0, -1.5]
+    const finCharges = baseFinCharges.map((fc, i) => Math.round((fc + loanInterest[i]) * 10) / 10)
     const rbt = ebit.map((eb, i) => Math.round((eb + finCharges[i]) * 10) / 10)
     const impot = rbt.map(r => r > 0 ? Math.round(-r * 0.25 * 10) / 10 : 0)
     const rn = rbt.map((r, i) => Math.round((r + impot[i]) * 10) / 10)
@@ -573,9 +593,10 @@ export default function BusinessPlanApp() {
     const immob = [12.0, 10.2, 8.4]
     const stocks = [3.0, 8.0, 15.0]
     const creances = [2.5, 9.0, 18.0]
-    const tresorerie = ran.map((r, i) => Math.round((4.5 + r + (i > 0 ? ran[i - 1] - rn[i] : 0)) * 10) / 10)
+    const tresorerie = ran.map((r, i) => Math.round((4.5 + loanAmt + r + (i > 0 ? ran[i - 1] - rn[i] : 0)) * 10) / 10)
     const totalActif = immob.map((im, i) => Math.round((im + stocks[i] + creances[i] + tresorerie[i]) * 10) / 10)
-    const dettesFin = [8.0, 15.0, 10.0]
+    const baseDettesFin = [8.0, 15.0, 10.0]
+    const dettesFin = baseDettesFin.map((d, i) => Math.round((d + loanRemaining[i]) * 10) / 10)
     const dettesFisc = [1.5, 3.0, 5.0]
     const dettesFourn = totalActif.map((ta, i) => Math.round((ta - capSocial[i] - ran[i] - dettesFin[i] - dettesFisc[i]) * 10) / 10)
     const roe = capPropres.map((cp, i) => cp > 0 ? Math.round(rn[i] / cp * 1000) / 10 : 0)
@@ -620,7 +641,7 @@ export default function BusinessPlanApp() {
       { poste: '  Amortissements', a1: -1.8, a2: -1.8, a3: -2.0, bold: false, color: C.text },
       { poste: '  Assurances & divers', a1: -1.8, a2: -1.9, a3: -2.8, bold: false, color: C.text },
       { poste: 'Résultat opérationnel (EBIT)', a1: ebit[0], a2: ebit[1], a3: ebit[2], bold: true, color: null },
-      { poste: 'Charges financières', a1: 0, a2: -1.0, a3: -1.5, bold: false, color: C.text },
+      { poste: 'Charges financières', a1: finCharges[0], a2: finCharges[1], a3: finCharges[2], bold: false, color: C.text },
       { poste: 'Résultat avant impôt', a1: rbt[0], a2: rbt[1], a3: rbt[2], bold: true, color: null },
       { poste: 'Impôt sur les sociétés (25%)', a1: impot[0], a2: impot[1], a3: impot[2], bold: false, color: C.text },
       { poste: 'Résultat net', a1: rn[0], a2: rn[1], a3: rn[2], bold: true, color: null },
@@ -692,28 +713,30 @@ export default function BusinessPlanApp() {
       breakevenData.push({ ca: caVal, coutsTotal: Math.round(coutsTotal * 10) / 10, profit: Math.round((caVal - coutsTotal) * 10) / 10 })
     }
 
+    const loanRepayQ = Math.round(loanPrincipalRepay * 10) / 10
     const cashFlow3YData = [
-      { year: 'A1 T1', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: -8.0, financement: 12.0, total: Math.round((ebit[0] / 4 + 4.0) * 10) / 10 },
+      { year: 'A1 T1', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: -8.0, financement: Math.round((12.0 + loanAmt) * 10) / 10, total: Math.round((ebit[0] / 4 + 4.0 + loanAmt) * 10) / 10 },
       { year: 'A1 T2', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: -2.0, financement: 0, total: Math.round((ebit[0] / 4 - 2.0) * 10) / 10 },
       { year: 'A1 T3', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: 0, financement: 0, total: Math.round(ebit[0] / 4 * 10) / 10 },
-      { year: 'A1 T4', exploitation: Math.round((ebit[0] / 4 - 0.5) * 10) / 10, investissement: 0, financement: 0, total: Math.round((ebit[0] / 4 - 0.5) * 10) / 10 },
+      { year: 'A1 T4', exploitation: Math.round((ebit[0] / 4 - 0.5) * 10) / 10, investissement: 0, financement: -loanRepayQ, total: Math.round((ebit[0] / 4 - 0.5 - loanRepayQ) * 10) / 10 },
       { year: 'A2 T1', exploitation: Math.round(ebit[1] / 4 * 10) / 10, investissement: -5.0, financement: ebit[1] > 0 ? 0 : 5.0, total: Math.round((ebit[1] / 4 - 5.0 + (ebit[1] > 0 ? 0 : 5.0)) * 10) / 10 },
       { year: 'A2 T2', exploitation: Math.round(ebit[1] / 4 * 10) / 10, investissement: -2.0, financement: 0, total: Math.round((ebit[1] / 4 - 2.0) * 10) / 10 },
       { year: 'A2 T3', exploitation: Math.round((ebit[1] / 4 + 0.5) * 10) / 10, investissement: 0, financement: 0, total: Math.round((ebit[1] / 4 + 0.5) * 10) / 10 },
-      { year: 'A2 T4', exploitation: Math.round((ebit[1] / 4 + 1) * 10) / 10, investissement: 0, financement: -3.0, total: Math.round((ebit[1] / 4 + 1 - 3.0) * 10) / 10 },
+      { year: 'A2 T4', exploitation: Math.round((ebit[1] / 4 + 1) * 10) / 10, investissement: 0, financement: Math.round((-3.0 - loanRepayQ) * 10) / 10, total: Math.round((ebit[1] / 4 + 1 - 3.0 - loanRepayQ) * 10) / 10 },
       { year: 'A3 T1', exploitation: Math.round(ebit[2] / 4 * 10) / 10, investissement: -8.0, financement: 0, total: Math.round((ebit[2] / 4 - 8.0) * 10) / 10 },
       { year: 'A3 T2', exploitation: Math.round((ebit[2] / 4 + 1) * 10) / 10, investissement: 0, financement: 0, total: Math.round((ebit[2] / 4 + 1) * 10) / 10 },
       { year: 'A3 T3', exploitation: Math.round((ebit[2] / 4 + 2) * 10) / 10, investissement: 0, financement: -2.0, total: Math.round((ebit[2] / 4 + 2 - 2.0) * 10) / 10 },
-      { year: 'A3 T4', exploitation: Math.round((ebit[2] / 4 + 3) * 10) / 10, investissement: 0, financement: -5.0, total: Math.round((ebit[2] / 4 + 3 - 5.0) * 10) / 10 },
+      { year: 'A3 T4', exploitation: Math.round((ebit[2] / 4 + 3) * 10) / 10, investissement: 0, financement: Math.round((-5.0 - loanRepayQ) * 10) / 10, total: Math.round((ebit[2] / 4 + 3 - 5.0 - loanRepayQ) * 10) / 10 },
     ]
 
     return {
       pricePerKg: p, pricePer500g: p / 2, pf,
+      loanAmt, loanInterest, loanRemaining,
       totalCA, productCA, ebit, rn, margeBrute, seuil, mbPct, fixedCosts,
       financialData, compteResultatData, bilanData, ratiosData,
       vanTriData, sensitivityData, breakevenData, cashFlow3YData,
     }
-  }, [priceIdx])
+  }, [priceIdx, loanIdx])
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -836,6 +859,27 @@ export default function BusinessPlanApp() {
                     )}
                     <span className="mr-1.5">{opt.label}</span>
                     <span className="font-bold">{opt.price.toLocaleString('fr-FR')} F</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* ─── Loan Selector (Hero compact) ─── */}
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-3">
+                <PiggyBank size={16} className="text-white/50" />
+                <span className="text-white/50 text-xs font-medium uppercase tracking-wider">Scénario de financement — Prêt bancaire</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {LOAN_OPTIONS.map((opt, i) => (
+                  <button key={i} onClick={() => setLoanIdx(i)}
+                    className={`group relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${loanIdx === i ? 'text-white shadow-lg scale-105' : 'text-white/50 hover:text-white/80 border border-white/15 hover:border-white/30 hover:scale-102'}`}
+                    style={loanIdx === i ? { backgroundColor: opt.color, boxShadow: `0 4px 20px ${opt.color}40` } : {}}
+                  >
+                    {opt.amount > 0 && loanIdx !== i && (
+                      <span className="absolute -top-2 -right-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold text-white" style={{ backgroundColor: opt.color }}>💼</span>
+                    )}
+                    <span className="mr-1.5">{opt.label}</span>
+                    {opt.amount > 0 && <span className="font-bold">{opt.amount}M Fcfa</span>}
                   </button>
                 ))}
               </div>
@@ -1202,6 +1246,143 @@ export default function BusinessPlanApp() {
                   <Info size={14} style={{ color: C.muted }} />
                   <p className="text-xs" style={{ color: C.muted }}>
                     Le choix du tarif modifie dynamiquement le Chiffre d&apos;Affaires, le Compte de Résultat, le Bilan, les Ratios, la VAN/TRI et l&apos;analyse de sensibilité.
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            {/* ─── Loan Scenario Card ─── */}
+            <Card className="border-0 shadow-lg overflow-hidden mt-8">
+              <div className="rounded-2xl overflow-hidden">
+                {/* Header bar */}
+                <div className="px-6 pt-6 pb-4" style={{ background: `linear-gradient(135deg, ${C.primary} 0%, #8B5CF6 100%)` }}>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
+                      <PiggyBank size={22} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">Scénario de Financement</h3>
+                      <p className="text-sm text-white/60">Simulez l&apos;impact d&apos;un prêt bancaire sur votre business plan</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Loan option cards */}
+                <div className="p-6 grid md:grid-cols-3 gap-5" style={{ backgroundColor: C.surface }}>
+                  {LOAN_OPTIONS.map((opt, i) => {
+                    const isSelected = loanIdx === i
+                    const loanAmount = opt.amount
+                    const principalRepay = loanAmount / 3
+                    const interests = [
+                      Math.round(loanAmount * LOAN_RATE * 10) / 10,
+                      Math.round((loanAmount - principalRepay) * LOAN_RATE * 10) / 10,
+                      Math.round((loanAmount - 2 * principalRepay) * LOAN_RATE * 10) / 10,
+                    ]
+                    const totalInterest = Math.round(interests.reduce((s, v) => s + v, 0) * 10) / 10
+                    const totalCost = Math.round((loanAmount + totalInterest) * 10) / 10
+                    const metrics = loanAmount > 0 ? [
+                      { label: 'Taux d\'intérêt', value: `${(LOAN_RATE * 100).toFixed(0)}%`, icon: Percent },
+                      { label: 'Intérêts totaux', value: `${totalInterest}M`, icon: Wallet },
+                      { label: 'Coût total du prêt', value: `${totalCost}M`, icon: DollarSign },
+                      { label: 'Remboursement annuel', value: `${Math.round(principalRepay * 10) / 10}M`, icon: Clock },
+                    ] : [
+                      { label: 'Autofinancement', value: '100%', icon: Shield },
+                      { label: 'Charges financières', value: 'Base', icon: Wallet },
+                      { label: 'Dettes financières', value: 'Base', icon: DollarSign },
+                      { label: 'Impact sur RN', value: 'Aucun', icon: TrendingUp },
+                    ]
+                    return (
+                      <motion.div
+                        key={i}
+                        whileHover={{ y: -4, boxShadow: isSelected ? `0 12px 40px ${opt.color}30` : '0 8px 30px rgba(0,0,0,0.08)' }}
+                        onClick={() => setLoanIdx(i)}
+                        className={`relative cursor-pointer rounded-2xl transition-all duration-300 overflow-hidden ${isSelected ? 'ring-2 shadow-xl' : 'shadow-md'}`}
+                        style={{
+                          backgroundColor: isSelected ? `${opt.color}06` : C.white,
+                          ringColor: opt.color,
+                          border: isSelected ? `2px solid ${opt.color}` : `2px solid ${opt.color}20`,
+                        }}
+                      >
+                        {/* Selected checkmark */}
+                        {isSelected && (
+                          <div className="absolute top-3 left-3">
+                            <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: opt.color }}>
+                              <CheckCircle2 size={14} className="text-white" />
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="p-5 pt-6">
+                          {/* Option name */}
+                          <div className="text-center mb-4">
+                            <h4 className="text-lg font-bold mb-1" style={{ color: opt.color }}>{opt.label}</h4>
+                            <div className="w-12 h-0.5 mx-auto rounded-full" style={{ backgroundColor: opt.color }} />
+                          </div>
+
+                          {/* Amount display */}
+                          <div className="text-center mb-5">
+                            {loanAmount > 0 ? (
+                              <>
+                                <div className="flex items-baseline justify-center gap-1">
+                                  <span className="text-3xl font-bold" style={{ color: C.primary }}>{loanAmount}</span>
+                                  <span className="text-sm font-medium" style={{ color: C.muted }}>M Fcfa</span>
+                                </div>
+                                <p className="text-xs mt-1" style={{ color: C.muted }}>capital emprunté</p>
+                                <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs" style={{ backgroundColor: `${opt.color}10`, color: opt.color }}>
+                                  <span>Remboursement sur 3 ans</span>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <div className="flex items-baseline justify-center gap-1">
+                                  <span className="text-3xl font-bold" style={{ color: C.primary }}>0</span>
+                                  <span className="text-sm font-medium" style={{ color: C.muted }}>Fcfa</span>
+                                </div>
+                                <p className="text-xs mt-1" style={{ color: C.muted }}>Pas de prêt bancaire</p>
+                                <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs" style={{ backgroundColor: `${opt.color}10`, color: opt.color }}>
+                                  <span>Financement propre uniquement</span>
+                                </div>
+                              </>
+                            )}
+                          </div>
+
+                          {/* Divider */}
+                          <div className="h-px mb-4" style={{ backgroundColor: `${opt.color}20` }} />
+
+                          {/* Key metrics */}
+                          <div className="space-y-2.5">
+                            {metrics.map((m, mi) => (
+                              <div key={mi} className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <m.icon size={13} style={{ color: C.muted }} />
+                                  <span className="text-xs" style={{ color: C.muted }}>{m.label}</span>
+                                </div>
+                                <span className="text-xs font-bold" style={{ color: C.primary }}>{m.value}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Select button */}
+                          <button
+                            className={`w-full mt-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${isSelected ? 'text-white shadow-md' : 'border-2 hover:shadow-sm'}`}
+                            style={isSelected
+                              ? { backgroundColor: opt.color, boxShadow: `0 4px 15px ${opt.color}30` }
+                              : { borderColor: `${opt.color}40`, color: opt.color, backgroundColor: 'transparent' }
+                            }
+                          >
+                            {isSelected ? '✓ Scénario actif' : 'Choisir ce scénario'}
+                          </button>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+
+                {/* Footer note */}
+                <div className="px-6 py-3 flex items-center gap-2 border-t" style={{ backgroundColor: C.white, borderColor: `${C.purple}15` }}>
+                  <Info size={14} style={{ color: C.muted }} />
+                  <p className="text-xs" style={{ color: C.muted }}>
+                    Le prêt est reçu en Année 1 et remboursé sur 3 ans (capital + intérêts à 8%/an). Les charges financières, le bilan et les flux de trésorerie s&apos;ajustent automatiquement.
                   </p>
                 </div>
               </div>

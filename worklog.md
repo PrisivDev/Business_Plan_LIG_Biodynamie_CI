@@ -159,3 +159,37 @@ Stage Summary:
 - Drop-off indicators between steps provide conversion context
 - No more concatenated/stuck-together data
 - App compiles and renders correctly
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: Implement loan scenario selector with dynamic financial impact
+
+Work Log:
+- Added `LOAN_OPTIONS` constant (3 scenarios: Sans prêt, Prêt 10M, Prêt 15M) and `LOAN_RATE` (8%/year) after `BASE_PRICE`
+- Added `loanIdx` state (default: 0 = Sans prêt)
+- Modified `dyn` useMemo to incorporate loan calculations:
+  - Added `loanAmt`, `loanPrincipalRepay`, `loanRemaining`, `loanInterest` calculations
+  - Changed `finCharges` to combine base charges + loan interest
+  - Changed `tresorerie` to include `loanAmt` in Year 1
+  - Changed `dettesFin` to include `loanRemaining` balances
+  - Updated `compteResultatData` to use dynamic `finCharges` values
+  - Updated `cashFlow3YData` with loan proceeds (A1 T1), principal repayments (A1 T4, A2 T4, A3 T4)
+  - Changed dependency array from `[priceIdx]` to `[priceIdx, loanIdx]`
+  - Added `loanAmt`, `loanInterest`, `loanRemaining` to return object
+- Added Loan Selector UI in Hero Section (after price selector) with colored buttons and briefcase badge
+- Added detailed Loan Scenario Card in Product section (after pricing card) with:
+  - Purple gradient header with PiggyBank icon
+  - 3-column grid of loan option cards
+  - Each card shows: loan amount, repayment schedule, key metrics (interest rate, total interest, total cost, annual repayment)
+  - Sans prêt card shows: autofinancement, base charges, no impact on RN
+  - Selected card has colored border, checkmark, "Scénario actif" button
+  - Footer note explaining loan mechanics
+  - Hover animations with y-lift and shadow effects
+
+Stage Summary:
+- Loan scenario selector fully implemented with both hero compact selector and detailed card
+- 3 loan options: Sans prêt (0), Prêt 10M Fcfa, Prêt 15M Fcfa
+- Financial data dynamically recalculates when loan scenario changes
+- Charges financières, bilan (dettes financières, trésorerie), and cash flow all update automatically
+- App compiles and renders correctly (verified via dev server logs)
