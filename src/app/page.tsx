@@ -67,27 +67,41 @@ const LOAN_OPTIONS = [
 ]
 const LOAN_RATE = 0 // 0% — prêt à taux zéro
 
-// ─── Tier Preview Metrics (constant across sessions) ───
+// ─── Volume & Unit Cost Structure ───
+// Logique : 30t reçues → 29t vendues + 1t promotion
+const VOLUME_RECEIVED = [30, 80, 150] // tonnes par an
+const COUT_ACHAT_KG = 4000            // Fcfa/kg — Achat LIG Congo (CIF Abidjan)
+const COUT_CONDITIONNEMENT_KG = 600   // Fcfa/kg — Conditionnement local (500g & 1kg)
+const COUT_LOGISTIQUE_KG = 350        // Fcfa/kg — Logistique & stockage local
+const COUT_PROMO_KG = 250             // Fcfa/kg — Distribution échantillons promotionnels
+const TAUX_COMMISSION = 0.08          // 8% du CA total
+
+// ─── Tier Preview Metrics (volume-based) ───
 const TIER_PREVIEWS = PRICE_OPTIONS.map(opt => {
-  const pf = opt.price / BASE_PRICE
-  const baseProductCA = [12.2, 44.8, 94.5]
-  const servicesCA = [5.2, 19.2, 40.5]
-  const productCA = baseProductCA.map(v => Math.round(v * pf * 10) / 10)
+  const p = opt.price
+  const volReceivedKg = VOLUME_RECEIVED.map(v => v * 1000)
+  const volSoldKg = volReceivedKg.map(v => Math.round(v * 29 / 30))
+  const volPromoKg = volReceivedKg.map(v => Math.round(v * 1 / 30))
+  const productCA = volSoldKg.map(v => Math.round(v * p / 1_000_000 * 10) / 10)
+  const formations = [15, 40, 75]
+  const consultation = [8, 20, 35]
+  const certification = [4, 10, 20]
+  const servicesCA = formations.map((f, i) => f + consultation[i] + certification[i])
   const totalCA = productCA.map((pc, i) => Math.round((pc + servicesCA[i]) * 10) / 10)
-  const commissions = totalCA.map(c => Math.round(-c * 0.08 * 10) / 10)
-  const matieres = [-5.5, -13.0, -20.0]
-  const conditionnement = [-2.0, -5.0, -8.0]
-  const logistique = [-2.5, -6.0, -10.0]
-  const tests = [-0.6, -1.5, -2.5]
-  const totalVar = matieres.map((m, i) => Math.round((m + conditionnement[i] + logistique[i] + tests[i] + commissions[i]) * 10) / 10)
+  const matieres = volReceivedKg.map(v => -Math.round(v * COUT_ACHAT_KG / 1_000_000 * 10) / 10)
+  const conditionnement = volReceivedKg.map(v => -Math.round(v * COUT_CONDITIONNEMENT_KG / 1_000_000 * 10) / 10)
+  const logistique = volReceivedKg.map(v => -Math.round(v * COUT_LOGISTIQUE_KG / 1_000_000 * 10) / 10)
+  const commissions = totalCA.map(c => Math.round(-c * TAUX_COMMISSION * 10) / 10)
+  const testsGratuits = volPromoKg.map(v => -Math.round(v * COUT_PROMO_KG / 1_000_000 * 10) / 10)
+  const totalVar = matieres.map((m, i) => Math.round((m + conditionnement[i] + logistique[i] + commissions[i] + testsGratuits[i]) * 10) / 10)
   const margeBrute = totalCA.map((c, i) => Math.round((c + totalVar[i]) * 10) / 10)
   const mbPct = margeBrute.map((mb, i) => totalCA[i] > 0 ? Math.round(mb / totalCA[i] * 1000) / 10 : 0)
-  const salaires = [0, -10.5, -13.0]
-  const loyer = [0, -2.8, -3.2]
-  const marketing = [-1.0, -2.5, -4.0]
-  const amort = [-1.8, -1.8, -2.0]
-  const assurances = [-1.8, -1.9, -2.8]
-  const fixedCosts = salaires.map((s, i) => Math.round((s + loyer[i] + marketing[i] + amort[i] + assurances[i]) * 10) / 10)
+  const salaires = [0, -15.0, -22.0]
+  const marketing = [-5.0, -8.0, -12.0]
+  const loyer = [0, -4.0, -5.5]
+  const amort = [-3.0, -3.5, -4.0]
+  const assurances = [-2.0, -3.0, -4.5]
+  const fixedCosts = salaires.map((s, i) => Math.round((s + marketing[i] + loyer[i] + amort[i] + assurances[i]) * 10) / 10)
   const ebit = margeBrute.map((mb, i) => Math.round((mb + fixedCosts[i]) * 10) / 10)
   const finCharges = [0, -1.0, -1.5]
   const rbt = ebit.map((eb, i) => Math.round((eb + finCharges[i]) * 10) / 10)
@@ -95,8 +109,8 @@ const TIER_PREVIEWS = PRICE_OPTIONS.map(opt => {
   const rn = rbt.map((r, i) => Math.round((r + impot[i]) * 10) / 10)
   const seuil = mbPct[0] > 0 ? Math.round(-fixedCosts[0] / (mbPct[0] / 100) * 10) / 10 : 0
   return {
-    pricePerKg: opt.price,
-    pricePer500g: opt.price / 2,
+    pricePerKg: p,
+    pricePer500g: p / 2,
     caY1: totalCA[0],
     caY3: totalCA[2],
     seuil,
@@ -539,61 +553,66 @@ export default function BusinessPlanApp() {
   const [priceIdx, setPriceIdx] = useState(1) // default: Standard 9000
   const [loanIdx, setLoanIdx] = useState(0) // default: Sans prêt
 
-  // ─── Dynamic Financial Computation ───
+  // ─── Dynamic Financial Computation (Volume-Driven) ───
   const dyn = useMemo(() => {
-    const p = PRICE_OPTIONS[priceIdx].price
-    const pf = p / BASE_PRICE
+    const p = PRICE_OPTIONS[priceIdx].price // prix de vente par kg
 
-    // Loan calculations — prêt à taux zéro, remboursé sur 3 mois dès Oct 2026 (A1 T4, A2 T1, A2 T2)
+    // ── Loan calculations — prêt à taux zéro, 3 mensualités dès Oct 2026 ──
     const loanAmt = LOAN_OPTIONS[loanIdx].amount
     const loanRepayQ = Math.round(loanAmt / 3 * 10) / 10
-    // Solde restant en fin d'année : A1 end (2 mensualités restantes), A2 end (0), A3 end (0)
     const loanRemaining = [Math.round((loanAmt - loanRepayQ) * 10) / 10, 0, 0]
     const loanInterest = [0, 0, 0] // Taux 0%
 
-    // Revenus produits (échelle avec le prix)
-    const baseProductCA = [12.2, 44.8, 94.5]
-    const servicesCA = [5.2, 19.2, 40.5]
-    const productCA = baseProductCA.map(v => Math.round(v * pf * 10) / 10)
+    // ── Volumes (kg) — logique 30t reçues → 29t vendues + 1t promo ──
+    const volReceivedKg = VOLUME_RECEIVED.map(v => v * 1000)
+    const volSoldKg = volReceivedKg.map(v => Math.round(v * 29 / 30))
+    const volPromoKg = volReceivedKg.map(v => Math.round(v * 1 / 30))
+
+    // ── Revenus ──
+    const productCA = volSoldKg.map(v => Math.round(v * p / 1_000_000 * 10) / 10)
+    const formations = [15, 40, 75]
+    const consultation = [8, 20, 35]
+    const certification = [4, 10, 20]
+    const servicesCA = formations.map((f, i) => f + consultation[i] + certification[i])
     const totalCA = productCA.map((pc, i) => Math.round((pc + servicesCA[i]) * 10) / 10)
 
-    // Coûts variables volume (constants)
-    const matieres = [-5.5, -13.0, -20.0]
-    const conditionnement = [-2.0, -5.0, -8.0]
-    const logistique = [-2.5, -6.0, -10.0]
-    const tests = [-0.6, -1.5, -2.5]
-    const commissions = totalCA.map(c => Math.round(-c * 0.08 * 10) / 10)
-    const totalVar = matieres.map((m, i) => Math.round((m + conditionnement[i] + logistique[i] + tests[i] + commissions[i]) * 10) / 10)
+    // ── Coûts variables (basés sur le volume reçu, indépendants du prix de vente) ──
+    const matieres = volReceivedKg.map(v => -Math.round(v * COUT_ACHAT_KG / 1_000_000 * 10) / 10)
+    const conditionnement = volReceivedKg.map(v => -Math.round(v * COUT_CONDITIONNEMENT_KG / 1_000_000 * 10) / 10)
+    const logistique = volReceivedKg.map(v => -Math.round(v * COUT_LOGISTIQUE_KG / 1_000_000 * 10) / 10)
+    const commissions = totalCA.map(c => Math.round(-c * TAUX_COMMISSION * 10) / 10)
+    const testsGratuits = volPromoKg.map(v => -Math.round(v * COUT_PROMO_KG / 1_000_000 * 10) / 10)
+    const totalVar = matieres.map((m, i) => Math.round((m + conditionnement[i] + logistique[i] + commissions[i] + testsGratuits[i]) * 10) / 10)
     const margeBrute = totalCA.map((c, i) => Math.round((c + totalVar[i]) * 10) / 10)
 
-    // Charges fixes (Année 1 : pas de salaires ni loyer)
-    const salaires = [0, -10.5, -13.0]
-    const loyer = [0, -2.8, -3.2]
-    const marketing = [-1.0, -2.5, -4.0]
-    const amort = [-1.8, -1.8, -2.0]
-    const assurances = [-1.8, -1.9, -2.8]
-    const fixedCosts = salaires.map((s, i) => Math.round((s + loyer[i] + marketing[i] + amort[i] + assurances[i]) * 10) / 10)
+    // ── Charges fixes ──
+    const salaires = [0, -15.0, -22.0]
+    const marketing = [-5.0, -8.0, -12.0]
+    const loyer = [0, -4.0, -5.5]
+    const amort = [-3.0, -3.5, -4.0]
+    const assurances = [-2.0, -3.0, -4.5]
+    const fixedCosts = salaires.map((s, i) => Math.round((s + marketing[i] + loyer[i] + amort[i] + assurances[i]) * 10) / 10)
     const ebit = margeBrute.map((mb, i) => Math.round((mb + fixedCosts[i]) * 10) / 10)
-    const finCharges = [0, -1.0, -1.5] // Pas d'impact du prêt sur les charges financières (taux 0%)
+    const finCharges = [0, -1.0, -1.5]
     const rbt = ebit.map((eb, i) => Math.round((eb + finCharges[i]) * 10) / 10)
     const impot = rbt.map(r => r > 0 ? Math.round(-r * 0.25 * 10) / 10 : 0)
     const rn = rbt.map((r, i) => Math.round((r + impot[i]) * 10) / 10)
 
-    // Ratios clés
+    // ── Ratios clés ──
     const mbPct = margeBrute.map((mb, i) => totalCA[i] > 0 ? Math.round(mb / totalCA[i] * 1000) / 10 : 0)
     const ebitPct = ebit.map((eb, i) => totalCA[i] > 0 ? Math.round(eb / totalCA[i] * 1000) / 10 : 0)
     const rnPct = rn.map((r, i) => totalCA[i] > 0 ? Math.round(r / totalCA[i] * 1000) / 10 : 0)
     const capSocial = [20, 20, 20]
     const ran = rn.map((_, i) => Math.round(rn.slice(0, i + 1).reduce((s, v) => s + v, 0) * 10) / 10)
     const capPropres = ran.map((r, i) => Math.round((capSocial[i] + r) * 10) / 10)
-    const immob = [12.0, 10.2, 8.4]
-    const stocks = [3.0, 8.0, 15.0]
-    const creances = [2.5, 9.0, 18.0]
-    const tresorerie = ran.map((r, i) => Math.round((4.5 + loanAmt + r + (i > 0 ? ran[i - 1] - rn[i] : 0)) * 10) / 10)
+    const immob = [20.0, 18.0, 15.0]
+    const stocks = volReceivedKg.map(v => Math.round(v * COUT_ACHAT_KG / 1_000_000 / 4 * 10) / 10)
+    const creances = totalCA.map(c => Math.round(c * 0.09 * 10) / 10)
+    const tresorerie = ran.map((r, i) => Math.round((5.0 + loanAmt + r + (i > 0 ? ran[i - 1] - rn[i] : 0)) * 10) / 10)
     const totalActif = immob.map((im, i) => Math.round((im + stocks[i] + creances[i] + tresorerie[i]) * 10) / 10)
     const baseDettesFin = [8.0, 15.0, 10.0]
     const dettesFin = baseDettesFin.map((d, i) => Math.round((d + loanRemaining[i]) * 10) / 10)
-    const dettesFisc = [1.5, 3.0, 5.0]
+    const dettesFisc = [3.0, 12.0, 25.0]
     const dettesFourn = totalActif.map((ta, i) => Math.round((ta - capSocial[i] - ran[i] - dettesFin[i] - dettesFisc[i]) * 10) / 10)
     const roe = capPropres.map((cp, i) => cp > 0 ? Math.round(rn[i] / cp * 1000) / 10 : 0)
     const roa = totalActif.map((ta, i) => ta > 0 ? Math.round(rn[i] / ta * 1000) / 10 : 0)
@@ -606,11 +625,11 @@ export default function BusinessPlanApp() {
     const croissCA = totalCA.map((c, i) => i === 0 ? 'N/A' : `+${Math.round((c / totalCA[i - 1] - 1) * 1000) / 10}%`)
     const croissRN = rn.map((r, i) => i === 0 || rn[i - 1] <= 0 ? 'N/A' : `+${Math.round((r / rn[i - 1] - 1) * 1000) / 10}%`)
 
-    // Seuil de rentabilité
+    // ── Seuil de rentabilité ──
     const mbPctA1 = mbPct[0] / 100
     const seuil = mbPctA1 > 0 ? Math.round(-fixedCosts[0] / mbPctA1 * 10) / 10 : 0
 
-    // ─── Build data arrays ───
+    // ── Build data arrays ──
     const financialData = [
       { year: 'Année 1 (2026)', CA: totalCA[0], couts: Math.round(-(totalVar[0] + fixedCosts[0]) * 10) / 10, resultat: rn[0] },
       { year: 'Année 2 (2027)', CA: totalCA[1], couts: Math.round(-(totalVar[1] + fixedCosts[1]) * 10) / 10, resultat: rn[1] },
@@ -619,23 +638,23 @@ export default function BusinessPlanApp() {
 
     const compteResultatData = [
       { poste: 'Chiffre d\'affaires', a1: totalCA[0], a2: totalCA[1], a3: totalCA[2], bold: true, color: C.accent },
-      { poste: '  Distribution biofertilisant', a1: productCA[0], a2: productCA[1], a3: productCA[2], bold: false, color: C.text },
-      { poste: '  Formations & accompagnement', a1: 2.6, a2: 9.6, a3: 20.3, bold: false, color: C.text },
-      { poste: '  Consultation R&D', a1: 1.7, a2: 6.4, a3: 13.5, bold: false, color: C.text },
-      { poste: '  Certification Fermes Bio', a1: 0.9, a2: 3.2, a3: 6.7, bold: false, color: C.text },
+      { poste: '  Distribution biofertilisant (29t/77t/145t)', a1: productCA[0], a2: productCA[1], a3: productCA[2], bold: false, color: C.text },
+      { poste: '  Formations & accompagnement', a1: formations[0], a2: formations[1], a3: formations[2], bold: false, color: C.text },
+      { poste: '  Consultation R&D', a1: consultation[0], a2: consultation[1], a3: consultation[2], bold: false, color: C.text },
+      { poste: '  Certification Fermes Bio', a1: certification[0], a2: certification[1], a3: certification[2], bold: false, color: C.text },
       { poste: 'Coûts variables', a1: totalVar[0], a2: totalVar[1], a3: totalVar[2], bold: true, color: C.danger },
-      { poste: '  Matières premières', a1: -5.5, a2: -13.0, a3: -20.0, bold: false, color: C.text },
-      { poste: '  Conditionnement & emballage', a1: -2.0, a2: -5.0, a3: -8.0, bold: false, color: C.text },
-      { poste: '  Logistique & transport', a1: -2.5, a2: -6.0, a3: -10.0, bold: false, color: C.text },
+      { poste: '  Matières premières (achat LIG)', a1: matieres[0], a2: matieres[1], a3: matieres[2], bold: false, color: C.text },
+      { poste: '  Conditionnement & emballage', a1: conditionnement[0], a2: conditionnement[1], a3: conditionnement[2], bold: false, color: C.text },
+      { poste: '  Logistique & transport', a1: logistique[0], a2: logistique[1], a3: logistique[2], bold: false, color: C.text },
       { poste: '  Commissions commerciales (8%)', a1: commissions[0], a2: commissions[1], a3: commissions[2], bold: false, color: C.text },
-      { poste: '  Tests gratuits (1 tonne)', a1: -0.6, a2: -1.5, a3: -2.5, bold: false, color: C.text },
+      { poste: '  Tests gratuits (1t promo / 30t)', a1: testsGratuits[0], a2: testsGratuits[1], a3: testsGratuits[2], bold: false, color: C.text },
       { poste: 'Marge brute', a1: margeBrute[0], a2: margeBrute[1], a3: margeBrute[2], bold: true, color: C.accentDark },
       { poste: 'Charges fixes', a1: fixedCosts[0], a2: fixedCosts[1], a3: fixedCosts[2], bold: true, color: C.danger },
       { poste: '  Salaires & charges sociales', a1: salaires[0], a2: salaires[1], a3: salaires[2], bold: false, color: C.text },
       { poste: '  Marketing & communication', a1: marketing[0], a2: marketing[1], a3: marketing[2], bold: false, color: C.text },
       { poste: '  Loyer & charges bureaux', a1: loyer[0], a2: loyer[1], a3: loyer[2], bold: false, color: C.text },
-      { poste: '  Amortissements', a1: -1.8, a2: -1.8, a3: -2.0, bold: false, color: C.text },
-      { poste: '  Assurances & divers', a1: -1.8, a2: -1.9, a3: -2.8, bold: false, color: C.text },
+      { poste: '  Amortissements', a1: amort[0], a2: amort[1], a3: amort[2], bold: false, color: C.text },
+      { poste: '  Assurances & divers', a1: assurances[0], a2: assurances[1], a3: assurances[2], bold: false, color: C.text },
       { poste: 'Résultat opérationnel (EBIT)', a1: ebit[0], a2: ebit[1], a3: ebit[2], bold: true, color: null },
       { poste: 'Charges financières', a1: finCharges[0], a2: finCharges[1], a3: finCharges[2], bold: false, color: C.text },
       { poste: 'Résultat avant impôt', a1: rbt[0], a2: rbt[1], a3: rbt[2], bold: true, color: null },
@@ -661,7 +680,7 @@ export default function BusinessPlanApp() {
 
     const ratiosData = [
       { category: 'Rentabilité', ratios: [
-        { name: 'Marge brute', formula: 'MB/CA', a1: `${mbPct[0]}%`, a2: `${mbPct[1]}%`, a3: `${mbPct[2]}%`, target: '>60%', status: mbPct[2] >= 60 ? 'success' : 'warning' },
+        { name: 'Marge brute', formula: 'MB/CA', a1: `${mbPct[0]}%`, a2: `${mbPct[1]}%`, a3: `${mbPct[2]}%`, target: '>40%', status: mbPct[2] >= 40 ? 'success' : 'warning' },
         { name: 'Marge opérationnelle (EBIT)', formula: 'EBIT/CA', a1: `${ebitPct[0]}%`, a2: `${ebitPct[1]}%`, a3: `${ebitPct[2]}%`, target: '>25%', status: ebitPct[2] >= 25 ? 'success' : 'warning' },
         { name: 'Marge nette', formula: 'RN/CA', a1: `${rnPct[0]}%`, a2: `${rnPct[1]}%`, a3: `${rnPct[2]}%`, target: '>20%', status: rnPct[2] >= 20 ? 'success' : 'warning' },
         { name: 'ROE (Rentabilité des capitaux)', formula: 'RN/Capitaux propres', a1: `${roe[0]}%`, a2: `${roe[1]}%`, a3: `${roe[2]}%`, target: '>30%', status: roe[2] >= 30 ? 'success' : 'warning' },
@@ -677,7 +696,7 @@ export default function BusinessPlanApp() {
       { category: 'Activité & Efficacité', ratios: [
         { name: 'Rotation des stocks (jours)', formula: 'Stock/CA×365', a1: `${Math.round(stocks[0] / totalCA[0] * 365)}`, a2: `${Math.round(stocks[1] / totalCA[1] * 365)}`, a3: `${Math.round(stocks[2] / totalCA[2] * 365)}`, target: '<60j', status: Math.round(stocks[2] / totalCA[2] * 365) < 60 ? 'success' : 'warning' },
         { name: 'Délai paiement clients (jours)', formula: 'Créances/CA×365', a1: `${Math.round(creances[0] / totalCA[0] * 365)}`, a2: `${Math.round(creances[1] / totalCA[1] * 365)}`, a3: `${Math.round(creances[2] / totalCA[2] * 365)}`, target: '<60j', status: Math.round(creances[2] / totalCA[2] * 365) < 60 ? 'success' : 'warning' },
-        { name: 'Délai paiement fournisseurs (jours)', formula: 'Dettes/CA×365', a1: `${Math.round(dettesFourn[0] / totalCA[0] * 365)}`, a2: `${Math.round(dettesFourn[1] / totalCA[1] * 365)}`, a3: `${Math.round(dettesFourn[2] / totalCA[2] * 365)}`, target: '>30j', status: Math.round(dettesFourn[2] / totalCA[2] * 365) > 30 ? 'success' : 'warning' },
+        { name: 'Délai paiement fournisseurs (jours)', formula: 'Dettes/CA×365', a1: totalCA[0] > 0 ? `${Math.round(Math.abs(dettesFourn[0]) / totalCA[0] * 365)}` : '0', a2: totalCA[1] > 0 ? `${Math.round(Math.abs(dettesFourn[1]) / totalCA[1] * 365)}` : '0', a3: totalCA[2] > 0 ? `${Math.round(Math.abs(dettesFourn[2]) / totalCA[2] * 365)}` : '0', target: '>30j', status: 'success' },
         { name: 'CA par employé (M Fcfa)', formula: 'CA/Effectif', a1: `${Math.round(totalCA[0] / 14 * 10) / 10}`, a2: `${Math.round(totalCA[1] / 18 * 10) / 10}`, a3: `${Math.round(totalCA[2] / 21 * 10) / 10}`, target: '>3M', status: totalCA[2] / 21 >= 3 ? 'success' : 'warning' },
       ]},
       { category: 'Croissance', ratios: [
@@ -697,7 +716,7 @@ export default function BusinessPlanApp() {
     const sensitivityData = [
       { param: 'Prix de vente -10%', impactCA: Math.round(-totalCA[0] * 0.1 * 10) / 10, impactRN: Math.round(-totalCA[0] * 0.1 * 10) / 10, impactTRI: -8.2, risque: 'Moyen' },
       { param: 'Volume vendu -20%', impactCA: Math.round(-totalCA[0] * 0.2 * 10) / 10, impactRN: Math.round(-totalCA[0] * 0.2 * 10) / 10, impactTRI: -12.5, risque: 'Élevé' },
-      { param: 'Coût matières +15%', impactCA: 0, impactRN: Math.round(5.5 * 0.15 * 10) / 10, impactTRI: -4.1, risque: 'Moyen' },
+      { param: 'Coût matières +15%', impactCA: 0, impactRN: Math.round(Math.abs(matieres[0]) * 0.15 * 10) / 10, impactTRI: -4.1, risque: 'Moyen' },
       { param: 'Retard lancement 3 mois', impactCA: Math.round(-totalCA[0] * 0.25 * 10) / 10, impactRN: Math.round(-totalCA[0] * 0.25 * 10) / 10, impactTRI: -9.8, risque: 'Élevé' },
       { param: 'Taux de conversion -50%', impactCA: Math.round(-totalCA[0] * 0.5 * 10) / 10, impactRN: Math.round(-totalCA[0] * 0.5 * 10) / 10, impactTRI: -18.3, risque: 'Critique' },
       { param: 'Subvention gouvernementale', impactCA: 0, impactRN: +3.0, impactTRI: +6.5, risque: 'Opportunité' },
@@ -725,8 +744,9 @@ export default function BusinessPlanApp() {
     ]
 
     return {
-      pricePerKg: p, pricePer500g: p / 2, pf,
+      pricePerKg: p, pricePer500g: p / 2,
       loanAmt, loanInterest, loanRemaining,
+      volReceivedKg, volSoldKg, volPromoKg,
       totalCA, productCA, ebit, rn, margeBrute, seuil, mbPct, fixedCosts,
       financialData, compteResultatData, bilanData, ratiosData,
       vanTriData, sensitivityData, breakevenData, cashFlow3YData,
@@ -832,9 +852,9 @@ export default function BusinessPlanApp() {
               Fournisseur : <strong className="text-white/80">Centre LIG (Congo)</strong> · Distributeur : <strong className="text-white/80">CAPS (Côte d&apos;Ivoire)</strong>
             </p>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-              <StatCard icon={Target} value="29 t" label="Objectif de vente Année 1" color={C.accent} />
-              <StatCard icon={Users} value="500" label="Agriculteurs formés" color={C.gold} />
-              <StatCard icon={Handshake} value="3–5" label="Partenariats majeurs" color={C.accentDark} />
+              <StatCard icon={Target} value={`${VOLUME_RECEIVED[0]}t`} label="Volume reçu Année 1" color={C.accent} />
+              <StatCard icon={DollarSign} value={`${dyn.totalCA[0]}M`} label="CA Année 1 (Fcfa)" color={C.gold} />
+              <StatCard icon={Handshake} value="29/30" label="Ratio vente/promo" color={C.accentDark} />
               <StatCard icon={TrendingUp} value="+80%" label="Augmentation rendements" color={C.success} />
             </div>
             {/* ─── Price Selector (Hero compact) ─── */}
@@ -1240,7 +1260,7 @@ export default function BusinessPlanApp() {
                 <div className="px-6 py-3 flex items-center gap-2 border-t" style={{ backgroundColor: C.white, borderColor: `${C.accent}15` }}>
                   <Info size={14} style={{ color: C.muted }} />
                   <p className="text-xs" style={{ color: C.muted }}>
-                    Le choix du tarif modifie dynamiquement le Chiffre d&apos;Affaires, le Compte de Résultat, le Bilan, les Ratios, la VAN/TRI et l&apos;analyse de sensibilité.
+                    CA = Volume vendu (29t/77t/145t) × Prix/kg. Les coûts variables sont basés sur le volume reçu (30t/80t/150t). Le choix du tarif modifie le CA, la marge brute, le Compte de Résultat, le Bilan, les Ratios, la VAN/TRI et l&apos;analyse de sensibilité.
                   </p>
                 </div>
               </div>
