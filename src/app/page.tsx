@@ -65,7 +65,7 @@ const LOAN_OPTIONS = [
   { label: 'Prêt 10M', amount: 10, color: '#F3A847' },
   { label: 'Prêt 15M', amount: 15, color: '#27AE60' },
 ]
-const LOAN_RATE = 0.08 // 8% per year
+const LOAN_RATE = 0 // 0% — prêt à taux zéro
 
 // ─── Tier Preview Metrics (constant across sessions) ───
 const TIER_PREVIEWS = PRICE_OPTIONS.map(opt => {
@@ -544,15 +544,12 @@ export default function BusinessPlanApp() {
     const p = PRICE_OPTIONS[priceIdx].price
     const pf = p / BASE_PRICE
 
-    // Loan calculations
+    // Loan calculations — prêt à taux zéro, remboursé sur 3 mois dès Oct 2026 (A1 T4, A2 T1, A2 T2)
     const loanAmt = LOAN_OPTIONS[loanIdx].amount
-    const loanPrincipalRepay = loanAmt / 3
-    const loanRemaining = [loanAmt - loanPrincipalRepay, loanAmt - 2 * loanPrincipalRepay, 0]
-    const loanInterest = [
-      -Math.round(loanAmt * LOAN_RATE * 10) / 10,
-      -Math.round((loanAmt - loanPrincipalRepay) * LOAN_RATE * 10) / 10,
-      -Math.round((loanAmt - 2 * loanPrincipalRepay) * LOAN_RATE * 10) / 10,
-    ]
+    const loanRepayQ = Math.round(loanAmt / 3 * 10) / 10
+    // Solde restant en fin d'année : A1 end (2 mensualités restantes), A2 end (0), A3 end (0)
+    const loanRemaining = [Math.round((loanAmt - loanRepayQ) * 10) / 10, 0, 0]
+    const loanInterest = [0, 0, 0] // Taux 0%
 
     // Revenus produits (échelle avec le prix)
     const baseProductCA = [12.2, 44.8, 94.5]
@@ -577,8 +574,7 @@ export default function BusinessPlanApp() {
     const assurances = [-1.8, -1.9, -2.8]
     const fixedCosts = salaires.map((s, i) => Math.round((s + loyer[i] + marketing[i] + amort[i] + assurances[i]) * 10) / 10)
     const ebit = margeBrute.map((mb, i) => Math.round((mb + fixedCosts[i]) * 10) / 10)
-    const baseFinCharges = [0, -1.0, -1.5]
-    const finCharges = baseFinCharges.map((fc, i) => Math.round((fc + loanInterest[i]) * 10) / 10)
+    const finCharges = [0, -1.0, -1.5] // Pas d'impact du prêt sur les charges financières (taux 0%)
     const rbt = ebit.map((eb, i) => Math.round((eb + finCharges[i]) * 10) / 10)
     const impot = rbt.map(r => r > 0 ? Math.round(-r * 0.25 * 10) / 10 : 0)
     const rn = rbt.map((r, i) => Math.round((r + impot[i]) * 10) / 10)
@@ -713,20 +709,19 @@ export default function BusinessPlanApp() {
       breakevenData.push({ ca: caVal, coutsTotal: Math.round(coutsTotal * 10) / 10, profit: Math.round((caVal - coutsTotal) * 10) / 10 })
     }
 
-    const loanRepayQ = Math.round(loanPrincipalRepay * 10) / 10
     const cashFlow3YData = [
       { year: 'A1 T1', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: -8.0, financement: Math.round((12.0 + loanAmt) * 10) / 10, total: Math.round((ebit[0] / 4 + 4.0 + loanAmt) * 10) / 10 },
       { year: 'A1 T2', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: -2.0, financement: 0, total: Math.round((ebit[0] / 4 - 2.0) * 10) / 10 },
       { year: 'A1 T3', exploitation: Math.round(ebit[0] / 4 * 10) / 10, investissement: 0, financement: 0, total: Math.round(ebit[0] / 4 * 10) / 10 },
-      { year: 'A1 T4', exploitation: Math.round((ebit[0] / 4 - 0.5) * 10) / 10, investissement: 0, financement: -loanRepayQ, total: Math.round((ebit[0] / 4 - 0.5 - loanRepayQ) * 10) / 10 },
-      { year: 'A2 T1', exploitation: Math.round(ebit[1] / 4 * 10) / 10, investissement: -5.0, financement: ebit[1] > 0 ? 0 : 5.0, total: Math.round((ebit[1] / 4 - 5.0 + (ebit[1] > 0 ? 0 : 5.0)) * 10) / 10 },
-      { year: 'A2 T2', exploitation: Math.round(ebit[1] / 4 * 10) / 10, investissement: -2.0, financement: 0, total: Math.round((ebit[1] / 4 - 2.0) * 10) / 10 },
+      { year: 'A1 T4 (Oct)', exploitation: Math.round((ebit[0] / 4 - 0.5) * 10) / 10, investissement: 0, financement: -loanRepayQ, total: Math.round((ebit[0] / 4 - 0.5 - loanRepayQ) * 10) / 10 },
+      { year: 'A2 T1', exploitation: Math.round(ebit[1] / 4 * 10) / 10, investissement: -5.0, financement: Math.round((-loanRepayQ + (ebit[1] > 0 ? 0 : 5.0)) * 10) / 10, total: Math.round((ebit[1] / 4 - 5.0 - loanRepayQ + (ebit[1] > 0 ? 0 : 5.0)) * 10) / 10 },
+      { year: 'A2 T2', exploitation: Math.round(ebit[1] / 4 * 10) / 10, investissement: -2.0, financement: -loanRepayQ, total: Math.round((ebit[1] / 4 - 2.0 - loanRepayQ) * 10) / 10 },
       { year: 'A2 T3', exploitation: Math.round((ebit[1] / 4 + 0.5) * 10) / 10, investissement: 0, financement: 0, total: Math.round((ebit[1] / 4 + 0.5) * 10) / 10 },
-      { year: 'A2 T4', exploitation: Math.round((ebit[1] / 4 + 1) * 10) / 10, investissement: 0, financement: Math.round((-3.0 - loanRepayQ) * 10) / 10, total: Math.round((ebit[1] / 4 + 1 - 3.0 - loanRepayQ) * 10) / 10 },
+      { year: 'A2 T4', exploitation: Math.round((ebit[1] / 4 + 1) * 10) / 10, investissement: 0, financement: -3.0, total: Math.round((ebit[1] / 4 + 1 - 3.0) * 10) / 10 },
       { year: 'A3 T1', exploitation: Math.round(ebit[2] / 4 * 10) / 10, investissement: -8.0, financement: 0, total: Math.round((ebit[2] / 4 - 8.0) * 10) / 10 },
       { year: 'A3 T2', exploitation: Math.round((ebit[2] / 4 + 1) * 10) / 10, investissement: 0, financement: 0, total: Math.round((ebit[2] / 4 + 1) * 10) / 10 },
       { year: 'A3 T3', exploitation: Math.round((ebit[2] / 4 + 2) * 10) / 10, investissement: 0, financement: -2.0, total: Math.round((ebit[2] / 4 + 2 - 2.0) * 10) / 10 },
-      { year: 'A3 T4', exploitation: Math.round((ebit[2] / 4 + 3) * 10) / 10, investissement: 0, financement: Math.round((-5.0 - loanRepayQ) * 10) / 10, total: Math.round((ebit[2] / 4 + 3 - 5.0 - loanRepayQ) * 10) / 10 },
+      { year: 'A3 T4', exploitation: Math.round((ebit[2] / 4 + 3) * 10) / 10, investissement: 0, financement: -5.0, total: Math.round((ebit[2] / 4 + 3 - 5.0) * 10) / 10 },
     ]
 
     return {
@@ -867,7 +862,7 @@ export default function BusinessPlanApp() {
             <div className="mb-8">
               <div className="flex items-center gap-2 mb-3">
                 <PiggyBank size={16} className="text-white/50" />
-                <span className="text-white/50 text-xs font-medium uppercase tracking-wider">Scénario de financement — Prêt bancaire</span>
+                <span className="text-white/50 text-xs font-medium uppercase tracking-wider">Scénario de financement — Prêt à taux zéro</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {LOAN_OPTIONS.map((opt, i) => (
@@ -1262,7 +1257,7 @@ export default function BusinessPlanApp() {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-white">Scénario de Financement</h3>
-                      <p className="text-sm text-white/60">Simulez l&apos;impact d&apos;un prêt bancaire sur votre business plan</p>
+                      <p className="text-sm text-white/60">Simulez l&apos;impact d&apos;un prêt à taux zéro sur votre business plan</p>
                     </div>
                   </div>
                 </div>
@@ -1272,19 +1267,12 @@ export default function BusinessPlanApp() {
                   {LOAN_OPTIONS.map((opt, i) => {
                     const isSelected = loanIdx === i
                     const loanAmount = opt.amount
-                    const principalRepay = loanAmount / 3
-                    const interests = [
-                      Math.round(loanAmount * LOAN_RATE * 10) / 10,
-                      Math.round((loanAmount - principalRepay) * LOAN_RATE * 10) / 10,
-                      Math.round((loanAmount - 2 * principalRepay) * LOAN_RATE * 10) / 10,
-                    ]
-                    const totalInterest = Math.round(interests.reduce((s, v) => s + v, 0) * 10) / 10
-                    const totalCost = Math.round((loanAmount + totalInterest) * 10) / 10
+                    const mensualite = Math.round(loanAmount / 3 * 10) / 10
                     const metrics = loanAmount > 0 ? [
-                      { label: 'Taux d\'intérêt', value: `${(LOAN_RATE * 100).toFixed(0)}%`, icon: Percent },
-                      { label: 'Intérêts totaux', value: `${totalInterest}M`, icon: Wallet },
-                      { label: 'Coût total du prêt', value: `${totalCost}M`, icon: DollarSign },
-                      { label: 'Remboursement annuel', value: `${Math.round(principalRepay * 10) / 10}M`, icon: Clock },
+                      { label: 'Taux d\'intérêt', value: '0%', icon: Percent },
+                      { label: 'Coût total du prêt', value: `${loanAmount}M`, icon: DollarSign },
+                      { label: 'Mensualité (×3)', value: `${mensualite}M`, icon: Wallet },
+                      { label: 'Début remboursement', value: 'Oct 2026', icon: Clock },
                     ] : [
                       { label: 'Autofinancement', value: '100%', icon: Shield },
                       { label: 'Charges financières', value: 'Base', icon: Wallet },
@@ -1327,9 +1315,9 @@ export default function BusinessPlanApp() {
                                   <span className="text-3xl font-bold" style={{ color: C.primary }}>{loanAmount}</span>
                                   <span className="text-sm font-medium" style={{ color: C.muted }}>M Fcfa</span>
                                 </div>
-                                <p className="text-xs mt-1" style={{ color: C.muted }}>capital emprunté</p>
+                                <p className="text-xs mt-1" style={{ color: C.muted }}>capital emprunté — taux zéro</p>
                                 <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs" style={{ backgroundColor: `${opt.color}10`, color: opt.color }}>
-                                  <span>Remboursement sur 3 ans</span>
+                                  <span>3 mensualités dès Oct 2026</span>
                                 </div>
                               </>
                             ) : (
@@ -1382,7 +1370,7 @@ export default function BusinessPlanApp() {
                 <div className="px-6 py-3 flex items-center gap-2 border-t" style={{ backgroundColor: C.white, borderColor: `${C.purple}15` }}>
                   <Info size={14} style={{ color: C.muted }} />
                   <p className="text-xs" style={{ color: C.muted }}>
-                    Le prêt est reçu en Année 1 et remboursé sur 3 ans (capital + intérêts à 8%/an). Les charges financières, le bilan et les flux de trésorerie s&apos;ajustent automatiquement.
+                    Prêt à taux zéro reçu au T1 de l&apos;Année 1. Remboursement en 3 mensualités égales à partir d&apos;Oct 2026 (A1 T4, A2 T1, A2 T2). Le bilan et les flux de trésorerie s&apos;ajustent automatiquement.
                   </p>
                 </div>
               </div>
