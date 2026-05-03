@@ -14,10 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Business Plan — LIG Biodynamie Côte d'Ivoire",
-  description: "Business Plan complet pour le Centre de Recherche Agricole LIAMBOU GISELE (LIG) — Biofertilisant Biodynamie en Côte d'Ivoire",
-  keywords: ["LIG", "Biodynamie", "Côte d'Ivoire", "biofertilisant", "agriculture", "business plan"],
-  authors: [{ name: "Centre LIG — Comptoir Agropastoral CI" }],
+  title: "Business Plan — CAPS Biodynamie Côte d'Ivoire",
+  description: "Business Plan complet pour CAPS Biodynamie — Distributeur exclusif du biofertilisant Biodynamie (LIG, Congo) en Côte d'Ivoire",
+  keywords: ["CAPS", "LIG", "Biodynamie", "Côte d'Ivoire", "Congo", "biofertilisant", "agriculture", "business plan"],
+  authors: [{ name: "CAPS Biodynamie — Comptoir Agropastoral CI" }],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },

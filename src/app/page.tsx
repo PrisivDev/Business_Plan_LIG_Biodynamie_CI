@@ -196,11 +196,11 @@ const riskData = [
     consequences: 'Réduction de la marge brute de 5 à 10 points, pression sur les prix de vente, nécessité d\'augmenter les tarifs ce qui affecte la compétitivité.',
   },
   {
-    name: 'Dépendance au partenaire exclusif',
+    name: 'Dépendance au fournisseur LIG (Congo)',
     likelihood: 2, impact: 4, category: 'stratégique',
-    description: 'Le partenariat exclusif avec le Comptoir Agropastoral CI concentre un risque important : en cas de désaccord, de retrait ou de défaillance du partenaire, l\'ensemble de la stratégie d\'implantation est compromise. Le partenaire détient un pouvoir de négociation élevé et contrôle l\'accès au marché local, les relations institutionnelles et une partie de la logistique.',
-    mitigation: 'Négociation d\'un contrat cadre avec clauses de protection (préavis 12 mois, non-concurrence, transfert de savoir-faire), développement progressif d\'une équipe locale indépendante, diversification des partenariats (ANADER, FIRCA, CNRA), clause d\'exclusivité limitée dans le temps (3 ans renouvelable).',
-    consequences: 'Perte d\'accès au marché ivoirien, retrait des relations institutionnelles, interruption de la distribution, coûts de restructuration estimés à 10-15M Fcfa.',
+    description: 'L\'approvisionnement exclusif auprès du Centre LIG (Congo) concentre un risque d\'approvisionnement : en cas de désaccord, de retrait ou de défaillance du fournisseur, l\'ensemble de la stratégie de distribution est compromise. LIG détient le brevet et la technologie de production du biofertilisant.',
+    mitigation: 'Négociation d\'un contrat cadre d\'approvisionnement avec clauses de protection (préavis 12 mois, prix fixe, volumes garantis), transfert progressif de compétences techniques, exploration de licences de production locale à moyen terme, diversification des sources d\'approvisionnement en matières premières.',
+    consequences: 'Rupture d\'approvisionnement en produits, impossibilité de répondre à la demande, perte de crédibilité commerciale, coûts de restructuration estimés à 10-15M Fcfa.',
   },
   {
     name: 'Conditions météorologiques défavorables',
@@ -221,7 +221,7 @@ const riskData = [
 const timelineData = [
   { period: 'Mai 2026', title: 'Pré-lancement', desc: 'Campagne de teasing digitale, signature des MoU avec FIRCA et PALMCI', status: 'upcoming' },
   { period: '10 Juin 2026', title: 'Lancement officiel', desc: 'Cérémonie à Abidjan avec partenaires, démonstration live, couverture médiatique RTI/Business24', status: 'upcoming' },
-  { period: 'Juil–Sept 2026', title: 'LIG Biodynamie Tour', desc: 'Tournée dans 5 régions agricoles, formations gratuites, campagne influenceurs verts', status: 'upcoming' },
+  { period: 'Juil–Sept 2026', title: 'CAPS Biodynamie Tour', desc: 'Tournée dans 5 régions agricoles, formations gratuites, campagne influenceurs verts', status: 'upcoming' },
   { period: 'Oct–Déc 2026', title: 'Évaluation & Consolidation', desc: 'Évaluation des résultats, collecte témoignages, signature nouveaux contrats', status: 'upcoming' },
   { period: 'Jan–Jun 2027', title: 'Extension régionale', desc: 'Extension distribution régionale, lancement label "Fermes Biodynamiques", salons (SARA)', status: 'upcoming' },
 ]
@@ -283,7 +283,7 @@ const mix4P = [
     'Comparatif : 3x moins cher que chimiques',
   ]},
   { P: 'Place', icon: Truck, color: C.accentDark, items: [
-    'Centre LIG Abidjan (vente directe)',
+    'Centre CAPS Abidjan (vente directe)',
     'E-commerce www.biodynamie.ci',
     'Réseau ANADER (diffusion nationale)',
     'Coopératives partenaires (10 régions)',
@@ -292,7 +292,7 @@ const mix4P = [
   ]},
   { P: 'Promotion', icon: Megaphone, color: C.purple, items: [
     'Lancement 10 juin 2026 (événement premium)',
-    'LIG Biodynamie Tour (5 régions)',
+    'CAPS Biodynamie Tour (5 régions)',
     'Influenceurs verts & ambassadeurs',
     'Témoignages vidéo agriculteurs',
     'Campagne digitale Facebook/WhatsApp',
@@ -314,7 +314,7 @@ const contentCalendar = [
 
 const compteResultatData = [
   { poste: 'Chiffre d\'affaires', a1: 17.4, a2: 64.0, a3: 135.0, bold: true, color: C.accent },
-  { poste: '  Vente biofertilisant (70%)', a1: 12.2, a2: 44.8, a3: 94.5, bold: false, color: C.text },
+  { poste: '  Distribution biofertilisant (70%)', a1: 12.2, a2: 44.8, a3: 94.5, bold: false, color: C.text },
   { poste: '  Formations & accompagnement (15%)', a1: 2.6, a2: 9.6, a3: 20.3, bold: false, color: C.text },
   { poste: '  Consultation R&D (10%)', a1: 1.7, a2: 6.4, a3: 13.5, bold: false, color: C.text },
   { poste: '  Certification Fermes Bio (5%)', a1: 0.9, a2: 3.2, a3: 6.7, bold: false, color: C.text },
@@ -602,7 +602,7 @@ export default function BusinessPlanApp() {
 
     const compteResultatData = [
       { poste: 'Chiffre d\'affaires', a1: totalCA[0], a2: totalCA[1], a3: totalCA[2], bold: true, color: C.accent },
-      { poste: '  Vente biofertilisant', a1: productCA[0], a2: productCA[1], a3: productCA[2], bold: false, color: C.text },
+      { poste: '  Distribution biofertilisant', a1: productCA[0], a2: productCA[1], a3: productCA[2], bold: false, color: C.text },
       { poste: '  Formations & accompagnement', a1: 2.6, a2: 9.6, a3: 20.3, bold: false, color: C.text },
       { poste: '  Consultation R&D', a1: 1.7, a2: 6.4, a3: 13.5, bold: false, color: C.text },
       { poste: '  Certification Fermes Bio', a1: 0.9, a2: 3.2, a3: 6.7, bold: false, color: C.text },
@@ -808,10 +808,10 @@ export default function BusinessPlanApp() {
               Projet <span style={{ color: C.accent }}>BIODYNAMIE</span>
             </h1>
             <p className="text-lg sm:text-xl text-white/80 mb-4 max-w-2xl leading-relaxed">
-              Implantation en Côte d&apos;Ivoire — Lancement du Biofertilisant <strong className="text-white">Biodynamie</strong>
+              Distribution exclusive en Côte d&apos;Ivoire — Biofertilisant <strong className="text-white">Biodynamie</strong>
             </p>
             <p className="text-base text-white/60 mb-10 max-w-2xl">
-              Partenaire Exclusif : <strong className="text-white/80">Comptoir Agropastoral CI</strong>
+              Fournisseur : <strong className="text-white/80">Centre LIG (Congo)</strong> · Distributeur : <strong className="text-white/80">CAPS (Côte d&apos;Ivoire)</strong>
             </p>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
               <StatCard icon={Target} value="29 t" label="Objectif de vente Année 1" color={C.accent} />
@@ -863,15 +863,15 @@ export default function BusinessPlanApp() {
 
           {/* ═══════ RÉSUMÉ EXÉCUTIF ═══════ */}
           <AnimatedSection id="resume">
-            <SectionHeader icon={Target} title="Résumé Exécutif" subtitle="Synthèse du projet LIG Biodynamie" />
+            <SectionHeader icon={Target} title="Résumé Exécutif" subtitle="Synthèse du projet CAPS Biodynamie" />
             <div className="grid md:grid-cols-2 gap-6">
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold mb-4" style={{ color: C.primary }}>Le Projet</h3>
                   <p className="leading-relaxed mb-4" style={{ color: C.text }}>
-                    Le Projet BIODYNAMIE s&apos;implante en Côte d&apos;Ivoire pour y déployer
-                    la révolution agricole biodynamique africaine à travers la production et la commercialisation du
-                    biofertilisant <strong>&quot;Biodynamie&quot;</strong>, en partenariat exclusif avec le Comptoir Agropastoral CI.
+                    CAPS Biodynamie s&apos;implante en Côte d&apos;Ivoire pour y déployer
+                    la révolution agricole biodynamique africaine à travers la distribution et la commercialisation du
+                    biofertilisant <strong>&quot;Biodynamie&quot;</strong>, produit par le Centre LIG (Congo) et distribué exclusivement par CAPS en Côte d&apos;Ivoire.
                   </p>
                   <p className="leading-relaxed" style={{ color: C.text }}>
                     Ce biofertilisant 100% naturel, issu de plus de 20 ans de R&D, promet une augmentation des
@@ -924,7 +924,7 @@ export default function BusinessPlanApp() {
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               {[
                 { title: 'Vision', desc: 'Faire de la Côte d\'Ivoire le fer de lance d\'une Afrique qui nourrit l\'Afrique, grâce à une agriculture durable, rentable et souveraine.', icon: Lightbulb, color: C.accent },
-                { title: 'Mission', desc: 'Produire et diffuser des solutions biofertilisantes écologiques et performantes, accessibles à tous les acteurs agricoles ivoiriens et ouest-africains.', icon: Target, color: C.gold },
+                { title: 'Mission', desc: 'Distribuer et diffuser les solutions biofertilisantes écologiques et performantes du Centre LIG, accessibles à tous les acteurs agricoles ivoiriens et ouest-africains.', icon: Target, color: C.gold },
                 { title: 'Valeurs', desc: 'Nature • Science • Résultats • Afrique — Un ADN ancré dans le respect de la terre et la performance agricole prouvée.', icon: Award, color: C.accentDark },
               ].map((item, i) => (
                 <motion.div key={i} whileHover={{ y: -4 }}>
@@ -942,9 +942,10 @@ export default function BusinessPlanApp() {
             </div>
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4" style={{ color: C.primary }}>Partenaire Exclusif : Comptoir Agropastoral CI</h3>
+                <h3 className="text-xl font-semibold mb-4" style={{ color: C.primary }}>Structure du Projet : LIG (Congo) × CAPS (Côte d&apos;Ivoire)</h3>
                 <p className="leading-relaxed mb-4" style={{ color: C.text }}>
-                  Le Comptoir Agropastoral CI est le partenaire exclusif de LIG en Côte d&apos;Ivoire. Implanté localement, il assure la distribution,
+                  <strong>LIG (Centre LIG, Congo)</strong> est le fournisseur et partenaire R&D qui conçoit et produit le biofertilisant Biodynamie.
+                  <strong>CAPS (Comptoir Agropastoral CI)</strong> est le distributeur exclusif en Côte d&apos;Ivoire, assurant la commercialisation,
                   la logistique, les relations institutionnelles et le suivi terrain.
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm" style={{ color: C.muted }}>
@@ -967,7 +968,7 @@ export default function BusinessPlanApp() {
                     { letter: 'P', label: 'Politique', items: ['Volonté gouvernementale d\'innovation verte', 'Stabilité macropolitique favorable', 'PNIA II et PNDAD'], color: '#2A7A65' },
                     { letter: 'E', label: 'Économique', items: ['Agriculture = 25% du PIB', 'Forte dépendance aux importations d\'engrais', 'Coût élevé des intrants chimiques'], color: '#3DDBB5' },
                     { letter: 'S', label: 'Socioculturel', items: ['Tradition agricole profonde', 'Résistance au changement', 'Jeunesse agricole croissante'], color: '#F3A847' },
-                    { letter: 'T', label: 'Technologique', items: ['R&D LIG +20 ans', 'Adaptation aux sols tropicaux', 'Innovation zero nourrissage piscicole'], color: '#D4875A' },
+                    { letter: 'T', label: 'Technologique', items: ['R&D Centre LIG (Congo) +20 ans', 'Adaptation aux sols tropicaux', 'Innovation zero nourrissage piscicole'], color: '#D4875A' },
                     { letter: 'E', label: 'Environnemental', items: ['Dégradation des sols par engrais chimiques', 'Changement climatique', 'Demande mondiale de bio'], color: '#5B8DB8' },
                     { letter: 'L', label: 'Légal', items: ['Loi n°2015-537 modernisation agricole', 'Stratégie Bio 2030', 'Normes certifications agricoles'], color: '#8B7E5A' },
                   ].map((item, i) => (
@@ -1233,7 +1234,7 @@ export default function BusinessPlanApp() {
                   <div>
                     <h4 className="font-semibold text-sm mb-2" style={{ color: C.accentDark }}>Canaux de Distribution</h4>
                     <div className="grid grid-cols-2 gap-2">
-                      {['Vente directe Centre LIG Abidjan', 'E-commerce www.biodynamie.ci', 'Coopératives partenaires', 'ANADER (diffusion nationale)', 'Magasins bio / intrants verts', '10 technico-commerciaux'].map((ch, i) => (
+                      {['Vente directe Centre CAPS Abidjan', 'E-commerce www.biodynamie.ci', 'Coopératives partenaires', 'ANADER (diffusion nationale)', 'Magasins bio / intrants verts', '10 technico-commerciaux'].map((ch, i) => (
                         <div key={i} className="flex items-center gap-2 text-xs" style={{ color: C.text }}>
                           <ChevronRight size={12} style={{ color: C.accent }} />{ch}
                         </div>
@@ -1245,7 +1246,7 @@ export default function BusinessPlanApp() {
                     <h4 className="font-semibold text-sm mb-2" style={{ color: C.gold }}>Sources de Revenus</h4>
                     <div className="space-y-2">
                       {[
-                        { label: 'Vente de biofertilisant', pct: 70 },
+                        { label: 'Distribution biofertilisant', pct: 70 },
                         { label: 'Formations & accompagnement', pct: 15 },
                         { label: 'Consultation R&D', pct: 10 },
                         { label: 'Certification "Fermes Biodynamiques"', pct: 5 },
@@ -2396,14 +2397,14 @@ export default function BusinessPlanApp() {
                         <tbody>
                           {[
                             { abbr: 'Biofertilisant', cat: 'Agronomie', def: 'Substance contenant des micro-organismes vivants qui favorisent la croissance des plantes en augmentant la disponibilité des nutriments dans le sol. Contrairement aux engrais chimiques, il régénère l\'écosystème du sol.' },
-                            { abbr: 'Biodynamie', cat: 'Agronomie', def: 'Méthode agricole écologique intégrant les principes de l\'agriculture biologique avec des pratiques spirituelles et cosmiques. Dans notre contexte, désigne le biofertilisant breveté du Centre LIG.' },
+                            { abbr: 'Biodynamie', cat: 'Agronomie', def: 'Méthode agricole écologique intégrant les principes de l\'agriculture biologique avec des pratiques spirituelles et cosmiques. Dans notre contexte, désigne le biofertilisant breveté par le Centre LIG (Congo), distribué exclusivement par CAPS en Côte d\'Ivoire.' },
                             { abbr: 'Intrant', cat: 'Agronomie', def: 'Tout produit ou matière utilisé dans le processus de production agricole : engrais, pesticides, semences, traitements. Les intrants chimiques sont progressivement remplacés par des alternatives biologiques.' },
                             { abbr: 'pH', cat: 'Chimie du sol', def: 'Potentiel hydrogène, mesure de l\'acidité ou de l\'alcalinité d\'un sol. Échelle de 0 à 14. Un pH de 7,5 (Biodynamie) est légèrement alcalin et compatible avec la plupart des cultures tropicales.' },
                             { abbr: 'Rendement', cat: 'Agronomie', def: 'Quantité de production récoltée par unité de surface (ex : tonnes/hectare). L\'objectif de Biodynamie est d\'augmenter les rendements de +80% par rapport aux pratiques conventionnelles.' },
                             { abbr: 'Biodégradable', cat: 'Écologie', def: 'Qui peut être décomposé par des organismes vivants (bactéries, champignons) en éléments naturels sans pollution. Le biofertilisant Biodynamie est 100% biodégradable contrairement aux engrais chimiques.' },
                             { abbr: 'Sols tropicaux', cat: 'Pédologie', def: 'Sols caractéristiques des régions tropicales, souvent ferrallitiques, acides et appauvris en matière organique. Nécessitent des amendements spécifiques que le Biodynamie apporte.' },
-                            { abbr: 'R&D', full: 'Recherche et Développement', def: 'Activités de recherche fondamentale et appliquée visant à créer de nouveaux produits ou améliorer les existants. Le Centre LIG a plus de 20 ans de R&D sur le biofertilisant Biodynamie.' },
-                            { abbr: 'Pisciculture zéro nourrissage', cat: 'Innovation LIG', def: 'Technique exclusive du Centre LIG consistant à élever des poissons sans apport alimentaire externe. Les rejets piscicoles servent de base au biofertilisant, garantissant un produit 100% naturel et économique.' },
+                            { abbr: 'R&D', full: 'Recherche et Développement', def: 'Activités de recherche fondamentale et appliquée visant à créer de nouveaux produits ou améliorer les existants. Le Centre LIG (Congo) a plus de 20 ans de R&D sur le biofertilisant Biodynamie.' },
+                            { abbr: 'Pisciculture zéro nourrissage', cat: 'Innovation LIG (Congo)', def: 'Technique exclusive du Centre LIG (Congo) consistant à élever des poissons sans apport alimentaire externe. Les rejets piscicoles servent de base au biofertilisant, garantissant un produit 100% naturel et économique.' },
                             { abbr: 'Rotation des stocks', cat: 'Logistique', def: 'Indicateur mesurant la vitesse à laquelle les stocks sont renouvelés. Calcul : Stock moyen / Coût des marchandises vendues × 365. Une rotation rapide indique une gestion efficace.' },
                             { abbr: 'Ecocert', cat: 'Certification', def: 'Organisme de certification internationale spécialisé dans l\'agriculture biologique et le développement durable. La certification Ecocert garantit le respect des normes bio européennes et internationales.' },
                           ].map((row, i) => (
@@ -2431,18 +2432,18 @@ export default function BusinessPlanApp() {
                           <tr style={{ backgroundColor: C.primary }}>
                             <th className="text-left p-3 text-white font-semibold w-36">Référence</th>
                             <th className="text-left p-3 text-white font-semibold w-56">Intitulé</th>
-                            <th className="text-left p-3 text-white font-semibold">Description & Impact pour LIG</th>
+                            <th className="text-left p-3 text-white font-semibold">Description & Impact pour CAPS Biodynamie</th>
                           </tr>
                         </thead>
                         <tbody>
                           {[
                             { abbr: 'Loi n°2015-537', full: 'Loi relative à la modernisation agricole', def: 'Loi ivoirienne encadrant la modernisation du secteur agricole. Favorise l\'innovation, l\'adoption de nouvelles technologies et l\'accès aux financements pour les acteurs agricoles. Cadre favorable pour l\'introduction de biofertilisants.' },
-                            { abbr: 'PNIA II', full: 'Programme National d\'Investissement Agricole II', def: 'Plan stratégique ivoirien (2018-2026) pour le développement du secteur agricole. Priorise la sécurité alimentaire, l\'agro-industrie et l\'agriculture durable. Alignement stratégique direct avec les objectifs de LIG Biodynamie.' },
+                            { abbr: 'PNIA II', full: 'Programme National d\'Investissement Agricole II', def: 'Plan stratégique ivoirien (2018-2026) pour le développement du secteur agricole. Priorise la sécurité alimentaire, l\'agro-industrie et l\'agriculture durable. Alignement stratégique direct avec les objectifs de CAPS Biodynamie.' },
                             { abbr: 'PNDAD', full: 'Programme National de Développement Agricole Durable', def: 'Programme gouvernemental ivoirien visant à concilier développement agricole et durabilité environnementale. Soutient les pratiques agro-écologiques et la transition vers le bio.' },
                             { abbr: 'Stratégie Bio 2030', full: 'Stratégie Nationale de l\'Agriculture Biologique', def: 'Politique gouvernementale ivoirienne ambitionnant de développer l\'agriculture biologique d\'ici 2030. Crée des opportunités de subventions, de certifications et de marchés pour les produits bio comme Biodynamie.' },
                             { abbr: 'PIB', full: 'Produit Intérieur Brut', def: 'Valeur totale des biens et services produits dans un pays sur une année. En Côte d\'Ivoire, l\'agriculture représente 25% du PIB, soulignant l\'importance stratégique du secteur.' },
-                            { abbr: 'SARA', full: 'Salon de l\'Agriculture et des Ressources Animales', def: 'Plus grand salon agricole de Côte d\'Ivoire et d\'Afrique de l\'Ouest. Se tient tous les 2 ans à Abidjan. Opportunité majeure de visibilité, de networking et de démonstration pour LIG Biodynamie.' },
-                            { abbr: 'Capital social', full: 'Capital Social de l\'Entreprise', def: 'Montant des apports des associés constituant les ressources permanentes de l\'entreprise. Figure au passif du bilan. Pour LIG CI, le capital social initial est de 20M FCFA.' },
+                            { abbr: 'SARA', full: 'Salon de l\'Agriculture et des Ressources Animales', def: 'Plus grand salon agricole de Côte d\'Ivoire et d\'Afrique de l\'Ouest. Se tient tous les 2 ans à Abidjan. Opportunité majeure de visibilité, de networking et de démonstration pour CAPS Biodynamie.' },
+                            { abbr: 'Capital social', full: 'Capital Social de l\'Entreprise', def: 'Montant des apports des associés constituant les ressources permanentes de l\'entreprise. Figure au passif du bilan. Pour CAPS CI, le capital social initial est de 20M FCFA.' },
                             { abbr: 'Amortissement', full: 'Amortissement comptable', def: 'Constatation comptable de la dépréciation irréversible d\'un actif immobilisé (matériel, bâtiments) sur sa durée de vie utile. Charge non décaissable qui réduit le résultat imposable.' },
                           ].map((row, i) => (
                             <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'transparent' : `${C.accent}04` }}>
@@ -2529,19 +2530,19 @@ export default function BusinessPlanApp() {
                   <Leaf size={22} className="text-white" />
                 </div>
                 <div>
-                  <p className="font-bold text-white">LIG Biodynamie</p>
+                  <p className="font-bold text-white">CAPS Biodynamie</p>
                   <p className="text-xs" style={{ color: C.accent }}>Côte d&apos;Ivoire</p>
                 </div>
               </div>
               <p className="text-sm text-white/60 leading-relaxed">
-                Le Projet BIODYNAMIE porte la vision d&apos;une Côte d&apos;Ivoire autosuffisante et durable.
+                CAPS Biodynamie porte la vision d&apos;une Côte d&apos;Ivoire autosuffisante et durable.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-white mb-4">LIG Côte d&apos;Ivoire</h4>
+              <h4 className="font-semibold text-white mb-4">LIG — Fournisseur (Congo)</h4>
               <div className="space-y-2 text-sm text-white/60">
-                <div className="flex items-center gap-2"><Phone size={14} /> +225 21270000</div>
-                <div className="flex items-center gap-2"><Phone size={14} /> +225 21271010</div>
+                <div className="flex items-center gap-2"><MapPin size={14} /> Centre LIG, Brazzaville, Congo</div>
+                <div className="flex items-center gap-2"><Globe size={14} /> R&D & Production du biofertilisant</div>
               </div>
             </div>
             <div>
