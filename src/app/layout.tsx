@@ -18,9 +18,6 @@ export const metadata: Metadata = {
   description: "Business Plan complet pour CAPS Biodynamie — Distributeur exclusif du biofertilisant Biodynamie (LIG, Congo) en Côte d'Ivoire",
   keywords: ["CAPS", "LIG", "Biodynamie", "Côte d'Ivoire", "Congo", "biofertilisant", "agriculture", "business plan"],
   authors: [{ name: "CAPS Biodynamie — Comptoir Agropastoral CI" }],
-  icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
-  },
 };
 
 export default function RootLayout({
